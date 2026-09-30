@@ -27,18 +27,22 @@ export function OutputShell({
   after,
   printLabel,
   onPrint,
+  paperChoice = true,
 }: {
   title: ReactNode;
   needsReview?: boolean;
   /** Notices and choices above the preview (hidden in print). */
   controls?: ReactNode;
-  printHelp: ReactNode;
+  printHelp?: ReactNode;
   /** The preview; its sheets are what prints. */
   children: ReactNode;
   /** Extra actions below the preview (hidden in print). */
   after?: ReactNode;
-  printLabel: ReactNode;
-  onPrint: () => void;
+  /** Without these, there's no print button (for outputs that aren't printed). */
+  printLabel?: ReactNode;
+  onPrint?: () => void;
+  /** False for outputs that aren't printed, like the voice-note script. */
+  paperChoice?: boolean;
 }) {
   const t = useT();
   const { plan, setPlan, status, go } = usePlan();
@@ -87,6 +91,7 @@ export function OutputShell({
               <h1 className="type-question">{title}</h1>
               <MissingPhotosNotice />
               {controls}
+              {paperChoice && (
               <fieldset className="flex flex-col gap-2">
                 <legend className="mb-2 type-heading">{t("paperLabel")}</legend>
                 <div className="flex flex-wrap gap-2">
@@ -103,15 +108,18 @@ export function OutputShell({
                 </div>
                 <p className="type-helper text-ink-soft">{printHelp}</p>
               </fieldset>
+              )}
             </div>
             {children}
             {after && <div className="flex flex-col gap-3 print:hidden">{after}</div>}
           </main>
-          <div className="sticky bottom-0 -mx-4 border-t-[1.5px] border-line bg-paper px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 print:hidden">
-            <Button full onClick={onPrint}>
-              {printLabel}
-            </Button>
-          </div>
+          {onPrint && (
+            <div className="sticky bottom-0 -mx-4 border-t-[1.5px] border-line bg-paper px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 print:hidden">
+              <Button full onClick={onPrint}>
+                {printLabel}
+              </Button>
+            </div>
+          )}
         </>
       )}
     </div>

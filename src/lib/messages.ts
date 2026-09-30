@@ -484,6 +484,34 @@ export const messages = {
   slotLowerEvening: { en: "evening", ur: "شام" },
   slotLowerNight: { en: "night", ur: "رات" },
 
+  // 9e. Voice-note script (screen) ------------------------------------------------
+  voiceHelpNamed: {
+    en: "Read this aloud to {helper} and send it as a WhatsApp voice note. It follows the fridge sheet from top to bottom.",
+    ur: "یہ {helper} کو بلند آواز سے پڑھ کر سنائیں اور واٹس ایپ وائس نوٹ میں بھیج دیں۔ یہ فریج شیٹ کی ترتیب سے اوپر سے نیچے چلتا ہے۔",
+  },
+  voiceHelp: {
+    en: "Read this aloud to whoever gives the medicines, and send it as a WhatsApp voice note. It follows the fridge sheet from top to bottom.",
+    ur: "جو دوائیں دیتا ہے اسے یہ بلند آواز سے پڑھ کر سنائیں اور واٹس ایپ وائس نوٹ میں بھیج دیں۔ یہ فریج شیٹ کی ترتیب سے اوپر سے نیچے چلتا ہے۔",
+  },
+  voiceOwnWords: {
+    en: "Any language you share is fine, like Punjabi, Sindhi, Pashto or Saraiki. Say it in your own words and keep the same order. Waqt Pe doesn't record or store any audio.",
+    ur: "کوئی بھی زبان جو آپ دونوں بولتے ہیں ٹھیک ہے، جیسے پنجابی، سندھی، پشتو یا سرائیکی۔ اپنے الفاظ میں کہیں اور ترتیب وہی رکھیں۔ وقت پہ کوئی آواز ریکارڈ یا محفوظ نہیں کرتا۔",
+  },
+  copyScriptEn: { en: "Copy English script", ur: "انگریزی متن کاپی کریں" },
+  copyScriptUr: { en: "Copy Urdu script", ur: "اردو متن کاپی کریں" },
+  scriptCopied: { en: "Copied. Paste it into WhatsApp, or read it from here.", ur: "کاپی ہو گیا۔ واٹس ایپ میں پیسٹ کریں، یا یہیں سے پڑھیں۔" },
+  scriptCopyFailed: {
+    en: "Couldn't copy automatically. Press and hold the script to select and copy it.",
+    ur: "خود بخود کاپی نہیں ہو سکا۔ متن کو دبا کر رکھیں، پھر چن کر کاپی کریں۔",
+  },
+
+  // 9f. Voice-note script templates (SPEC.md → Voice-note script) -----------------
+  // Fixed templates, never AI. Word tables for agreement live in src/lib/voice.ts.
+  voiceOpeningNamed: { en: "{helper}, here's how {person}'s medicines go.", ur: "{helper}، یہ {person} کی دوائیوں کا طریقہ ہے۔" },
+  voiceOpening: { en: "Here's how {person}'s medicines go.", ur: "یہ {person} کی دوائیوں کا طریقہ ہے۔" },
+  voiceDose: { en: "{when}. The {symbol} box. {quantity}.", ur: "{when}۔ {symbol} والا ڈبہ۔ {quantity}۔" },
+  voiceClosing: { en: "If anything is unclear, call me.", ur: "کچھ سمجھ نہ آئے تو مجھے فون کریں۔" },
+
   // 9b. Printed on the sheet (always both languages) ---------------------------
   sheetFor: { en: "For {helper}", ur: "{helper} کے لیے" },
   sheetCall: { en: "If anything is unclear, call", ur: "کچھ سمجھ نہ آئے تو فون کریں" },

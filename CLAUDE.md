@@ -33,6 +33,7 @@ Next.js (App Router) as a static export (`output: "export"`, builds to `out/`), 
 - `src/lib/backup.ts` — the `.waqtpe` saved file: plan plus referenced photos as base64. `readBackup()` checks and sanitises before anything is stored.
 - `src/lib/sheet.ts` — printing rules: paper sizes, mm→px, `sheetFingerprint`/`recordPrint`/`upcomingVersion` (a changed plan prints as the next version and border colour), doses grouped by time of day.
 - `src/components/sheets/` — printed outputs, sized in mm at true size (`FridgeSheet`, `StickerSheet`, `DoctorList`), built from `print.tsx` (`PrintPage`, `En`, `Ur`); `SheetFrame` scales a sheet to fit the screen but not in print; `OutputShell` is the screen around every output (lock, paper size, preview, print button). Printed type: English ≥ 12 pt, Urdu ≥ 14 pt, both languages always.
+- `src/lib/voice.ts` — the voice-note script: fixed templates (in `messages.ts`) plus Urdu agreement tables (colour × shape gender, meal words in the oblique case, spoken fractions ڈیڑھ/ڈھائی/ساڑھے). Same order as the fridge sheet (`dosesBySlot`). Every Urdu word here needs native review.
 - `src/lib/device.ts` — "Clear everything on this device".
 - `src/components/` — core components from the App theme (Button, TextField, ChoiceCard, ChoiceChip, ListEditor, ConfirmInline, Notice, ProgressHeader, SetupScreen, Ur, icons). Use `ConfirmInline`, never `window.confirm`.
 - `src/pictograms/` — placeholder pictograms and medicine symbols, each a swappable SVG component with a `size` prop.
@@ -44,7 +45,7 @@ Next.js (App Router) as a static export (`output: "export"`, builds to `out/`), 
 - `npm run build` — static export to `out/`
 - `npm run lint` — type check
 - `npm test` — unit tests (Vitest)
-- `node tests/print.e2e.mjs [screenshotDir]` — after a build: prints the fridge sheet, stickers and doctor's list on A4 and Letter (typical and worst-case plans), checks nothing sticks out of a page, measures stickers against spec (within 1 mm), and makes real PDFs to check page size and count
+- `node tests/print.e2e.mjs [screenshotDir]` — after a build: prints the fridge sheet, stickers and doctor's list on A4 and Letter, checks the voice script's order and right-to-left Urdu, (typical and worst-case plans), checks nothing sticks out of a page, measures stickers against spec (within 1 mm), and makes real PDFs to check page size and count
 - `node tests/reload.e2e.mjs [screenshotDir]` — after a build: serves `out/` and walks the setup flow on a phone-sized touch screen, checking the plan survives a reload from the link alone (uses the preinstalled Chromium)
 
 ## Milestones
@@ -58,4 +59,5 @@ Tracked in SPEC.md → "Build milestones". Status:
 - [x] 5. Review step and output lock
 - [x] 6. Fridge sheet print, both pages, placeholder pictograms, research toggles
 - [x] 7. Sticker sheet and doctor's list
-- [ ] 8. Voice-note script, English and Urdu
+- [x] 8. Voice-note script, English and Urdu
+- [ ] 9. Lock-screen card with presets and clock preview

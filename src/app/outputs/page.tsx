@@ -41,6 +41,7 @@ export default function Outputs() {
       title: "outputVoice",
       help: helper ? fillNodes(t("outputVoiceHelpNamed"), { helper }) : t("outputVoiceHelp"),
       needsReview: true,
+      path: "/outputs/voice/",
     },
     { id: "doctor", title: "outputDoctor", help: t("outputDoctorHelp"), needsReview: true, path: "/outputs/doctor/" },
     // No medicines on it, so it doesn't wait for the medicine check.

@@ -482,6 +482,16 @@ Setup is a linear, one-question-per-screen flow on mobile, with a progress indic
 - A typical doctor's list fits one page. A very long one flows onto a second page with the table header repeated, and a medicine's rows never split.
 - The stickers and doctor's list are locked with the fridge sheet until every medicine is checked. Their screens share `OutputShell` with the fridge sheet.
 
+**Build decisions (milestone 8):**
+
+- The script is built from the templates in the spec, with the dose lines in exactly the fridge sheet's order (times of day top to bottom, medicines in plan order). It's shown in Urdu and English, each with its own copy button, whatever the interface language. The copied text has one line per sentence group, ready to paste into WhatsApp.
+- `{anchor}` in the per-dose template becomes a "when" phrase that folds in the food instruction. With the default meal labels, food is said relative to the meal: "Morning, after breakfast" / "صبح، ناشتے کے بعد" ("at breakfast time" / "ناشتے کے وقت" when food doesn't matter). A label the family typed can't be safely inflected in Urdu, so it's said as it is, with the food after it: "Morning, at Fajr, after food" / "صبح، فجر، کھانے کے بعد". Clock labels drop the time-of-day word: "At 8 am, after food".
+- Urdu symbol phrases use a lookup table: colours that inflect agree with their shape's gender in the oblique case before والا (نیلے ستارے, نیلی پتنگ, پیلی تکون, کالی مچھلی); the others don't change. The genders assumed (پتنگ, تکون and مچھلی feminine; the rest masculine) need native confirmation.
+- Quantities are spelled out for reading aloud: "One and a half tablets", "Half a tablet"; in Urdu آدھی, ڈیڑھ, ڈھائی and ساڑھے for halves, singular/plural units (گولی/گولیاں, قطرہ/قطرے). Above ten, numerals.
+- Names and labels the family typed are wrapped in invisible Unicode isolates (U+2068…U+2069), so "Shabnam" or "Ammi" keeps its place inside an Urdu sentence on screen and after pasting into WhatsApp.
+- The script says "call me"; it doesn't name the family member reading it, since the voice itself tells the helper who it is.
+- Native review is still needed for every Urdu template and word table before launch, as the spec says.
+
 **Global behaviour:**
 
 - Progress autosaves to the URL hash and IndexedDB on every change.
