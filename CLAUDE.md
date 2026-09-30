@@ -34,7 +34,7 @@ Next.js (App Router) as a static export (`output: "export"`, builds to `out/`), 
 - `src/lib/device.ts` — "Clear everything on this device".
 - `src/components/` — core components from the App theme (Button, TextField, ChoiceCard, ChoiceChip, ListEditor, ConfirmInline, Notice, ProgressHeader, SetupScreen, Ur, icons). Use `ConfirmInline`, never `window.confirm`.
 - `src/pictograms/` — placeholder pictograms and medicine symbols, each a swappable SVG component with a `size` prop.
-- `src/app/setup/<step>/` — one route per setup screen. `src/app/kit/` — component and type gallery for checking the theme in both directions.
+- `src/app/setup/<step>/` — one route per setup screen. `src/app/outputs/` — the outputs hub (screen 9); medicine outputs stay locked until `canPrint(plan)`. `reviewed` is set true only in the review step, via `markReviewed()`. `src/app/kit/` — component and type gallery for checking the theme in both directions.
 
 ## Commands
 
@@ -52,4 +52,5 @@ Tracked in SPEC.md → "Build milestones". Status:
 - [x] 2. Setup screens 1–4 and 7
 - [x] 3. Medicines list and editor, with symbol auto-assignment
 - [x] 4. Photo capture, compression, IndexedDB, `.waqtpe` export and import
-- [ ] 5. Review step and output lock
+- [x] 5. Review step and output lock
+- [ ] 6. Fridge sheet print, both pages, placeholder pictograms, research toggles

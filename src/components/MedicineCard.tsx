@@ -1,11 +1,11 @@
 "use client";
 
-import { Chevron } from "./icons";
+import { Check, Chevron } from "./icons";
 import { PhotoThumb } from "./Photo";
-import { fill, useLang, useT } from "@/lib/i18n";
+import { fill, useLang, useT, type MessageKey } from "@/lib/i18n";
 import { quantityText } from "@/lib/medicine";
 import { slotText, slotTint } from "@/lib/slots";
-import type { Dose, Form, Medicine } from "@/lib/plan";
+import type { Dose, Form, Medicine, Plan } from "@/lib/plan";
 import { SymbolShape, TimeOfDay } from "@/pictograms";
 
 /** Time-of-day tint, slot pictogram, quantity. */
@@ -55,8 +55,43 @@ export function MedicineCard({ medicine, onOpen }: { medicine: Medicine; onOpen:
             <span className="type-helper text-warning">{t("noDosesYet")}</span>
           )}
         </span>
+        {medicine.reviewed && (
+          <span className="flex items-center gap-1 type-helper font-bold text-success">
+            <Check size={18} />
+            {t("cardChecked")}
+          </span>
+        )}
       </span>
       <Chevron size={20} className="mt-3 shrink-0 text-ink-soft" />
     </button>
+  );
+}
+
+const doseFood: Record<Dose["food"], MessageKey> = {
+  before: "doseFoodBefore",
+  after: "doseFoodAfter",
+  with: "doseFoodWith",
+  any: "doseFoodAny",
+};
+
+/** Every dose written out, for checking against the prescription. */
+export function DoseLines({ medicine, anchors }: { medicine: Medicine; anchors: Plan["anchors"] }) {
+  const t = useT();
+  const { lang } = useLang();
+  return (
+    <ul className="flex flex-col gap-2">
+      {medicine.doses.map((d) => (
+        <li key={d.slot} className={`flex items-center gap-2 rounded-input px-2 py-1 ${slotTint[d.slot]}`}>
+          <TimeOfDay slot={d.slot} size={32} className="shrink-0" />
+          <span className="type-body">
+            {fill(t("doseLine"), {
+              anchor: anchors.labels[d.slot][lang] || t(slotText[d.slot]),
+              quantity: quantityText(medicine.form, d.quantity)[lang],
+              food: t(doseFood[d.food]),
+            })}
+          </span>
+        </li>
+      ))}
+    </ul>
   );
 }

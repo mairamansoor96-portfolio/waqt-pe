@@ -58,6 +58,9 @@ function MedicineEditor() {
   // switch from "Add" to "Change" while the name is being typed.
   const isNew = useRef<boolean | null>(null);
   if (medicine && isNew.current === null) isNew.current = isBlankMedicine(medicine);
+  // Checked when the editor opened, so a change can say it needs checking again.
+  const wasReviewed = useRef<boolean | null>(null);
+  if (medicine && wasReviewed.current === null) wasReviewed.current = medicine.reviewed;
   const [nameError, setNameError] = useState(false);
   const [whenError, setWhenError] = useState(false);
   const nameInput = useRef<HTMLInputElement>(null);
@@ -100,6 +103,12 @@ function MedicineEditor() {
         return !missingName && !missingWhen;
       }}
     >
+      {wasReviewed.current && !medicine.reviewed && (
+        <Notice tone="warning" role="status">
+          {medName ? fillNodes(t("recheckNamed"), { name: medName }) : t("recheck")}
+        </Notice>
+      )}
+
       <TextField
         ref={nameInput}
         label={t("medNameLabel")}

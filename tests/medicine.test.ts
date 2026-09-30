@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { clampQuantity, formatQuantity, isBlankMedicine, quantityText, symbolName, withDose, withForm } from "@/lib/medicine";
+import { clampQuantity, formatQuantity, isBlankMedicine, markReviewed, quantityText, symbolName, withDose, withForm } from "@/lib/medicine";
+import { samplePlan } from "@/lib/sample";
+import { canPrint } from "@/lib/plan";
 import { createMedicine, type Medicine } from "@/lib/plan";
 
 const med = (fields: Partial<Medicine> = {}): Medicine => ({ ...createMedicine([])!, reviewed: true, ...fields });
@@ -49,5 +51,17 @@ describe("medicine helpers", () => {
   it("recognises a medicine left empty", () => {
     expect(isBlankMedicine(med())).toBe(true);
     expect(isBlankMedicine(med({ name: "Metformin" }))).toBe(false);
+  });
+
+  it("unlocks outputs only when every medicine is checked, and any edit re-locks them", () => {
+    const plan = samplePlan();
+    expect(canPrint(plan)).toBe(false);
+    plan.medicines = plan.medicines.map((m) => markReviewed(m, true));
+    expect(canPrint(plan)).toBe(true);
+    plan.medicines[1] = withDose(plan.medicines[1], "night", { quantity: 1, food: "any" });
+    expect(canPrint(plan)).toBe(false);
+    plan.medicines[1] = markReviewed(plan.medicines[1], true);
+    plan.medicines[2] = withForm(plan.medicines[2], "drops");
+    expect(canPrint(plan)).toBe(false);
   });
 });
