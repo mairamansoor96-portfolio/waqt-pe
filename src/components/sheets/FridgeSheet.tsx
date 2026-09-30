@@ -3,16 +3,14 @@
 // The fridge sheet: page 1 is the schedule, page 2 the weekly tick grid.
 // SPEC.md → Output specs → Fridge sheet. Sized in mm so it prints at true
 // size; the screen preview scales it down (SheetFrame).
-//
-// Type on paper: English at least 12 pt, Urdu at least 14 pt with generous
-// line height. Printed outputs don't use the app's type roles.
 
-import type { CSSProperties, ReactNode } from "react";
+import type { CSSProperties } from "react";
+import { En, INK, PrintPage, SOFT, TINT, Ur } from "./print";
 import { fill, messages } from "@/lib/i18n";
 import { quantityText } from "@/lib/medicine";
-import { giverDefaults, isHelper, type FoodVariant, type Plan, type Slot, type TickVariant } from "@/lib/plan";
+import { giverDefaults, isHelper, type FoodVariant, type Plan, type TickVariant } from "@/lib/plan";
 import { usePhoto } from "@/lib/photos";
-import { PAGE_MARGIN_MM, PAPER, dosesBySlot, mm, printDate, tickRows, type SheetDose } from "@/lib/sheet";
+import { dosesBySlot, mm, printDate, tickRows, type SheetDose } from "@/lib/sheet";
 import {
   AnchorPictogram,
   CallPictogram,
@@ -23,10 +21,6 @@ import {
   TimeOfDay,
 } from "@/pictograms";
 
-const TINT: Record<Slot, string> = { morning: "#FCE9D8", midday: "#FFF6CC", evening: "#F6DCE4", night: "#DDE0F2" };
-const INK = "#15182B";
-const SOFT = "#4A5070";
-
 const foodKey = { before: "doseFoodBefore", after: "doseFoodAfter", with: "doseFoodWith", any: "doseFoodAny" } as const;
 
 export interface SheetOptions {
@@ -35,65 +29,6 @@ export interface SheetOptions {
   date: Date;
   foodVariant: FoodVariant;
   tickVariant: TickVariant;
-}
-
-/** Size of one printed page's content box, in mm. */
-export function pageBox(plan: Plan) {
-  const paper = PAPER[plan.settings.paper];
-  return { width: paper.width - 2 * PAGE_MARGIN_MM, height: paper.height - 2 * PAGE_MARGIN_MM };
-}
-
-function Page({
-  plan,
-  version,
-  children,
-  breakBefore,
-  label,
-  className = "",
-}: {
-  plan: Plan;
-  version: SheetOptions["version"];
-  children: ReactNode;
-  breakBefore?: boolean;
-  label: string;
-  className?: string;
-}) {
-  const box = pageBox(plan);
-  const style: CSSProperties = {
-    width: `${box.width}mm`,
-    // A little under the page: print layout rounds differently from screen,
-    // and 1 mm of slack was not always enough to avoid a blank extra page.
-    minHeight: `${box.height - 3}mm`,
-    border: `2.5mm solid ${version.borderColour}`,
-    borderRadius: "4mm",
-    padding: "4mm",
-    boxDecorationBreak: "clone",
-    WebkitBoxDecorationBreak: "clone",
-    breakBefore: breakBefore ? "page" : undefined,
-    color: INK,
-    background: "#fff",
-  };
-  return (
-    <section data-sheet-page aria-label={label} className={`sheet flex flex-col gap-[3mm] ${className}`} style={style} dir="ltr">
-      {children}
-    </section>
-  );
-}
-
-function Ur({ children, size = 14, style }: { children: ReactNode; size?: number; style?: CSSProperties }) {
-  return (
-    <span lang="ur" dir="rtl" style={{ fontSize: `${size}pt`, lineHeight: 2, display: "block", ...style }}>
-      {children}
-    </span>
-  );
-}
-
-function En({ children, size = 12, bold, style }: { children: ReactNode; size?: number; bold?: boolean; style?: CSSProperties }) {
-  return (
-    <span lang="en" dir="auto" style={{ fontSize: `${size}pt`, lineHeight: 1.3, fontWeight: bold ? 700 : 400, display: "block", ...style }}>
-      {children}
-    </span>
-  );
 }
 
 /** A photo from this device, or the medicine's symbol when there isn't one here. */
@@ -192,7 +127,7 @@ export function SchedulePage({ plan, version, date, foodVariant, className }: Sh
   const helper = isHelper(plan.giver.type) ? plan.giver.helperName?.trim() : undefined;
   const d = giverDefaults(plan.giver.type);
   return (
-    <Page plan={plan} version={version} label={messages.page1Label.en} className={className}>
+    <PrintPage plan={plan} border={version.borderColour} label={messages.page1Label.en} className={className}>
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "4mm", flexWrap: "wrap" }}>
         <div style={{ display: "flex", gap: "3mm", alignItems: "baseline", flexWrap: "wrap" }}>
           <En size={18} bold>
@@ -265,7 +200,7 @@ export function SchedulePage({ plan, version, date, foodVariant, className }: Sh
           </div>
         </footer>
       )}
-    </Page>
+    </PrintPage>
   );
 }
 
@@ -292,7 +227,7 @@ export function TickGridPage({
   const cell: CSSProperties = { width: "13mm", height: "13mm", border: "0.7mm solid #000", padding: 0 };
   const colour = tickVariant === "colourColumns";
   return (
-    <Page plan={plan} version={version} label={messages.page2Label.en} breakBefore={breakBefore} className={className}>
+    <PrintPage plan={plan} border={version.borderColour} label={messages.page2Label.en} breakBefore={breakBefore} className={className}>
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "4mm" }}>
         <div style={{ display: "flex", gap: "3mm", alignItems: "center" }}>
           <TickBoxPictogram size={mm(12)} />
@@ -368,6 +303,6 @@ export function TickGridPage({
           ))}
         </tbody>
       </table>
-    </Page>
+    </PrintPage>
   );
 }

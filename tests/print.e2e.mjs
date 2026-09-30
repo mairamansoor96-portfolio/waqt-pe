@@ -81,8 +81,9 @@ const worst = base(
   })),
   [1, 2, 3].map((n) => ({ id: `c${n}`, name: `Contact with a long name ${n}`, relation: "grandson-in-law", phone: "+92 300 1234567 ext 890" })),
 );
-const link = (plan, research = false) =>
-  `${origin}/outputs/fridge/${research ? "?research=1" : ""}#p=${LZString.compressToEncodedURIComponent(JSON.stringify(plan))}`;
+const link = (plan, research = false, output = "fridge") =>
+  `${origin}/outputs/${output}/${research ? "?research=1" : ""}#p=${LZString.compressToEncodedURIComponent(JSON.stringify(plan))}`;
+const PX_PER_MM = 96 / 25.4;
 
 const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH ?? "/opt/pw-browsers/chromium-1194/chrome-linux/chrome" });
 const offOrigin = [];
@@ -197,8 +198,82 @@ try {
   const sheetBorder = await v2.locator("[data-sheet-page]").first().evaluate((e) => getComputedStyle(e).borderTopColor);
   assert.equal(sheetBorder, "rgb(31, 122, 122)", "teal border on version 2");
 
+  // Milestone 7: stickers measure within 1 mm of spec, on both papers, at every size.
+  for (const out of ["stickers", "doctor"]) {
+    const l = await newPage();
+    await l.goto(link(unchecked, false, out));
+    await l.getByText("Check the medicines first").waitFor();
+    assert.equal(await l.locator("[data-sheet-page]").count(), 0, `${out} locked until checked`);
+  }
+  for (const [label, plan] of [["typical", typical], ["worst", worst]]) {
+    for (const paper of ["A4", "Letter"]) {
+      for (const [size, chip] of [[20, "Small, 20 mm"], [30, "Medium, 30 mm"], [40, "Large, 40 mm"]]) {
+        const p = structuredClone(plan);
+        p.settings.paper = paper;
+        const page = await newPage();
+        await page.goto(link(p, false, "stickers"));
+        await page.locator("[data-sticker-disc]").first().waitFor();
+        if (size !== 30) await page.getByText(chip).click();
+        await page.evaluate(() => document.fonts.ready);
+        await page.emulateMedia({ media: "print" });
+        const sizes = await page.evaluate(
+          (pxPerMm) => ({
+            discs: [...document.querySelectorAll("[data-sticker-disc]")].map((d) => {
+              const r = d.getBoundingClientRect();
+              const s = d.querySelector("svg").getBoundingClientRect();
+              return { w: r.width / pxPerMm, h: r.height / pxPerMm, symbolInside: s.width <= r.width && s.height <= r.height };
+            }),
+            line: document.querySelector("[data-calibration-line]").getBoundingClientRect().width / pxPerMm,
+          }),
+          PX_PER_MM,
+        );
+        await page.emulateMedia({ media: null });
+        assert.equal(sizes.discs.length, p.medicines.length, "one sticker per medicine");
+        for (const d of sizes.discs) {
+          assert.ok(Math.abs(d.w - size) <= 1 && Math.abs(d.h - size) <= 1, `${size} mm sticker measured ${d.w.toFixed(2)}×${d.h.toFixed(2)} mm`);
+          assert.ok(d.symbolInside, "symbol fits inside its sticker");
+        }
+        assert.ok(Math.abs(sizes.line - 50) <= 0.5, `calibration line measured ${sizes.line.toFixed(2)} mm`);
+        assert.deepEqual(await clippedInPrint(page), [], `stickers ${label} ${paper} ${size} mm clipped`);
+        const pdf = pdfInfo(await page.pdf({ preferCSSPageSize: true, printBackground: true }));
+        const [w, h] = PAPER_PT[paper];
+        assert.ok(Math.abs(pdf.width - w) < 3 && Math.abs(pdf.height - h) < 3, `${paper} page size`);
+        assert.equal(pdf.pages, 1, `${p.medicines.length} stickers at ${size} mm fit one ${paper} page, got ${pdf.pages}`);
+        const worstDisc = Math.max(...sizes.discs.map((d) => Math.abs(d.w - size)));
+        console.log(`stickers ${label.padEnd(7)} ${paper.padEnd(6)} ${size} mm: ${sizes.discs.length} stickers, off by at most ${worstDisc.toFixed(2)} mm, line ${sizes.line.toFixed(2)} mm, 1 page`);
+        if (shots && label === "typical" && size === 30) {
+          await page.emulateMedia({ media: "print" });
+          await page.screenshot({ path: `${shots}/print-stickers-${paper}.png`, fullPage: true });
+          await page.emulateMedia({ media: null });
+        }
+      }
+
+      // Doctor's list: one page, nothing clipped.
+      const p = structuredClone(plan);
+      p.settings.paper = paper;
+      const page = await newPage();
+      await page.goto(link(p, false, "doctor"));
+      await page.locator("[data-doctor-row]").first().waitFor();
+      await page.evaluate(() => document.fonts.ready);
+      assert.deepEqual(await clippedInPrint(page), [], `doctor's list ${label} ${paper} clipped`);
+      const pdf = pdfInfo(await page.pdf({ preferCSSPageSize: true, printBackground: true }));
+      if (label === "typical") {
+        assert.equal(pdf.pages, 1, `doctor's list fits one ${paper} page`);
+        const text = await page.locator("[data-sheet-page]").textContent();
+        for (const want of ["1½ tablets, morning (Fajr)", "after food", "None listed by the family (this is not a record of no known allergies)", "B+", "Maira, daughter"])
+          assert.ok(text.includes(want), `doctor's list shows "${want}"`);
+      }
+      console.log(`doctor   ${label.padEnd(7)} ${paper.padEnd(6)} ${pdf.pages} page(s), nothing clipped`);
+      if (shots && label === "typical") {
+        await page.emulateMedia({ media: "print" });
+        await page.screenshot({ path: `${shots}/print-doctor-${paper}.png`, fullPage: true });
+        await page.emulateMedia({ media: null });
+      }
+    }
+  }
+
   assert.deepEqual(offOrigin, [], "no request leaves the origin");
-  console.log("ok: fridge sheet prints cleanly on A4 and Letter; research toggles stay local; versions advance on changed prints");
+  console.log("ok: fridge sheet, stickers and doctor's list print cleanly on A4 and Letter; stickers within 1 mm; research toggles stay local; versions advance on changed prints");
 } finally {
   await browser.close();
   server.close();

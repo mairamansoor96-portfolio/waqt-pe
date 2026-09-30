@@ -3,7 +3,7 @@ import { decodePlan, encodePlan } from "@/lib/hash";
 import { markReviewed, withDose } from "@/lib/medicine";
 import { VERSION_BORDER_COLOURS } from "@/lib/plan";
 import { samplePlan } from "@/lib/sample";
-import { changedSinceLastPrint, dosesBySlot, recordPrint, sheetFingerprint, tickRows, upcomingVersion } from "@/lib/sheet";
+import { changedSinceLastPrint, doctorRows, dosesBySlot, recordPrint, sheetFingerprint, tickRows, upcomingVersion } from "@/lib/sheet";
 
 describe("fridge sheet", () => {
   it("groups doses by time of day and leaves empty times out", () => {
@@ -47,5 +47,17 @@ describe("fridge sheet", () => {
     const back = decodePlan(encodePlan(plan));
     expect(back.status === "ok" && back.plan.sheetVersion.fingerprint).toBe(plan.sheetVersion.fingerprint);
     expect(back.status === "ok" && changedSinceLastPrint(back.plan)).toBe(false);
+  });
+
+  it("writes the doctor's list in plain clinical English", () => {
+    const rows = doctorRows(samplePlan());
+    expect(rows[0]).toMatchObject({
+      form: "Tablet",
+      timing: ["1 tablet, morning (Breakfast)", "1 tablet, evening (Dinner)"],
+      food: ["after food", "after food"],
+    });
+    expect(rows[1].timing).toEqual(["½ tablet, morning (Breakfast)"]);
+    expect(rows[1].food).toEqual(["with or without food"]);
+    expect(rows[2]).toMatchObject({ form: "Syrup", timing: ["2 spoons, night (Bedtime)"] });
   });
 });

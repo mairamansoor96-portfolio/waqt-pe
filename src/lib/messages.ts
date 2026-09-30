@@ -424,6 +424,66 @@ export const messages = {
   tickWeekSheet: { en: "One sheet per week", ur: "ہر ہفتے ایک شیٹ" },
   tickColourColumns: { en: "Colour-coded days", ur: "رنگوں والے دن" },
 
+  // 9c. Sticker sheet ------------------------------------------------------------
+  stickerSizeLabel: { en: "Sticker size", ur: "اسٹیکر کا سائز" },
+  stickerSmall: { en: "Small, 20 mm", ur: "چھوٹا، 20 ملی میٹر" },
+  stickerMedium: { en: "Medium, 30 mm", ur: "درمیانہ، 30 ملی میٹر" },
+  stickerLarge: { en: "Large, 40 mm", ur: "بڑا، 40 ملی میٹر" },
+  stickersHelp: {
+    en: "Cut along the dashed lines and stick each one on the box with the same name, with clear tape or on label paper. The same shape is on the fridge sheet.",
+    ur: "کٹی ہوئی لکیروں پر کاٹیں اور ہر ایک کو اسی نام والے ڈبے پر لگائیں، شفاف ٹیپ سے یا لیبل پیپر پر۔ یہی نشان فریج شیٹ پر بھی ہے۔",
+  },
+  actualSizeHelp: {
+    en: "In the print window, choose 100% or Actual size, not Fit to page, so the stickers come out the right size. Check the 50 mm line with a ruler.",
+    ur: "پرنٹ کی ونڈو میں 100% یا Actual size چنیں، Fit to page نہیں، تاکہ اسٹیکر صحیح سائز میں آئیں۔ 50 ملی میٹر والی لکیر رولر سے ناپ لیں۔",
+  },
+  printStickers: { en: "Print sticker sheet", ur: "اسٹیکر شیٹ پرنٹ کریں" },
+  stickersReady: {
+    en: "Sticker sheet ready. Stick each one on the box with the same name.",
+    ur: "اسٹیکر شیٹ تیار ہے۔ ہر ایک کو اسی نام والے ڈبے پر لگائیں۔",
+  },
+  stickerCalibration: {
+    en: "This line should measure 50 mm. If it's shorter, print again at 100% (actual size).",
+    ur: "یہ لکیر 50 ملی میٹر ہونی چاہیے۔ اگر چھوٹی ہے تو 100% (اصل سائز) پر دوبارہ پرنٹ کریں۔",
+  },
+  stickerCut: { en: "Cut along the dashed lines", ur: "کٹی ہوئی لکیروں پر کاٹیں" },
+
+  // 9d. Doctor's list ------------------------------------------------------------
+  // Printed in clinical English (SPEC.md: "precise text" for doctors). The Urdu
+  // is kept for the screen and in case a family asks for an Urdu copy later.
+  printDoctor: { en: "Print doctor's list", ur: "ڈاکٹر کی فہرست پرنٹ کریں" },
+  doctorReady: { en: "Doctor's list ready.", ur: "ڈاکٹر کی فہرست تیار ہے۔" },
+  doctorHelp: {
+    en: "One page in plain clinical English, for appointments and pharmacies.",
+    ur: "سادہ طبی انگریزی میں ایک صفحہ، ڈاکٹر اور فارمیسی کے لیے۔",
+  },
+  docTitle: { en: "Current medicines", ur: "موجودہ دوائیں" },
+  docColMedicine: { en: "Medicine (as on the box)", ur: "دوا (جیسے ڈبے پر)" },
+  docColForm: { en: "Form", ur: "قسم" },
+  docColDose: { en: "Dose and timing", ur: "خوراک اور وقت" },
+  docColFood: { en: "Food", ur: "کھانا" },
+  docColPurpose: { en: "Family's note", ur: "گھر والوں کا نوٹ" },
+  docTiming: { en: "{quantity}, {slot} ({anchor})", ur: "{quantity}، {slot} ({anchor})" },
+  docConditions: { en: "Conditions", ur: "بیماریاں" },
+  docAllergies: { en: "Allergies", ur: "الرجی" },
+  docBloodGroup: { en: "Blood group", ur: "بلڈ گروپ" },
+  docContacts: { en: "Family contacts", ur: "گھر والوں سے رابطہ" },
+  docNotRecorded: { en: "Not recorded", ur: "درج نہیں" },
+  docNoneListed: {
+    en: "None listed by the family (this is not a record of no known allergies)",
+    ur: "گھر والوں نے کوئی درج نہیں کی (اس کا مطلب یہ نہیں کہ کوئی الرجی نہیں)",
+  },
+  docConditionsNone: { en: "None listed by the family", ur: "گھر والوں نے کوئی درج نہیں کی" },
+  docPrinted: { en: "Printed {date}", ur: "پرنٹ {date}" },
+  docFooter: {
+    en: "Written by the family from the prescription, using Waqt Pe. Please check it against the current prescription. It contains no medical advice.",
+    ur: "گھر والوں نے نسخے سے، وقت پہ کی مدد سے لکھی۔ براہ کرم موجودہ نسخے سے ملا لیں۔ اس میں کوئی طبی مشورہ نہیں۔",
+  },
+  slotLowerMorning: { en: "morning", ur: "صبح" },
+  slotLowerMidday: { en: "midday", ur: "دوپہر" },
+  slotLowerEvening: { en: "evening", ur: "شام" },
+  slotLowerNight: { en: "night", ur: "رات" },
+
   // 9b. Printed on the sheet (always both languages) ---------------------------
   sheetFor: { en: "For {helper}", ur: "{helper} کے لیے" },
   sheetCall: { en: "If anything is unclear, call", ur: "کچھ سمجھ نہ آئے تو فون کریں" },

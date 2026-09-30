@@ -473,6 +473,15 @@ Setup is a linear, one-question-per-screen flow on mobile, with a progress indic
 - The printed sheet is laid out left to right; Urdu labels inside it are right to left. Whether a right-to-left sheet suits Urdu-reading helpers better is an open research question.
 - Printing is recorded when the print button is tapped and on the browser's `beforeprint` event, since not every browser fires it. The browser can't report a cancelled print, so cancelling still records it; an unchanged reprint keeps its version, so this is harmless.
 
+**Build decisions (milestone 7):**
+
+- Each sticker is a round disc of exactly the chosen diameter (20, 30 or 40 mm, border included), the symbol filling most of it, and the medicine name beneath at 9 pt ("small text"). A dashed rounded rectangle around each is the cut guide. The size is chosen on the sticker screen for that print; it isn't saved in the plan, because the data model has no field for it.
+- The sticker sheet carries a 50 mm calibration line with a note in both languages, and the screen tells the family to print at 100% (actual size), because printers set to "fit to page" shrink everything.
+- The doctor's list prints in plain clinical English. One row per dose, so each timing lines up with its food instruction; the medicine, form and the family's note span a medicine's rows. The small symbol helps the family match the list to boxes.
+- Empty fields say exactly what they mean: allergies read "None listed by the family (this is not a record of no known allergies)", conditions "None listed by the family", blood group "Not recorded". The footer says the family wrote it from the prescription and that it contains no medical advice.
+- A typical doctor's list fits one page. A very long one flows onto a second page with the table header repeated, and a medicine's rows never split.
+- The stickers and doctor's list are locked with the fridge sheet until every medicine is checked. Their screens share `OutputShell` with the fridge sheet.
+
 **Global behaviour:**
 
 - Progress autosaves to the URL hash and IndexedDB on every change.
