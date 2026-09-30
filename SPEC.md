@@ -462,6 +462,17 @@ Setup is a linear, one-question-per-screen flow on mobile, with a progress indic
 - The fridge sheet, stickers, voice note and doctor's list lock until every medicine is checked, and the hub names the medicines still unchecked. The lock-screen card has no medicines on it, so it doesn't wait for the check. Confirm this.
 - After an edit, the medicine editor says the medicine needs checking against the prescription again, and medicine cards show which medicines are checked.
 
+**Build decisions (milestone 6):**
+
+- To know whether the plan changed since the last print, `sheetVersion` gains an optional `fingerprint`: a short hash of everything the sheet shows (not the review ticks or print settings). Printing records the date and fingerprint; if the fingerprint changed, the print becomes the next version with the next border colour. The preview always shows the version and date that will print, and the screen says when a new version is coming ("take the old sheet down").
+- The sheet is laid out in mm and prints at true size; the on-screen preview is the same sheet scaled down. Page margins 8 mm. The minimums hold: box photo 30 mm wide, symbol 12 mm, drawn quantity 8 mm each, English 12 pt, Urdu 14 pt. English and Urdu labels both always print, whatever the interface language.
+- A typical plan (three times of day, up to two medicines each, two contacts) prints as exactly two pages on A4 and on Letter. Larger plans flow onto more pages instead of shrinking or clipping: time-of-day rows can split between cards, cards never split, and the tick grid repeats its header row.
+- Food pictograms, variant B ("plate"): before food = full plate (not eaten yet), after = empty plate, with = half-eaten plate. Variant A ("sequence") draws pill and plate in order with an arrow. Both are placeholders for testing.
+- Tick grid, "one sheet per week": numbered day columns 1–7 and a "Week starting" line for the family to fill in. "Colour-coded days": seven pale day colours with short day names in both languages.
+- `?research=1` shows the research panel on the fridge sheet screen. Its choices apply to that preview and print only and are never saved to the plan.
+- The printed sheet is laid out left to right; Urdu labels inside it are right to left. Whether a right-to-left sheet suits Urdu-reading helpers better is an open research question.
+- Printing is recorded when the print button is tapped and on the browser's `beforeprint` event, since not every browser fires it. The browser can't report a cancelled print, so cancelling still records it; an unchanged reprint keeps its version, so this is harmless.
+
 **Global behaviour:**
 
 - Progress autosaves to the URL hash and IndexedDB on every change.

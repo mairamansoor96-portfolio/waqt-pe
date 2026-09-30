@@ -380,6 +380,57 @@ export const messages = {
   },
   outputLocked: { en: "Locked until every medicine is checked", ur: "ہر دوا جانچنے تک بند" },
   outputComing: { en: "Coming in a later build", ur: "بعد کے ورژن میں آ رہا ہے" },
+  openOutput: { en: "Open", ur: "کھولیں" },
+
+  // 9a. Fridge sheet (screen) --------------------------------------------------
+  paperLabel: { en: "Paper size", ur: "کاغذ کا سائز" },
+  paperA4: { en: "A4", ur: "A4" },
+  paperLetter: { en: "US Letter", ur: "US Letter" },
+  versionFirst: {
+    en: "This prints as version 1, with a {colour} border.",
+    ur: "یہ ورژن 1 کے طور پر پرنٹ ہوگی، {colour} کنارے کے ساتھ۔",
+  },
+  versionSame: {
+    en: "Nothing has changed since version {n} was printed on {date}. Printing again keeps version {n}.",
+    ur: "ورژن {n} کے پرنٹ ({date}) کے بعد کچھ نہیں بدلا۔ دوبارہ پرنٹ کرنے پر ورژن {n} ہی رہے گا۔",
+  },
+  versionChanged: {
+    en: "The plan has changed since version {old} was printed. This prints as version {n}, with a {colour} border. Put it up and take the old sheet down.",
+    ur: "ورژن {old} کے پرنٹ کے بعد پلان بدل گیا ہے۔ یہ ورژن {n} کے طور پر {colour} کنارے کے ساتھ پرنٹ ہوگی۔ اسے لگائیں اور پرانی شیٹ اتار دیں۔",
+  },
+  borderIndigo: { en: "dark blue", ur: "گہرا نیلا" },
+  borderTeal: { en: "teal", ur: "فیروزی" },
+  borderMaroon: { en: "maroon", ur: "عنابی" },
+  borderOlive: { en: "olive", ur: "زیتونی" },
+  page1Label: { en: "Page 1: the schedule", ur: "صفحہ 1: شیڈول" },
+  page2Label: { en: "Page 2: the tick grid, to replace each week", ur: "صفحہ 2: ٹک والا خانہ، ہر ہفتے نیا" },
+  printFridge: { en: "Print fridge sheet", ur: "فریج شیٹ پرنٹ کریں" },
+  printGrid: { en: "Print tick grid only", ur: "صرف ٹک والا خانہ پرنٹ کریں" },
+  fridgeReady: { en: "Fridge sheet ready. Version {n} has a {colour} border.", ur: "فریج شیٹ تیار ہے۔ ورژن {n} کا کنارہ {colour} ہے۔" },
+  gridReady: { en: "Tick grid ready.", ur: "ٹک والا خانہ تیار ہے۔" },
+  printHelp: {
+    en: "In the print window, choose the paper size above and turn on background graphics, so the colours print.",
+    ur: "پرنٹ کی ونڈو میں اوپر والا کاغذ کا سائز چنیں اور بیک گراؤنڈ گرافکس آن کریں، تاکہ رنگ پرنٹ ہوں۔",
+  },
+  researchTitle: { en: "Research mode", ur: "تحقیق کا موڈ" },
+  researchBody: {
+    en: "For test sessions. Changes here only affect this preview and print; the family's plan stays as it is.",
+    ur: "آزمائشی سیشن کے لیے۔ یہاں کی تبدیلیاں صرف اس پیش منظر اور پرنٹ پر اثر کرتی ہیں؛ گھر والوں کا پلان ویسا ہی رہتا ہے۔",
+  },
+  researchFood: { en: "Food pictogram", ur: "کھانے کا نشان" },
+  foodSequence: { en: "Sequence with arrow", ur: "تیر کے ساتھ ترتیب" },
+  foodPlate: { en: "Full or empty plate", ur: "بھری یا خالی پلیٹ" },
+  researchTick: { en: "Tick grid", ur: "ٹک والا خانہ" },
+  tickWeekSheet: { en: "One sheet per week", ur: "ہر ہفتے ایک شیٹ" },
+  tickColourColumns: { en: "Colour-coded days", ur: "رنگوں والے دن" },
+
+  // 9b. Printed on the sheet (always both languages) ---------------------------
+  sheetFor: { en: "For {helper}", ur: "{helper} کے لیے" },
+  sheetCall: { en: "If anything is unclear, call", ur: "کچھ سمجھ نہ آئے تو فون کریں" },
+  sheetVersion: { en: "Version {n}", ur: "ورژن {n}" },
+  sheetPrinted: { en: "Printed {date}", ur: "پرنٹ {date}" },
+  tickTitle: { en: "Tick a box each time you give a medicine", ur: "ہر بار دوا دینے کے بعد خانے میں ٹک لگائیں" },
+  weekStarting: { en: "Week starting", ur: "ہفتہ شروع" },
   saveAndShare: { en: "Save and share the plan", ur: "پلان محفوظ کریں اور بھیجیں" },
 
   // 8. Save ------------------------------------------------------------------

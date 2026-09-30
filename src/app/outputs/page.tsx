@@ -33,8 +33,8 @@ export default function Outputs() {
   const unlocked = canPrint(plan);
   const notChecked = plan.medicines.filter((m) => !m.reviewed).map((m) => m.name.trim()).filter(Boolean);
 
-  const outputs: { id: string; title: MessageKey; help: ReactNode; needsReview: boolean }[] = [
-    { id: "fridge", title: "outputFridge", help: t("outputFridgeHelp"), needsReview: true },
+  const outputs: { id: string; title: MessageKey; help: ReactNode; needsReview: boolean; path?: string }[] = [
+    { id: "fridge", title: "outputFridge", help: t("outputFridgeHelp"), needsReview: true, path: "/outputs/fridge/" },
     { id: "stickers", title: "outputStickers", help: t("outputStickersHelp"), needsReview: true },
     {
       id: "voice",
@@ -112,10 +112,17 @@ export default function Outputs() {
                   >
                     <h2 className="type-heading">{t(o.title)}</h2>
                     <p className="type-helper text-ink-soft">{o.help}</p>
-                    <p className={`flex items-center gap-2 pt-1 type-helper font-bold ${locked ? "text-warning" : "text-ink-soft"}`}>
-                      {locked && <LockIcon />}
-                      {locked ? t("outputLocked") : t("outputComing")}
-                    </p>
+                    {!locked && o.path ? (
+                      <Button variant="secondary" className="mt-2" onClick={() => go(o.path!)}>
+                        {t("openOutput")}
+                        <span className="sr-only">: {t(o.title)}</span>
+                      </Button>
+                    ) : (
+                      <p className={`flex items-center gap-2 pt-1 type-helper font-bold ${locked ? "text-warning" : "text-ink-soft"}`}>
+                        {locked && <LockIcon />}
+                        {locked ? t("outputLocked") : t("outputComing")}
+                      </p>
+                    )}
                   </li>
                 );
               })}
