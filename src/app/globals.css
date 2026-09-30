@@ -1,0 +1,50 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+
+/* Self-hosted fonts: no request to a font CDN at runtime. */
+@import "@fontsource/atkinson-hyperlegible/400.css";
+@import "@fontsource/atkinson-hyperlegible/700.css";
+@import "@fontsource/noto-nastaliq-urdu/400.css";
+@import "@fontsource/noto-nastaliq-urdu/700.css";
+
+@layer base {
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 100%; /* respect the reader's text-size setting */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-size: var(--type-body-size);
+    line-height: var(--type-body-lh);
+    background: var(--color-paper);
+  }
+
+  /* Every Urdu container: Nastaliq, generous line height, no letter-spacing. */
+  [lang="ur"] {
+    font-family: var(--font-urdu);
+    letter-spacing: normal;
+  }
+  [lang="en"] {
+    font-family: var(--font-sans);
+  }
+
+  /* Visible keyboard focus on every interactive element. */
+  :focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
