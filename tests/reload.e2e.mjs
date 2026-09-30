@@ -168,7 +168,55 @@ try {
   await page.getByRole("button", { name: "Add a person to call" }).tap(); // left blank on purpose
   await shot(page, "05-contacts");
   await next(page, "Check each medicine against the prescription");
-  await next(page, "Keep Ammi's plan safe");
+
+  // Milestone 5: outputs stay locked until every medicine is checked.
+  const sheets = page.locator("h1", { hasText: "Ammi's sheets" });
+  const lockedOutputs = () => page.locator('[data-locked="true"]').count();
+  await page.getByText("Checked: 0 of 1").waitFor();
+  await page.getByRole("button", { name: "See the sheets" }).tap();
+  await sheets.waitFor();
+  assert.equal(await lockedOutputs(), 4, "medicine outputs locked");
+  assert.equal(await page.locator('[data-output="lockscreen"]').getAttribute("data-locked"), "false");
+  await page.getByText("Not checked yet: Metformin 500 mg.").waitFor();
+  await shot(page, "06a-outputs-locked");
+  await page.getByRole("button", { name: "Check the medicines" }).tap();
+  await question(page).filter({ hasText: "Check each medicine against the prescription" }).waitFor();
+  await page.getByText("Fajr, after tea: 1½ tablets, after food").waitFor();
+  await page.getByText("Maghrib: 1 tablet, with or without food").waitFor();
+  await page.getByText("Matches the prescription").tap();
+  await page.getByText("Checked: 1 of 1").waitFor();
+  await page.getByText("Every medicine is checked. The sheets are ready.").waitFor();
+  await shot(page, "06b-review");
+  await page.getByRole("button", { name: "See the sheets" }).tap();
+  await sheets.waitFor();
+  assert.equal(await lockedOutputs(), 0, "all outputs unlocked");
+
+  // Editing any medicine re-locks them.
+  await page.getByRole("button", { name: "Back" }).tap();
+  await page.getByRole("button", { name: "Change Metformin 500 mg" }).tap();
+  await question(page).filter({ hasText: "Change Metformin 500 mg" }).waitFor();
+  await page.getByRole("button", { name: "More" }).first().tap();
+  await page.getByRole("button", { name: "Fewer" }).first().tap(); // back to 1½, but it was still an edit
+  await page.getByText("You changed Metformin 500 mg, so check it against the prescription again").waitFor();
+  await page.getByRole("button", { name: "Save medicine" }).tap();
+  await question(page).filter({ hasText: "What medicines does Ammi take?" }).waitFor();
+  assert.equal(await page.getByText("Checked against the prescription").count(), 0);
+  await next(page, "Who should people call about Ammi?");
+  await next(page, "Check each medicine against the prescription");
+  await page.getByText("Checked: 0 of 1").waitFor();
+  await page.getByRole("button", { name: "See the sheets" }).tap();
+  await sheets.waitFor();
+  assert.equal(await lockedOutputs(), 4, "edit re-locked the outputs");
+
+  // Check it again, then on to saving.
+  await page.getByRole("button", { name: "Check the medicines" }).tap();
+  await page.getByText("Matches the prescription").tap();
+  await page.getByText("Checked: 1 of 1").waitFor();
+  await page.getByRole("button", { name: "See the sheets" }).tap();
+  await sheets.waitFor();
+  assert.equal(await lockedOutputs(), 0);
+  await page.getByRole("button", { name: "Save and share the plan" }).tap();
+  await question(page).filter({ hasText: "Keep Ammi's plan safe" }).waitFor();
 
   // 8. Save: the summary shows everything; blank contact was dropped.
   const summary = page.locator("dl");
@@ -363,7 +411,7 @@ try {
   }
 
   assert.deepEqual(offOrigin, [], "no request leaves the origin");
-  console.log("ok: setup flow works on a phone; 8 medicines get 8 unique symbols; photos survive reload; saved file imports fully elsewhere; plan survives reload from the link alone; no off-origin requests");
+  console.log("ok: setup flow works on a phone; editing a medicine re-locks outputs; 8 medicines get 8 unique symbols; photos survive reload; saved file imports fully elsewhere; plan survives reload from the link alone; no off-origin requests");
 } finally {
   await browser.close();
   server.close();

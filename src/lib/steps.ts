@@ -20,3 +20,6 @@ export function nextStep(id: StepId): StepId | undefined {
 
 /** The medicine editor, a sub-screen of step 5. */
 export const editorPath = (id: string) => `/setup/medicine/?m=${encodeURIComponent(id)}`;
+
+/** The outputs hub (screen 9). Not a setup step, so it has no progress header. */
+export const OUTPUTS_PATH = "/outputs/";

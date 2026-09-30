@@ -71,3 +71,12 @@ export function clampQuantity(form: Form, quantity: number): number {
   if (!Number.isFinite(quantity)) return step;
   return Math.min(MAX_QUANTITY, Math.max(step, Math.round(quantity / step) * step));
 }
+
+/**
+ * The only way a medicine becomes reviewed: the family ticks "Matches the
+ * prescription" in the review step. Not an edit, so it doesn't go through
+ * editMedicine().
+ */
+export function markReviewed(m: Medicine, reviewed: boolean): Medicine {
+  return { ...m, reviewed };
+}

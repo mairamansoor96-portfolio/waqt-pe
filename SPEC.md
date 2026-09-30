@@ -455,6 +455,13 @@ Setup is a linear, one-question-per-screen flow on mobile, with a progress indic
 - The file picker for importing has no type filter, because iOS greys out unknown extensions like `.waqtpe`; the file is checked after it's chosen.
 - The link does not save text to IndexedDB as well. The link is the one source of the plan's words; IndexedDB holds photos only. (The spec's "autosaves to the URL hash and IndexedDB" is met by photos saving to IndexedDB the moment they're taken.)
 
+**Build decisions (milestone 5):**
+
+- Review (step 7) shows each medicine's box photo, symbol, name, purpose and every dose written out ("Fajr: 1½ tablets, after food"), with one large "Matches the prescription" tick per medicine. Ticking is the only way `reviewed` becomes true (`markReviewed`); every edit resets it (`editMedicine`).
+- Review continues to the outputs hub at `/outputs/` (screen 9), which is not a setup step, so it has no progress header. The hub goes on to Save (step 8).
+- The fridge sheet, stickers, voice note and doctor's list lock until every medicine is checked, and the hub names the medicines still unchecked. The lock-screen card has no medicines on it, so it doesn't wait for the check. Confirm this.
+- After an edit, the medicine editor says the medicine needs checking against the prescription again, and medicine cards show which medicines are checked.
+
 **Global behaviour:**
 
 - Progress autosaves to the URL hash and IndexedDB on every change.

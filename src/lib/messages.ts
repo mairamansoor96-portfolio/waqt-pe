@@ -298,10 +298,89 @@ export const messages = {
 
   // 7. Review (placeholder until milestone 5) --------------------------------
   qReview: { en: "Check each medicine against the prescription", ur: "ہر دوا کو نسخے سے ملا لیں" },
-  reviewLater: {
-    en: "The check comes with the medicines, in a later build. For now, continue to save the plan.",
-    ur: "یہ جانچ دواؤں کے ساتھ بعد کے ورژن میں آئے گی۔ ابھی آگے چل کر پلان محفوظ کریں۔",
+  reviewHelp: {
+    en: "Hold the prescription next to each box. Tick a medicine only when its name, how many and when all match.",
+    ur: "ہر ڈبے کے ساتھ نسخہ رکھیں۔ دوا پر ٹک تب ہی لگائیں جب اس کا نام، کتنی اور کب، سب مل جائیں۔",
   },
+  reviewEmpty: {
+    en: "There are no medicines to check yet. Add them first.",
+    ur: "ابھی جانچنے کے لیے کوئی دوا نہیں۔ پہلے دوائیں شامل کریں۔",
+  },
+  reviewCount: { en: "Checked: {n} of {total}", ur: "جانچی گئیں: {total} میں سے {n}" },
+  reviewMatches: { en: "Matches the prescription", ur: "نسخے سے ملتی ہے" },
+  reviewAllDone: {
+    en: "Every medicine is checked. The sheets are ready.",
+    ur: "ہر دوا جانچ لی گئی۔ شیٹس تیار ہیں۔",
+  },
+  reviewNoPhoto: { en: "No box photo", ur: "ڈبے کی تصویر نہیں" },
+  reviewPhotoNeeded: {
+    en: "Add a box photo, so the helper can match the box.",
+    ur: "ڈبے کی تصویر شامل کریں، تاکہ مددگار ڈبہ پہچان سکیں۔",
+  },
+  doseLine: { en: "{anchor}: {quantity}, {food}", ur: "{anchor}: {quantity}، {food}" },
+  doseFoodBefore: { en: "before food", ur: "کھانے سے پہلے" },
+  doseFoodAfter: { en: "after food", ur: "کھانے کے بعد" },
+  doseFoodWith: { en: "with food", ur: "کھانے کے ساتھ" },
+  doseFoodAny: { en: "with or without food", ur: "کھانے کے ساتھ یا بغیر" },
+  seeSheets: { en: "See the sheets", ur: "شیٹس دیکھیں" },
+  cardChecked: { en: "Checked against the prescription", ur: "نسخے سے جانچی گئی" },
+  recheckNamed: {
+    en: "You changed {name}, so check it against the prescription again before printing.",
+    ur: "آپ نے {name} بدلی ہے، اس لیے پرنٹ سے پہلے اسے نسخے سے دوبارہ ملا لیں۔",
+  },
+  recheck: {
+    en: "You changed this medicine, so check it against the prescription again before printing.",
+    ur: "آپ نے یہ دوا بدلی ہے، اس لیے پرنٹ سے پہلے اسے نسخے سے دوبارہ ملا لیں۔",
+  },
+
+  // 9. Outputs hub -----------------------------------------------------------
+  outputsTitleNamed: { en: "{name}'s sheets", ur: "{name} کی شیٹس" },
+  outputsTitle: { en: "The sheets", ur: "شیٹس" },
+  outputsHelp: {
+    en: "Everything here is made on this device from the plan on this page.",
+    ur: "یہاں سب کچھ اسی ڈیوائس پر، اسی صفحے کے پلان سے بنتا ہے۔",
+  },
+  outputsLockedTitle: { en: "Check the medicines first", ur: "پہلے دوائیں جانچ لیں" },
+  outputsLockedBody: {
+    en: "The fridge sheet, stickers, voice note and doctor's list unlock when every medicine is checked against the prescription.",
+    ur: "فریج شیٹ، اسٹیکر، وائس نوٹ اور ڈاکٹر کی فہرست تب کھلیں گے جب ہر دوا نسخے سے جانچ لی جائے۔",
+  },
+  outputsNotChecked: { en: "Not checked yet: {names}.", ur: "ابھی نہیں جانچی گئیں: {names}۔" },
+  outputsNoMedicines: {
+    en: "Add medicines first. The sheets are made from them.",
+    ur: "پہلے دوائیں شامل کریں۔ شیٹس انہی سے بنتی ہیں۔",
+  },
+  goReview: { en: "Check the medicines", ur: "دوائیں جانچیں" },
+  goMedicines: { en: "Add medicines", ur: "دوائیں شامل کریں" },
+  outputFridge: { en: "Fridge sheet", ur: "فریج شیٹ" },
+  outputFridgeHelp: {
+    en: "The daily schedule with box photos and pictures, and a weekly tick grid.",
+    ur: "روزانہ کا شیڈول ڈبوں کی تصویروں اور نشانوں کے ساتھ، اور ہفتہ وار ٹک والا خانہ۔",
+  },
+  outputStickers: { en: "Sticker sheet", ur: "اسٹیکر شیٹ" },
+  outputStickersHelp: { en: "One sticker for each box, matching the fridge sheet.", ur: "ہر ڈبے کے لیے ایک اسٹیکر، فریج شیٹ سے ملتا ہوا۔" },
+  outputVoice: { en: "Voice-note script", ur: "وائس نوٹ کا متن" },
+  outputVoiceHelpNamed: {
+    en: "Words to read aloud and send to {helper} as a WhatsApp voice note.",
+    ur: "بلند آواز سے پڑھ کر {helper} کو واٹس ایپ وائس نوٹ میں بھیجنے کے الفاظ۔",
+  },
+  outputVoiceHelp: {
+    en: "Words to read aloud and send as a WhatsApp voice note.",
+    ur: "بلند آواز سے پڑھ کر واٹس ایپ وائس نوٹ میں بھیجنے کے الفاظ۔",
+  },
+  outputDoctor: { en: "Doctor's list", ur: "ڈاکٹر کی فہرست" },
+  outputDoctorHelp: {
+    en: "One page of medicines, doses, conditions and allergies, for appointments and pharmacies.",
+    ur: "دواؤں، خوراک، بیماریوں اور الرجی کا ایک صفحہ، ڈاکٹر اور فارمیسی کے لیے۔",
+  },
+  outputLockScreen: { en: "Emergency lock-screen card", ur: "ایمرجنسی لاک اسکرین کارڈ" },
+  outputLockScreenHelp: {
+    en: "A phone wallpaper a stranger can read in an emergency without unlocking the phone.",
+    ur: "فون کا وال پیپر جو ایمرجنسی میں کوئی اجنبی فون کھولے بغیر پڑھ سکے۔",
+  },
+  outputLocked: { en: "Locked until every medicine is checked", ur: "ہر دوا جانچنے تک بند" },
+  outputComing: { en: "Coming in a later build", ur: "بعد کے ورژن میں آ رہا ہے" },
+  saveAndShare: { en: "Save and share the plan", ur: "پلان محفوظ کریں اور بھیجیں" },
 
   // 8. Save ------------------------------------------------------------------
   qSaveNamed: { en: "Keep {name}'s plan safe", ur: "{name} کا پلان محفوظ رکھیں" },
