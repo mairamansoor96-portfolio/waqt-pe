@@ -1,7 +1,9 @@
 // What the printed sheets show, and the rules for printing them.
 // SPEC.md → Output specs → Fridge sheet, and Data model → Rules.
 
-import { SLOTS, nextSheetVersion, type Dose, type Medicine, type Paper, type Plan, type Slot } from "./plan";
+import { messages, type MessageKey } from "./messages";
+import { quantityText } from "./medicine";
+import { SLOTS, nextSheetVersion, type Dose, type Form, type Medicine, type Paper, type Plan, type Slot } from "./plan";
 
 /** Paper sizes in mm. Printed with an 8 mm margin all round. */
 export const PAPER: Record<Paper, { width: number; height: number; css: string }> = {
@@ -81,4 +83,63 @@ export function tickRows(plan: Plan): (SheetDose & { slot: Slot })[] {
 /** "30 Sep 2026": numerals and a short month, readable in either language. */
 export function printDate(date: Date): string {
   return date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+}
+
+// ---------------------------------------------------------------------------
+// Sticker sheet
+
+/** Symbol sizes in mm: 30 by default, 20 and 40 as options (SPEC.md). */
+export const STICKER_SIZES = [20, 30, 40] as const;
+export type StickerSize = (typeof STICKER_SIZES)[number];
+export const DEFAULT_STICKER_SIZE: StickerSize = 30;
+
+// ---------------------------------------------------------------------------
+// Doctor's list (clinical English)
+
+const slotWord: Record<Slot, MessageKey> = {
+  morning: "slotLowerMorning",
+  midday: "slotLowerMidday",
+  evening: "slotLowerEvening",
+  night: "slotLowerNight",
+};
+const foodWord: Record<Dose["food"], MessageKey> = {
+  before: "doseFoodBefore",
+  after: "doseFoodAfter",
+  with: "doseFoodWith",
+  any: "doseFoodAny",
+};
+const formWord: Record<Form, MessageKey> = {
+  tablet: "formTablet",
+  capsule: "formCapsule",
+  syrup: "formSyrup",
+  drops: "formDrops",
+  inhaler: "formInhaler",
+  insulin: "formInsulin",
+};
+
+export interface DoctorRow {
+  medicine: Medicine;
+  form: string;
+  /** One line per dose, in day order: "1½ tablets, morning (Fajr)". */
+  timing: string[];
+  /** The matching food instruction for each timing line. */
+  food: string[];
+}
+
+/** The doctor's list table, one row per medicine, in English. */
+export function doctorRows(plan: Plan): DoctorRow[] {
+  return plan.medicines.map((medicine) => {
+    const doses = [...medicine.doses].sort((a, b) => SLOTS.indexOf(a.slot) - SLOTS.indexOf(b.slot));
+    return {
+      medicine,
+      form: messages[formWord[medicine.form]].en,
+      timing: doses.map((d) =>
+        messages.docTiming.en
+          .replace("{quantity}", quantityText(medicine.form, d.quantity).en)
+          .replace("{slot}", messages[slotWord[d.slot]].en)
+          .replace("{anchor}", plan.anchors.labels[d.slot].en),
+      ),
+      food: doses.map((d) => messages[foodWord[d.food]].en),
+    };
+  });
 }

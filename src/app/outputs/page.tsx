@@ -35,14 +35,14 @@ export default function Outputs() {
 
   const outputs: { id: string; title: MessageKey; help: ReactNode; needsReview: boolean; path?: string }[] = [
     { id: "fridge", title: "outputFridge", help: t("outputFridgeHelp"), needsReview: true, path: "/outputs/fridge/" },
-    { id: "stickers", title: "outputStickers", help: t("outputStickersHelp"), needsReview: true },
+    { id: "stickers", title: "outputStickers", help: t("outputStickersHelp"), needsReview: true, path: "/outputs/stickers/" },
     {
       id: "voice",
       title: "outputVoice",
       help: helper ? fillNodes(t("outputVoiceHelpNamed"), { helper }) : t("outputVoiceHelp"),
       needsReview: true,
     },
-    { id: "doctor", title: "outputDoctor", help: t("outputDoctorHelp"), needsReview: true },
+    { id: "doctor", title: "outputDoctor", help: t("outputDoctorHelp"), needsReview: true, path: "/outputs/doctor/" },
     // No medicines on it, so it doesn't wait for the medicine check.
     { id: "lockscreen", title: "outputLockScreen", help: t("outputLockScreenHelp"), needsReview: false },
   ];
