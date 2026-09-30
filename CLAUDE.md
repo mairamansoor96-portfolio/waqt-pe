@@ -25,11 +25,13 @@ Next.js (App Router) as a static export (`output: "export"`, builds to `out/`), 
 - `src/lib/plan.ts` — the `Plan` data model from SPEC.md, defaults, symbol table, and rules (review reset, print lock, sheet versions, units).
 - `src/lib/sanitise.ts` — turns untrusted JSON (from a link or file) into a valid `Plan`.
 - `src/lib/hash.ts` — `Plan` ⇄ compressed URL hash (`#p=…`).
-- `src/lib/usePlan.ts` — React hook: loads the plan from the hash, autosaves every change back to it.
-- `src/lib/i18n.tsx` — UI language (English/Urdu) and document direction.
+- `src/lib/plan-store.tsx` — `PlanProvider` and `usePlan()`: loads the plan from the hash once, autosaves every change back to it, and `go(path)` moves between screens carrying the plan in the link. Mounted in the root layout so every screen shares one plan.
+- `src/lib/steps.ts` — the setup flow order (8 steps, one question per screen).
+- `src/lib/messages.ts` — all interface copy in English and Urdu (Urdu needs native review). `src/lib/i18n.tsx` — UI language, document direction, `useT()`, and `useFillNodes()` for names inside sentences (isolates a name only when its direction differs from the sentence's).
 - `src/lib/device.ts` — "Clear everything on this device".
-- `src/components/` — core components from the App theme (Button, TextField, ChoiceCard, Notice, ProgressHeader, Ur, icons).
-- `src/app/kit/` — component and type gallery for checking the theme in both directions.
+- `src/components/` — core components from the App theme (Button, TextField, ChoiceCard, ChoiceChip, ListEditor, ConfirmInline, Notice, ProgressHeader, SetupScreen, Ur, icons). Use `ConfirmInline`, never `window.confirm`.
+- `src/pictograms/` — placeholder pictograms and medicine symbols, each a swappable SVG component with a `size` prop.
+- `src/app/setup/<step>/` — one route per setup screen. `src/app/kit/` — component and type gallery for checking the theme in both directions.
 
 ## Commands
 
@@ -37,11 +39,12 @@ Next.js (App Router) as a static export (`output: "export"`, builds to `out/`), 
 - `npm run build` — static export to `out/`
 - `npm run lint` — type check
 - `npm test` — unit tests (Vitest)
-- `node tests/reload.e2e.mjs` — after a build: serves `out/` and checks a plan survives a reload from the link alone (uses the preinstalled Chromium)
+- `node tests/reload.e2e.mjs [screenshotDir]` — after a build: serves `out/` and walks the setup flow on a phone-sized touch screen, checking the plan survives a reload from the link alone (uses the preinstalled Chromium)
 
 ## Milestones
 
 Tracked in SPEC.md → "Build milestones". Status:
 
 - [x] 1. Scaffold, design tokens, data model, URL-hash state
-- [ ] 2. Setup screens 1–4 and 7
+- [x] 2. Setup screens 1–4 and 7 (medicines, review and save screens are placeholders until milestones 3–5)
+- [ ] 3. Medicines list and editor, with symbol auto-assignment

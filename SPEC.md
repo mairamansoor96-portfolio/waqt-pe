@@ -433,6 +433,13 @@ Setup is a linear, one-question-per-screen flow on mobile, with a progress indic
 | 9 | Outputs hub | Links to fridge sheet, stickers, voice script, doctor's list, lock screen | Each output opens as a print or download preview |
 | 10 | Save | Copy private link, download `.waqtpe` file, import a file, clear device data | Import restores text and photos exactly |
 
+**Build decisions (milestone 2):**
+
+- The progress header counts 8 steps: name, health details, who gives the medicines, daily anchors, medicines, contacts, review, save. Person (screen 2) is split into a name screen and a health screen to keep one question per screen, which puts "who gives" at step 3 as in the layout sketch.
+- Each setup screen is its own route (`/setup/<step>/`), and the plan travels between them in the link, so the browser back button works and a copied link reopens the same screen.
+- Suggested treatment-relevant conditions are stored in English (the language of the doctor's list and emergency card) and shown in the interface language. Anything typed is stored as typed.
+- Confirmations for hard-to-undo actions happen in the page, never in a browser dialog.
+
 **Global behaviour:**
 
 - Progress autosaves to the URL hash and IndexedDB on every change.
