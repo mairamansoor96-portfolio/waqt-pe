@@ -13,6 +13,8 @@ describe("medicine helpers", () => {
     expect(formatQuantity(1.5)).toBe("1½");
     expect(quantityText("tablet", 0.5).en).toBe("½ tablet");
     expect(quantityText("syrup", 2).en).toBe("2 spoons");
+    // Isolated left-to-right, so right-to-left Urdu doesn't show "½1".
+    expect(quantityText("tablet", 1.5).ur).toBe("\u20661½\u2069 گولی");
   });
 
   it("names symbols for the voice note", () => {

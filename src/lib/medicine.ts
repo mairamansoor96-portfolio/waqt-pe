@@ -37,11 +37,14 @@ export function formatQuantity(quantity: number): string {
   return whole ? `${whole}½` : "½";
 }
 
-/** "1½ tablets", "2 spoons". */
+/**
+ * "1½ tablets", "2 spoons". In Urdu the number is isolated left-to-right
+ * (U+2066 … U+2069); otherwise right-to-left text shows "1½" as "½1".
+ */
 export function quantityText(form: Form, quantity: number): Bilingual {
   const unit = unitFor(form, quantity);
   const q = formatQuantity(quantity);
-  return { en: `${q} ${unit.en}`, ur: `${q} ${unit.ur}` };
+  return { en: `${q} ${unit.en}`, ur: `\u2066${q}\u2069 ${unit.ur}` };
 }
 
 /** A medicine left completely empty, for example after tapping Add and then Back. */

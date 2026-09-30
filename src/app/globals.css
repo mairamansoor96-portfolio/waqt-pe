@@ -48,3 +48,24 @@
     }
   }
 }
+
+/* Printed sheets ------------------------------------------------------------ */
+.sheet {
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+@media print {
+  html,
+  body {
+    background: #fff !important;
+  }
+  /* Sheets print at true size: undo the on-screen preview scaling. */
+  .sheet-scale-outer {
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .sheet-scale {
+    transform: none !important;
+  }
+}

@@ -53,7 +53,11 @@ export interface Plan {
   anchors: { mode: AnchorMode; labels: Record<Slot, Bilingual> };
   medicines: Medicine[];
   contacts: Contact[];
-  sheetVersion: { number: number; borderColour: string; printedAt: string };
+  /**
+   * `fingerprint` (optional, added in milestone 6): a short hash of what the
+   * last printed sheet showed, so a reprint knows whether the plan changed.
+   */
+  sheetVersion: { number: number; borderColour: string; printedAt: string; fingerprint?: string };
   settings: { paper: Paper; foodVariant: FoodVariant; tickVariant: TickVariant };
 }
 

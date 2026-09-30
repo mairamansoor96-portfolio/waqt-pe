@@ -297,3 +297,177 @@ export function Quantity({ form, quantity, size = 28 }: { form: Form; quantity: 
     </span>
   );
 }
+
+// ---------------------------------------------------------------------------
+// Food. Two research variants (SPEC.md → Research toggles):
+//  A "sequence": pill and plate in order, with an arrow (assumes a reading
+//    direction, which is exactly what research tests).
+//  B "plate": one plate with a pill. Before = full plate (not eaten yet),
+//    after = empty plate (eaten), with = half-eaten plate.
+
+function Plate({ x, y, r, fill = 1 }: { x: number; y: number; r: number; fill?: 0 | 0.5 | 1 }) {
+  return (
+    <g>
+      <ellipse cx={x} cy={y} rx={r} ry={r * 0.62} fill="var(--color-surface, #fff)" />
+      <ellipse cx={x} cy={y} rx={r * 0.62} ry={r * 0.36} />
+      {fill > 0 && (
+        <path
+          d={
+            fill === 1
+              ? `M${x - r * 0.5} ${y} q${r * 0.5} ${-r * 0.75} ${r} 0z`
+              : `M${x - r * 0.5} ${y} q${r * 0.25} ${-r * 0.5} ${r * 0.5} 0z`
+          }
+          fill="#E8A33D"
+        />
+      )}
+    </g>
+  );
+}
+
+function Pill({ x, y, r }: { x: number; y: number; r: number }) {
+  return (
+    <g>
+      <circle cx={x} cy={y} r={r} fill="var(--color-surface, #fff)" />
+      <path d={`M${x - r * 0.7} ${y}h${r * 1.4}`} />
+    </g>
+  );
+}
+
+function AnyTime(props: PictogramProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="24" cy="24" r="17" strokeDasharray="4 5" />
+      <circle cx="24" cy="24" r="3" fill={INK} stroke="none" />
+      <path d="M24 12v12l7 4" />
+    </Svg>
+  );
+}
+
+export function FoodPictogram({
+  food,
+  variant,
+  size = 48,
+  ...props
+}: PictogramProps & { food: "before" | "after" | "with" | "any"; variant: "sequence" | "plate" }) {
+  if (food === "any") return <AnyTime size={size} {...props} />;
+  if (variant === "plate") {
+    return (
+      <Svg size={size} {...props}>
+        <Plate x={22} y={28} r={18} fill={food === "before" ? 1 : food === "with" ? 0.5 : 0} />
+        <Pill x={40} y={12} r={6} />
+      </Svg>
+    );
+  }
+  // Sequence: drawn twice as wide as it is tall.
+  const pill = <Pill x={food === "before" ? 12 : 84} y={24} r={8} />;
+  return (
+    <svg
+      width={size * 2}
+      height={size}
+      viewBox="0 0 96 48"
+      className={props.className}
+      role={props.title ? "img" : undefined}
+      aria-label={props.title}
+      aria-hidden={props.title ? undefined : true}
+      data-placeholder="pictogram"
+      fill="none"
+      stroke={INK}
+      strokeWidth={2.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {food === "with" ? (
+        <>
+          <Plate x={48} y={27} r={20} fill={0.5} />
+          <Pill x={56} y={22} r={6} />
+        </>
+      ) : (
+        <>
+          {pill}
+          <Plate x={food === "before" ? 76 : 20} y={26} r={16} fill={food === "before" ? 1 : 0} />
+          <path d="M36 24h22M52 18l6 6-6 6" />
+        </>
+      )}
+    </svg>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Anchors on the sheet: meals, prayers (mosque silhouette), clock.
+
+function Breakfast(props: PictogramProps) {
+  return (
+    <Svg {...props}>
+      <path d="M10 20h22v10a11 11 0 0 1-22 0z" fill="var(--color-surface, #fff)" />
+      <path d="M32 23h4a4 4 0 0 1 0 8h-4M16 8c-2 3 2 5 0 8M24 8c-2 3 2 5 0 8" />
+      <path d="M6 42h32" />
+    </Svg>
+  );
+}
+
+function Lunch(props: PictogramProps) {
+  return (
+    <Svg {...props}>
+      <Plate x={24} y={30} r={18} fill={1} />
+      <path d="M8 6v12M40 6v12" />
+    </Svg>
+  );
+}
+
+function Dinner(props: PictogramProps) {
+  return (
+    <Svg {...props}>
+      <Plate x={22} y={32} r={17} fill={1} />
+      <path d="M40 4a7 7 0 1 0 5 11 6 6 0 0 1-5-11z" fill="#C9CCE8" />
+    </Svg>
+  );
+}
+
+function Bedtime(props: PictogramProps) {
+  return (
+    <Svg {...props}>
+      <path d="M4 38V14M4 30h40v8M44 30v-6a6 6 0 0 0-6-6H20v12" fill="none" />
+      <circle cx="12" cy="24" r="4" />
+      <path d="M32 6h6l-6 6h6" strokeWidth={2} />
+    </Svg>
+  );
+}
+
+const meals: Record<Slot, (p: PictogramProps) => ReactNode> = {
+  morning: Breakfast,
+  midday: Lunch,
+  evening: Dinner,
+  night: Bedtime,
+};
+
+/** The small anchor pictogram next to a time-of-day scene. */
+export function AnchorPictogram({ mode, slot, ...props }: PictogramProps & { mode: AnchorMode; slot: Slot }) {
+  if (mode === "meals") {
+    const Meal = meals[slot];
+    return <Meal {...props} />;
+  }
+  return <AnchorModeIcon mode={mode} {...props} />;
+}
+
+// ---------------------------------------------------------------------------
+// Utility: call, tick box.
+
+export function CallPictogram(props: PictogramProps) {
+  return (
+    <Svg {...props}>
+      <path
+        d="M14 6l6 8-4 5c2 5 6 9 11 11l5-4 8 6-3 7c-15 1-30-14-29-29z"
+        fill="var(--color-surface, #fff)"
+      />
+    </Svg>
+  );
+}
+
+export function TickBoxPictogram(props: PictogramProps) {
+  return (
+    <Svg {...props}>
+      <rect x="6" y="6" width="36" height="36" rx="3" />
+      <path d="m14 25 7 7 14-16" strokeWidth={4} />
+    </Svg>
+  );
+}

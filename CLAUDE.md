@@ -31,6 +31,8 @@ Next.js (App Router) as a static export (`output: "export"`, builds to `out/`), 
 - `src/lib/medicine.ts` — medicine helpers: symbol names for the voice note, drawn/written quantities, `withDose`/`withForm` (edits go through `editMedicine`, so `reviewed` resets).
 - `src/lib/photos.ts` — photos on this device: compress (long edge 1000 px, JPEG), store in IndexedDB as bytes + type, `usePhoto(id)` for display, `missingPhotos()` for links opened on another device. Delete a photo when its medicine or contact is removed or it's replaced.
 - `src/lib/backup.ts` — the `.waqtpe` saved file: plan plus referenced photos as base64. `readBackup()` checks and sanitises before anything is stored.
+- `src/lib/sheet.ts` — printing rules: paper sizes, mm→px, `sheetFingerprint`/`recordPrint`/`upcomingVersion` (a changed plan prints as the next version and border colour), doses grouped by time of day.
+- `src/components/sheets/` — printed outputs, sized in mm at true size (`FridgeSheet`), and `SheetFrame`, which scales a sheet to fit the screen but not in print. Printed type: English ≥ 12 pt, Urdu ≥ 14 pt, both languages always.
 - `src/lib/device.ts` — "Clear everything on this device".
 - `src/components/` — core components from the App theme (Button, TextField, ChoiceCard, ChoiceChip, ListEditor, ConfirmInline, Notice, ProgressHeader, SetupScreen, Ur, icons). Use `ConfirmInline`, never `window.confirm`.
 - `src/pictograms/` — placeholder pictograms and medicine symbols, each a swappable SVG component with a `size` prop.
@@ -42,6 +44,7 @@ Next.js (App Router) as a static export (`output: "export"`, builds to `out/`), 
 - `npm run build` — static export to `out/`
 - `npm run lint` — type check
 - `npm test` — unit tests (Vitest)
+- `node tests/print.e2e.mjs [screenshotDir]` — after a build: prints the fridge sheet on A4 and Letter (typical and worst-case plans, both research variants), checks nothing sticks out of a page, and makes real PDFs to check page size and count
 - `node tests/reload.e2e.mjs [screenshotDir]` — after a build: serves `out/` and walks the setup flow on a phone-sized touch screen, checking the plan survives a reload from the link alone (uses the preinstalled Chromium)
 
 ## Milestones
@@ -53,4 +56,5 @@ Tracked in SPEC.md → "Build milestones". Status:
 - [x] 3. Medicines list and editor, with symbol auto-assignment
 - [x] 4. Photo capture, compression, IndexedDB, `.waqtpe` export and import
 - [x] 5. Review step and output lock
-- [ ] 6. Fridge sheet print, both pages, placeholder pictograms, research toggles
+- [x] 6. Fridge sheet print, both pages, placeholder pictograms, research toggles
+- [ ] 7. Sticker sheet and doctor's list

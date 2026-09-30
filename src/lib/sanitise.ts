@@ -166,7 +166,12 @@ export function sanitisePlan(input: unknown): Plan {
     anchors: { mode, labels },
     medicines: medicines(o.medicines),
     contacts: contacts(o.contacts),
-    sheetVersion: { number, borderColour, printedAt },
+    sheetVersion: {
+      number,
+      borderColour,
+      printedAt,
+      fingerprint: typeof version.fingerprint === "string" && /^[0-9a-f]{1,16}$/.test(version.fingerprint) ? version.fingerprint : undefined,
+    },
     settings: {
       paper: oneOf(settings.paper, ["A4", "Letter"] as const, base.settings.paper),
       foodVariant: oneOf(settings.foodVariant, ["sequence", "plate"] as const, base.settings.foodVariant),
