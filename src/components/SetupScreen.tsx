@@ -19,6 +19,10 @@ export function SetupScreen({
   children,
   onContinue,
   bottomBar,
+  backPath,
+  onBack,
+  continuePath,
+  continueLabel,
 }: {
   step: StepId;
   question: ReactNode;
@@ -28,6 +32,14 @@ export function SetupScreen({
   onContinue?: () => boolean;
   /** Replaces the Continue button, for the last screen. */
   bottomBar?: ReactNode;
+  /** Where Back goes, if not the previous step (for sub-screens like the medicine editor). */
+  backPath?: string;
+  /** Runs before going back. */
+  onBack?: () => void;
+  /** Where Continue goes, if not the next step. */
+  continuePath?: string;
+  /** Label for the primary button, if not "Continue". */
+  continueLabel?: ReactNode;
 }) {
   const t = useT();
   const { status, go } = usePlan();
@@ -49,7 +61,11 @@ export function SetupScreen({
         </button>
         <LanguageToggle />
       </div>
-      <ProgressHeader step={stepNumber(step)} total={STEPS.length} onBack={() => go(prev ? stepPath(prev) : "/")} />
+      <ProgressHeader step={stepNumber(step)} total={STEPS.length} onBack={() => {
+          onBack?.();
+          go(backPath ?? (prev ? stepPath(prev) : "/"));
+        }}
+      />
 
       {status === "loading" ? (
         <p role="status" className="grow py-8 text-ink-soft">
@@ -72,10 +88,11 @@ export function SetupScreen({
                 full
                 onClick={() => {
                   if (onContinue && !onContinue()) return;
-                  if (next) go(stepPath(next));
+                  const to = continuePath ?? (next && stepPath(next));
+                  if (to) go(to);
                 }}
               >
-                {t("continue")}
+                {continueLabel ?? t("continue")}
               </Button>
             )}
           </div>

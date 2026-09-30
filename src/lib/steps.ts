@@ -17,3 +17,6 @@ export function prevStep(id: StepId): StepId | undefined {
 export function nextStep(id: StepId): StepId | undefined {
   return STEPS[STEPS.indexOf(id) + 1];
 }
+
+/** The medicine editor, a sub-screen of step 5. */
+export const editorPath = (id: string) => `/setup/medicine/?m=${encodeURIComponent(id)}`;

@@ -273,18 +273,27 @@ export function FormPictogram({ form, ...props }: PictogramProps & { form: FormG
   }
 }
 
-/** Quantity drawn, not written: two pills for two, a half pill for a half. */
+/**
+ * Quantity drawn, not written: two pills for two, a half pill for a half.
+ * Large counts (insulin units, many drops) show one pictogram and the numeral.
+ */
 export function Quantity({ form, quantity, size = 28 }: { form: Form; quantity: number; size?: number }) {
   const whole = Math.floor(quantity);
   const half = quantity - whole >= 0.5;
-  const shown = Math.min(whole, 6); // insulin units and drops are counted in numerals beyond this
+  if (whole > 6) {
+    return (
+      <span className="inline-flex items-center gap-1" aria-hidden="true">
+        <FormPictogram form={form} size={size} />
+        <span className="font-bold tabular-nums">×{whole}</span>
+      </span>
+    );
+  }
   return (
     <span className="inline-flex flex-wrap items-center gap-1" aria-hidden="true">
-      {Array.from({ length: shown }, (_, i) => (
+      {Array.from({ length: whole }, (_, i) => (
         <FormPictogram key={i} form={form} size={size} />
       ))}
       {half && <FormPictogram form="halfTablet" size={size} />}
-      {whole > shown && <span className="font-bold">×{whole}</span>}
     </span>
   );
 }

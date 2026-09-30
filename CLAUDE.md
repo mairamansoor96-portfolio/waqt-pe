@@ -28,6 +28,7 @@ Next.js (App Router) as a static export (`output: "export"`, builds to `out/`), 
 - `src/lib/plan-store.tsx` — `PlanProvider` and `usePlan()`: loads the plan from the hash once, autosaves every change back to it, and `go(path)` moves between screens carrying the plan in the link. Mounted in the root layout so every screen shares one plan.
 - `src/lib/steps.ts` — the setup flow order (8 steps, one question per screen).
 - `src/lib/messages.ts` — all interface copy in English and Urdu (Urdu needs native review). `src/lib/i18n.tsx` — UI language, document direction, `useT()`, and `useFillNodes()` for names inside sentences (isolates a name only when its direction differs from the sentence's).
+- `src/lib/medicine.ts` — medicine helpers: symbol names for the voice note, drawn/written quantities, `withDose`/`withForm` (edits go through `editMedicine`, so `reviewed` resets).
 - `src/lib/device.ts` — "Clear everything on this device".
 - `src/components/` — core components from the App theme (Button, TextField, ChoiceCard, ChoiceChip, ListEditor, ConfirmInline, Notice, ProgressHeader, SetupScreen, Ur, icons). Use `ConfirmInline`, never `window.confirm`.
 - `src/pictograms/` — placeholder pictograms and medicine symbols, each a swappable SVG component with a `size` prop.
@@ -46,5 +47,6 @@ Next.js (App Router) as a static export (`output: "export"`, builds to `out/`), 
 Tracked in SPEC.md → "Build milestones". Status:
 
 - [x] 1. Scaffold, design tokens, data model, URL-hash state
-- [x] 2. Setup screens 1–4 and 7 (medicines, review and save screens are placeholders until milestones 3–5)
-- [ ] 3. Medicines list and editor, with symbol auto-assignment
+- [x] 2. Setup screens 1–4 and 7
+- [x] 3. Medicines list and editor, with symbol auto-assignment (box photos come in 4; review is a placeholder until 5)
+- [ ] 4. Photo capture, compression, IndexedDB, `.waqtpe` export and import

@@ -440,6 +440,13 @@ Setup is a linear, one-question-per-screen flow on mobile, with a progress indic
 - Suggested treatment-relevant conditions are stored in English (the language of the doctor's list and emergency card) and shown in the interface language. Anything typed is stored as typed.
 - Confirmations for hard-to-undo actions happen in the page, never in a browser dialog.
 
+**Build decisions (milestone 3):**
+
+- The medicine editor is a sub-screen of step 5 at `/setup/medicine/?m=<id>`. Edits save to the link as they're made (every edit resets `reviewed`); "Save medicine" checks there's a name and at least one time of day, then returns to the list.
+- "Add medicine" creates the medicine, and its symbol, straight away. One left completely empty is removed when you go back.
+- A removed medicine's symbol is free for the next one. The removal confirmation reminds the family to take its sticker off the box. Open question: should a freed symbol wait before being reused, so an old box with that sticker can't be confused with a new medicine?
+- Tablets count in halves; other forms in whole units. Above 6, the quantity is drawn as one pictogram and a numeral (for insulin units and drops).
+
 **Global behaviour:**
 
 - Progress autosaves to the URL hash and IndexedDB on every change.

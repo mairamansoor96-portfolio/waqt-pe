@@ -103,8 +103,27 @@ try {
   await shot(page, "04-anchors");
   await next(page, "What medicines does Ammi take?");
 
-  // 5. Medicines placeholder.
+  // 5. Medicines: empty state, then one medicine through the editor.
   await page.getByText("Gather Ammi's medicine boxes and the prescription").waitFor();
+  await page.getByRole("button", { name: "Add medicine" }).tap();
+  await question(page).filter({ hasText: "Add a medicine" }).waitFor();
+  await page.getByRole("button", { name: "Save medicine" }).tap();
+  await page.getByText("Add the name from the box").waitFor();
+  await page.getByLabel("Name, as written on the box").fill("Metformin 500 mg");
+  await page.getByLabel("What's it for, in Ammi's words?").fill("for sugar");
+  await page.getByRole("button", { name: "Save medicine" }).tap();
+  await page.getByText("Tap at least one time of day").waitFor();
+  await page.getByText("Give at Fajr, after tea").tap(); // the anchor label edited earlier
+  await page.getByRole("button", { name: "More" }).tap(); // 1 → 1½
+  await page.getByText("After food", { exact: true }).tap();
+  await page.getByText("Give at Maghrib").tap();
+  await page.getByText("This box gets the blue star.").waitFor();
+  await shot(page, "05a-medicine-editor");
+  await page.getByRole("button", { name: "Save medicine" }).tap();
+  await question(page).filter({ hasText: "What medicines does Ammi take?" }).waitFor();
+  const card = await page.locator("[data-symbol]").textContent();
+  assert.ok(card.includes("Metformin 500 mg") && card.includes("1½ tablets") && card.includes("for sugar"), card);
+  await shot(page, "05b-medicines");
   await next(page, "Who should people call about Ammi?");
 
   // 6. Contacts: loose phone check that never blocks.
@@ -173,6 +192,55 @@ try {
   await broken.goto(origin + "/setup/");
   await question(broken).filter({ hasText: "Who is this plan for?" }).waitFor();
 
+  // Milestone 3: 8 medicines get 8 unique colour-and-shape pairs.
+  const meds = await newPage();
+  await meds.goto(origin + "/setup/name/");
+  await meds.getByLabel("Their name, as the family says it").fill("Abbu");
+  await settle(meds);
+  await meds.goto(meds.url().replace("/setup/name/", "/setup/medicines/"));
+  const addMedicine = async (name) => {
+    await meds.getByRole("button", { name: "Add medicine" }).tap();
+    await question(meds).filter({ hasText: "Add a medicine" }).waitFor();
+    await meds.getByLabel("Name, as written on the box").fill(name);
+    await meds.getByText("Give at Breakfast").tap();
+    await meds.getByRole("button", { name: "Save medicine" }).tap();
+    await question(meds).filter({ hasText: "What medicines does Abbu take?" }).waitFor();
+  };
+  const symbols = () => meds.locator("[data-symbol]").evaluateAll((els) => els.map((e) => e.dataset.symbol));
+  const assertUnique = async (n) => {
+    const list = await symbols();
+    assert.equal(list.length, n);
+    assert.equal(new Set(list.map((x) => x.split(" ")[0])).size, n, "unique colours");
+    assert.equal(new Set(list.map((x) => x.split(" ")[1])).size, n, "unique shapes");
+    return list;
+  };
+  for (let i = 1; i <= 8; i++) await addMedicine(`Medicine ${i}`);
+  await assertUnique(8);
+  await meds.getByText("That's 8 medicines").waitFor();
+  assert.equal(await meds.getByRole("button", { name: "Add medicine" }).count(), 0);
+  await shot(meds, "05c-eight-medicines");
+
+  // Remove one; a medicine added and abandoned is tidied away; the next gets a free pair.
+  await meds.locator("[data-symbol]", { hasText: "Medicine 3" }).tap();
+  await meds.getByRole("button", { name: "Remove this medicine" }).tap();
+  await meds.getByRole("button", { name: "Yes, remove it" }).tap();
+  await question(meds).filter({ hasText: "What medicines does Abbu take?" }).waitFor();
+  await assertUnique(7);
+  await meds.getByRole("button", { name: "Add medicine" }).tap();
+  await question(meds).filter({ hasText: "Add a medicine" }).waitFor();
+  await meds.getByRole("button", { name: "Back" }).tap();
+  await question(meds).filter({ hasText: "What medicines does Abbu take?" }).waitFor();
+  await assertUnique(7);
+  await addMedicine("Medicine 9");
+  const eight = await assertUnique(8);
+
+  // All of it survives a reload from the link alone.
+  await settle(meds);
+  const medsReloaded = await newPage();
+  await medsReloaded.goto(meds.url());
+  await question(medsReloaded).filter({ hasText: "What medicines does Abbu take?" }).waitFor();
+  assert.deepEqual(await medsReloaded.locator("[data-symbol]").evaluateAll((els) => els.map((e) => e.dataset.symbol)), eight);
+
   // Urdu: whole document right-to-left, and it sticks across screens.
   const ur = await newPage();
   await ur.goto(fresh.url().replace("/setup/save/", "/setup/giver/"));
@@ -186,6 +254,11 @@ try {
   await ur.goto(fresh.url().replace("/setup/save/", "/setup/contacts/"));
   await ur.waitForTimeout(300);
   await shot(ur, "08-contacts-ur");
+  await ur.goto(fresh.url().replace("/setup/save/", "/setup/medicines/"));
+  await ur.locator("[data-symbol]").first().tap();
+  await ur.getByText("Metformin 500 mg").first().waitFor();
+  await ur.waitForTimeout(300);
+  await shot(ur, "09-medicine-editor-ur");
 
   // Clear everything, confirmed in the page.
   await fresh.getByRole("button", { name: /Change.*Name/ }).waitFor();
@@ -203,7 +276,7 @@ try {
   }
 
   assert.deepEqual(offOrigin, [], "no request leaves the origin");
-  console.log("ok: setup flow works on a phone; plan survives reload from the link alone; no off-origin requests");
+  console.log("ok: setup flow works on a phone; 8 medicines get 8 unique symbols; plan survives reload from the link alone; no off-origin requests");
 } finally {
   await browser.close();
   server.close();
