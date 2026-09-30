@@ -3,6 +3,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { Button } from "./Button";
 import { LanguageToggle } from "./LanguageToggle";
+import { MissingPhotosNotice } from "./MissingPhotosNotice";
 import { ProgressHeader } from "./ProgressHeader";
 import { useFillNodes, useT, type MessageKey } from "@/lib/i18n";
 import { usePlan } from "@/lib/plan-store";
@@ -80,6 +81,7 @@ export function SetupScreen({
               </h1>
               {help && <p className="text-ink-soft">{help}</p>}
             </div>
+            <MissingPhotosNotice showAction={step !== "save"} />
             {children}
           </main>
           <div className="sticky bottom-0 -mx-4 border-t-[1.5px] border-line bg-paper px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3">

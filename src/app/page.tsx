@@ -5,6 +5,7 @@
 
 import { Button } from "@/components/Button";
 import { ConfirmInline } from "@/components/ConfirmInline";
+import { ImportControl } from "@/components/ImportControl";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { Notice } from "@/components/Notice";
 import { SampleSheet } from "@/components/SampleSheet";
@@ -55,6 +56,14 @@ export default function Landing() {
             {t("sampleHeading")}
           </h2>
           <SampleSheet />
+        </section>
+
+        <section aria-labelledby="open-file" className="flex flex-col gap-3">
+          <h2 id="open-file" className="type-heading">
+            {t("importHeading")}
+          </h2>
+          <p className="text-ink-soft">{t("importBody")}</p>
+          <ImportControl onImported={() => go(stepPath("save"))} />
         </section>
 
         {hasPlan && (

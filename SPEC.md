@@ -447,6 +447,14 @@ Setup is a linear, one-question-per-screen flow on mobile, with a progress indic
 - A removed medicine's symbol is free for the next one. The removal confirmation reminds the family to take its sticker off the box. Open question: should a freed symbol wait before being reused, so an old box with that sticker can't be confused with a new medicine?
 - Tablets count in halves; other forms in whole units. Above 6, the quantity is drawn as one pictogram and a numeral (for insulin units and drops).
 
+**Build decisions (milestone 4):**
+
+- Photos are shrunk before storing (long edge 1000 px, JPEG at 80%). A 30 mm print at 300 dpi needs about 350 px, so this leaves room for larger stickers and lock-screen faces while keeping a saved file with 11 photos around 1–2 MB.
+- Photos are stored in IndexedDB as bytes plus type, because some older Safari versions can't store Blobs. The plan holds only each photo's id.
+- The `.waqtpe` file is JSON: `{ format: "waqtpe", version: 1, savedAt, plan, photos: { id: { type, data } } }`. Only photos the plan refers to are written or read. Importing sanitises the plan, accepts only JPEG, PNG and WebP photos, and replaces the current plan only after the family confirms in the page.
+- The file picker for importing has no type filter, because iOS greys out unknown extensions like `.waqtpe`; the file is checked after it's chosen.
+- The link does not save text to IndexedDB as well. The link is the one source of the plan's words; IndexedDB holds photos only. (The spec's "autosaves to the URL hash and IndexedDB" is met by photos saving to IndexedDB the moment they're taken.)
+
 **Global behaviour:**
 
 - Progress autosaves to the URL hash and IndexedDB on every change.

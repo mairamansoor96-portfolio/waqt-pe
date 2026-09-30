@@ -3,10 +3,12 @@
 import { useState, type ReactNode } from "react";
 import { Button } from "@/components/Button";
 import { ConfirmInline } from "@/components/ConfirmInline";
+import { ImportControl } from "@/components/ImportControl";
 import { Notice } from "@/components/Notice";
 import { SetupScreen, useNamed } from "@/components/SetupScreen";
 import { clearDevice } from "@/lib/device";
-import { useT, type MessageKey } from "@/lib/i18n";
+import { fill, useT, type MessageKey } from "@/lib/i18n";
+import { backupFileName, downloadBlob, exportPlan } from "@/lib/backup";
 import { usePlan } from "@/lib/plan-store";
 import { stepPath, type StepId } from "@/lib/steps";
 import type { AnchorMode, Giver } from "@/lib/plan";
@@ -19,14 +21,27 @@ const giverKey: Record<Giver, MessageKey> = {
 };
 const anchorKey: Record<AnchorMode, MessageKey> = { meals: "anchorMeals", prayers: "anchorPrayers", clock: "anchorClock" };
 
-// Screen 10 in SPEC.md. Milestone 2 has the link and clearing; the
-// .waqtpe file export and import come in milestone 4.
+// Screen 10 in SPEC.md: copy the private link, download or import the
+// .waqtpe file (photos included), and clear everything on this device.
 export default function SaveStep() {
   const t = useT();
   const named = useNamed();
   const { plan, flush, go, resetPlan } = usePlan();
   const [copy, setCopy] = useState<"idle" | "copied" | "failed">("idle");
   const [cleared, setCleared] = useState(false);
+  const [file, setFile] = useState<"idle" | "working" | "failed" | number>("idle");
+
+  const downloadFile = async () => {
+    setFile("working");
+    try {
+      flush();
+      const { blob, photoCount } = await exportPlan(plan);
+      downloadBlob(blob, backupFileName(plan));
+      setFile(photoCount);
+    } catch {
+      setFile("failed");
+    }
+  };
   const { person, giver, anchors, contacts } = plan;
 
   const copyLink = async () => {
@@ -111,7 +126,7 @@ export default function SaveStep() {
           {t("cleared")}
         </Notice>
       )}
-      <Notice title={t("privacyTitle")}>{t("saveFileLater")}</Notice>
+      <Notice title={t("privacyTitle")} />
 
       <section aria-labelledby="summary" className="flex flex-col gap-3">
         <h2 id="summary" className="type-heading">
@@ -135,6 +150,34 @@ export default function SaveStep() {
             </div>
           ))}
         </dl>
+      </section>
+
+      <section aria-labelledby="file" className="flex flex-col gap-3">
+        <h2 id="file" className="type-heading">
+          {t("fileHeading")}
+        </h2>
+        <p className="text-ink-soft">{t("fileBody")}</p>
+        <Button variant="secondary" full disabled={file === "working"} onClick={downloadFile}>
+          {t("downloadFile")}
+        </Button>
+        {typeof file === "number" && (
+          <p role="status" className="type-helper font-bold text-success">
+            {fill(t("fileDownloaded"), { n: file })}
+          </p>
+        )}
+        {file === "failed" && (
+          <p role="alert" className="type-helper font-bold text-error">
+            {t("fileFailed")}
+          </p>
+        )}
+      </section>
+
+      <section aria-labelledby="import" className="flex flex-col gap-3">
+        <h2 id="import" className="type-heading">
+          {t("importHeading")}
+        </h2>
+        <p className="text-ink-soft">{t("importBody")}</p>
+        <ImportControl onImported={() => setCleared(false)} />
       </section>
 
       <section aria-labelledby="clear" className="flex flex-col gap-3">
