@@ -1,0 +1,120 @@
+/*
+ * Waqt Pe app theme — the one file for design tokens (SPEC.md → App theme).
+ * This styles the app itself, not the printed outputs.
+ *
+ * Tailwind v4 turns these into utilities: bg-paper, text-ink, border-line,
+ * rounded-card, max-w-app, font-urdu, and so on. The default Tailwind palette,
+ * shadows and radii are switched off so nothing off-theme can slip in.
+ *
+ * Medicine symbol colours and sheet-version border colours are data, not app
+ * chrome; they live in src/lib/plan.ts.
+ */
+
+@theme {
+  /* Colours ------------------------------------------------------------- */
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-white: #ffffff;
+
+  --color-paper: #fafaf7;   /* page background */
+  --color-surface: #ffffff; /* inputs, cards, sheet previews */
+  --color-ink: #1e2340;     /* body text, icons */
+  --color-ink-soft: #4a5070;/* secondary text, AA on paper */
+  --color-line: #d9dbe5;    /* borders, dividers */
+  --color-primary: #2b2d6e; /* primary buttons, selected states, focus ring */
+
+  /* Time-of-day tints: pale backgrounds only, never text. */
+  --color-dawn: #fce9d8;
+  --color-noon: #fff6cc;
+  --color-dusk: #f6dce4;
+  --color-night: #dde0f2;
+
+  --color-success: #2e7d5b;
+  --color-warning: #9a5b00;
+  --color-error: #b3261e;
+
+  /* Type ---------------------------------------------------------------- */
+  --font-*: initial;
+  --font-sans: "Atkinson Hyperlegible", system-ui, sans-serif;
+  --font-urdu: "Noto Nastaliq Urdu", "Atkinson Hyperlegible", serif;
+
+  /* Radius varies by hierarchy ----------------------------------------- */
+  --radius-*: initial;
+  --radius-input: 10px;
+  --radius-button: 14px;
+  --radius-card: 16px;
+  --radius-chip: 9999px;
+
+  /* No drop shadows. Structure comes from borders and spacing. */
+  --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+
+  /* Layout: one column, max 560 px. */
+  --container-app: 560px;
+
+  /* Spacing: Tailwind's 4 px base. Use only 1, 2, 3, 4, 6, 8, 12
+     (4, 8, 12, 16, 24, 32, 48 px). */
+  --spacing: 4px;
+
+  /* Motion: the sun on the progress arc is the only decorative animation. */
+  --ease-sun: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/*
+ * Type roles. Size and line height switch automatically inside lang="ur",
+ * because Nastaliq needs a larger size and much more line height.
+ * Never tighten the Urdu line heights. Sizes are in rem so they follow the
+ * reader's own text-size setting (the layout must hold at 200%).
+ */
+:root,
+[lang="en"] {
+  --type-question-size: 1.75rem; /* 28px */
+  --type-question-lh: 1.3;
+  --type-heading-size: 1.375rem; /* 22px */
+  --type-heading-lh: 1.35;
+  --type-body-size: 1.125rem; /* 18px */
+  --type-body-lh: 1.5;
+  --type-helper-size: 0.9375rem; /* 15px */
+  --type-helper-lh: 1.5;
+}
+
+[lang="ur"] {
+  --type-question-size: 1.875rem; /* 30px */
+  --type-question-lh: 2;
+  --type-heading-size: 1.5rem; /* 24px */
+  --type-heading-lh: 2;
+  --type-body-size: 1.25rem; /* 20px */
+  --type-body-lh: 2.1;
+  --type-helper-size: 1.0625rem; /* 17px */
+  --type-helper-lh: 2.1;
+}
+
+@utility type-question {
+  font-size: var(--type-question-size);
+  line-height: var(--type-question-lh);
+  font-weight: 700;
+}
+@utility type-heading {
+  font-size: var(--type-heading-size);
+  line-height: var(--type-heading-lh);
+  font-weight: 700;
+}
+@utility type-body {
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-lh);
+  font-weight: 400;
+}
+@utility type-helper {
+  font-size: var(--type-helper-size);
+  line-height: var(--type-helper-lh);
+  font-weight: 400;
+}
+
+/* Borders: 1.5 px `line`. */
+@utility frame {
+  border-width: 1.5px;
+  border-style: solid;
+  border-color: var(--color-line);
+}
