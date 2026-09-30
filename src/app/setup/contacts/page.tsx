@@ -3,13 +3,15 @@
 import { useState } from "react";
 import { Button } from "@/components/Button";
 import { SetupScreen, useNamed } from "@/components/SetupScreen";
+import { PhotoPicker } from "@/components/Photo";
 import { TextField } from "@/components/TextField";
 import { fill, useFillNodes, useT } from "@/lib/i18n";
 import { phoneWarning } from "@/lib/phone";
+import { deletePhoto } from "@/lib/photos";
 import { usePlan } from "@/lib/plan-store";
 import { MAX_CONTACTS, newId, type Contact } from "@/lib/plan";
 
-const isBlank = (c: Contact) => !c.name.trim() && !c.relation.trim() && !c.phone.trim();
+const isBlank = (c: Contact) => !c.name.trim() && !c.relation.trim() && !c.phone.trim() && !c.photoId;
 
 export default function ContactsStep() {
   const t = useT();
@@ -22,7 +24,10 @@ export default function ContactsStep() {
 
   const update = (id: string, changes: Partial<Contact>) =>
     setPlan((p) => ({ ...p, contacts: p.contacts.map((c) => (c.id === id ? { ...c, ...changes } : c)) }));
-  const remove = (id: string) => setPlan((p) => ({ ...p, contacts: p.contacts.filter((c) => c.id !== id) }));
+  const remove = (contact: Contact) => {
+    void deletePhoto(contact.photoId);
+    setPlan((p) => ({ ...p, contacts: p.contacts.filter((c) => c.id !== contact.id) }));
+  };
   const add = () =>
     setPlan((p) =>
       p.contacts.length >= MAX_CONTACTS
@@ -82,7 +87,19 @@ export default function ContactsStep() {
                   onChange={(e) => update(c.id, { phone: e.target.value })}
                   onBlur={() => setCheckedPhones((s) => new Set(s).add(c.id))}
                 />
-                <Button variant="secondary" onClick={() => remove(c.id)}>
+                <PhotoPicker
+                  shape="face"
+                  photoId={c.photoId}
+                  heading={t("contactPhotoHeading")}
+                  help={t("contactPhotoHelp")}
+                  alt={c.name.trim() ? fill(t("faceAltNamed"), { name: c.name.trim() }) : t("faceAlt")}
+                  onChange={(photoId) => {
+                    const old = c.photoId;
+                    update(c.id, { photoId });
+                    void deletePhoto(old);
+                  }}
+                />
+                <Button variant="secondary" onClick={() => remove(c)}>
                   {c.name.trim() ? fillNodes(t("removeContactNamed"), { name: c.name.trim() }) : t("removeContact")}
                 </Button>
               </fieldset>
@@ -98,7 +115,6 @@ export default function ContactsStep() {
       ) : (
         <p className="text-ink-soft">{t("contactsFull")}</p>
       )}
-      <p className="type-helper text-ink-soft">{t("contactPhotoLater")}</p>
     </SetupScreen>
   );
 }

@@ -1,7 +1,8 @@
 "use client";
 
 import { Chevron } from "./icons";
-import { useLang, useT } from "@/lib/i18n";
+import { PhotoThumb } from "./Photo";
+import { fill, useLang, useT } from "@/lib/i18n";
 import { quantityText } from "@/lib/medicine";
 import { slotText, slotTint } from "@/lib/slots";
 import type { Dose, Form, Medicine } from "@/lib/plan";
@@ -34,6 +35,9 @@ export function MedicineCard({ medicine, onOpen }: { medicine: Medicine; onOpen:
       data-symbol={`${medicine.symbol.colour} ${medicine.symbol.shape}`}
       className="frame flex w-full items-start gap-3 rounded-card bg-surface p-3 text-start"
     >
+      {medicine.photoId && (
+        <PhotoThumb id={medicine.photoId} alt={name ? fill(t("boxPhotoAltNamed"), { name }) : t("boxPhotoAlt")} size={64} />
+      )}
       <SymbolShape shape={medicine.symbol.shape} colour={medicine.symbol.colour} size={48} className="shrink-0" />
       <span className="flex min-w-0 grow flex-col gap-1">
         <span dir="auto" className="type-body break-words font-bold">

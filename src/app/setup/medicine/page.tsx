@@ -5,14 +5,16 @@ import { useSearchParams } from "next/navigation";
 import { ChoiceChip } from "@/components/ChoiceChip";
 import { ConfirmInline } from "@/components/ConfirmInline";
 import { Notice } from "@/components/Notice";
+import { PhotoPicker } from "@/components/Photo";
 import { QuantityStepper } from "@/components/QuantityStepper";
 import { SetupScreen } from "@/components/SetupScreen";
 import { TextField } from "@/components/TextField";
 import { Check } from "@/components/icons";
 import { fill, useFillNodes, useLang, useT, type MessageKey } from "@/lib/i18n";
 import { isBlankMedicine, symbolName, withDose, withForm } from "@/lib/medicine";
+import { deletePhoto } from "@/lib/photos";
 import { usePlan } from "@/lib/plan-store";
-import { FOODS, FORMS, SLOTS, editMedicine, type Food, type Form, type Medicine, type Slot } from "@/lib/plan";
+import { FOODS, FORMS, SLOTS, editMedicine, giverDefaults, type Food, type Form, type Medicine, type Slot } from "@/lib/plan";
 import { slotText, slotTint } from "@/lib/slots";
 import { stepPath } from "@/lib/steps";
 import { FormPictogram, SymbolShape, TimeOfDay } from "@/pictograms";
@@ -146,6 +148,19 @@ function MedicineEditor() {
         </div>
       </fieldset>
 
+      <PhotoPicker
+        photoId={medicine.photoId}
+        heading={t("medPhotoHeading")}
+        help={t("medPhotoHelp")}
+        note={giverDefaults(plan.giver.type).boxPhotos === "required" ? t("medPhotoNeeded") : undefined}
+        alt={medName ? fill(t("boxPhotoAltNamed"), { name: medName }) : t("boxPhotoAlt")}
+        onChange={(photoId) => {
+          const old = medicine.photoId;
+          update((m) => editMedicine(m, { photoId }));
+          void deletePhoto(old);
+        }}
+      />
+
       <section aria-labelledby="symbol" className="frame flex items-center gap-4 rounded-card bg-surface p-4">
         <SymbolShape shape={medicine.symbol.shape} colour={medicine.symbol.colour} size={64} className="shrink-0" />
         <div className="flex flex-col gap-1">
@@ -153,7 +168,6 @@ function MedicineEditor() {
             {t("medSymbolHeading")}
           </h2>
           <p>{fill(t("medSymbolBody"), { symbol: sym[lang] })}</p>
-          <p className="type-helper text-ink-soft">{t("medPhotoLater")}</p>
         </div>
       </section>
 
@@ -185,6 +199,7 @@ function MedicineEditor() {
         confirmLabel={t("removeMedicineYes")}
         cancelLabel={t("keepMedicine")}
         onConfirm={() => {
+          void deletePhoto(medicine.photoId);
           remove();
           go(LIST);
         }}

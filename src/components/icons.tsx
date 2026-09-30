@@ -27,3 +27,28 @@ export function Check({ size = 24, className = "" }: IconProps) {
     </svg>
   );
 }
+
+export function CameraIcon({ size = 24, className = "" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" className={className}>
+      <path
+        d="M4 8h3l2-3h6l2 3h3v11H4z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <circle cx="12" cy="13" r="3.5" fill="none" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  );
+}
+
+export function ImageIcon({ size = 24, className = "" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" className={className}>
+      <rect x="4" y="5" width="16" height="14" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path d="m4 16 5-5 4 4 2-2 5 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" />
+    </svg>
+  );
+}

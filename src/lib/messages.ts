@@ -191,7 +191,6 @@ export const messages = {
     en: "This box gets the {symbol}. The same sticker goes on the box and the fridge sheet, so it's easy to match.",
     ur: "اس ڈبے کا نشان {symbol} ہے۔ یہی اسٹیکر ڈبے اور فریج شیٹ دونوں پر لگے گا، تاکہ ملانا آسان ہو۔",
   },
-  medPhotoLater: { en: "Box photos come in the next build.", ur: "ڈبے کی تصویریں اگلے ورژن میں آئیں گی۔" },
   medWhenHeadingNamed: { en: "When does {name} take it?", ur: "{name} یہ کب لیتے ہیں؟" },
   medWhenHeading: { en: "When is it taken?", ur: "یہ کب لی جاتی ہے؟" },
   medWhenHelp: {
@@ -252,11 +251,50 @@ export const messages = {
     en: "This number has letters in it. Check it, or keep it as it is.",
     ur: "اس نمبر میں حروف ہیں۔ دیکھ لیں، یا ایسے ہی رہنے دیں۔",
   },
-  contactPhotoLater: { en: "Face photos come in a later build.", ur: "چہروں کی تصویریں بعد کے ورژن میں آئیں گی۔" },
   addContact: { en: "Add a person to call", ur: "فون کے لیے کوئی شخص شامل کریں" },
   removeContactNamed: { en: "Remove {name}", ur: "{name} کو ہٹائیں" },
   removeContact: { en: "Remove this person", ur: "یہ شخص ہٹائیں" },
   contactsFull: { en: "That's 3 people, as many as the sheet has room for.", ur: "3 لوگ ہو گئے، شیٹ پر اتنی ہی جگہ ہے۔" },
+
+  // Photos --------------------------------------------------------------------
+  photoTake: { en: "Take a photo", ur: "تصویر لیں" },
+  photoChoose: { en: "Choose a photo", ur: "تصویر چنیں" },
+  photoRetake: { en: "Take a new photo", ur: "نئی تصویر لیں" },
+  photoRemove: { en: "Remove photo", ur: "تصویر ہٹائیں" },
+  photoSaving: { en: "Saving the photo…", ur: "تصویر محفوظ ہو رہی ہے…" },
+  photoUnreadable: {
+    en: "Couldn't use that photo. Take it again, or choose a different one.",
+    ur: "یہ تصویر استعمال نہیں ہو سکی۔ دوبارہ لیں، یا کوئی اور چنیں۔",
+  },
+  photoStorage: {
+    en: "This browser couldn't store the photo. Private browsing can cause this; try a normal window.",
+    ur: "یہ براؤزر تصویر محفوظ نہیں کر سکا۔ پرائیویٹ براؤزنگ کی وجہ سے ایسا ہو سکتا ہے؛ عام ونڈو میں کوشش کریں۔",
+  },
+  photoMissing: { en: "Photo is on another device", ur: "تصویر دوسری ڈیوائس پر ہے" },
+  medPhotoHeading: { en: "Photo of the box", ur: "ڈبے کی تصویر" },
+  medPhotoHelp: {
+    en: "Photograph the box or strip exactly as it's kept at home, with the name showing. It stays on this device.",
+    ur: "ڈبے یا پتے کی تصویر ویسے ہی لیں جیسے گھر میں رکھا ہے، نام نظر آئے۔ یہ اسی ڈیوائس پر رہے گی۔",
+  },
+  medPhotoNeeded: {
+    en: "The helper finds the right box by this photo, so it matters most.",
+    ur: "مددگار اسی تصویر سے صحیح ڈبہ پہچانیں گے، اس لیے یہ سب سے اہم ہے۔",
+  },
+  boxPhotoAltNamed: { en: "Box of {name}", ur: "{name} کا ڈبہ" },
+  boxPhotoAlt: { en: "Medicine box", ur: "دوا کا ڈبہ" },
+  contactPhotoHeading: { en: "Photo of their face (optional)", ur: "ان کے چہرے کی تصویر (اختیاری)" },
+  contactPhotoHelp: {
+    en: "Someone who can't read a name can still recognise a face. It stays on this device.",
+    ur: "جو نام نہیں پڑھ سکتا وہ چہرہ پہچان سکتا ہے۔ یہ اسی ڈیوائس پر رہے گی۔",
+  },
+  faceAltNamed: { en: "{name}'s face", ur: "{name} کا چہرہ" },
+  faceAlt: { en: "Their face", ur: "ان کا چہرہ" },
+  photosMissingTitle: { en: "Photos are on the original device", ur: "تصویریں اصل ڈیوائس پر ہیں" },
+  photosMissingBody: {
+    en: "The link carries words only. Import the saved file to bring the photos.",
+    ur: "لنک میں صرف الفاظ ہوتے ہیں۔ تصویریں لانے کے لیے محفوظ فائل امپورٹ کریں۔",
+  },
+  photosMissingAction: { en: "Import a saved file", ur: "محفوظ فائل امپورٹ کریں" },
 
   // 7. Review (placeholder until milestone 5) --------------------------------
   qReview: { en: "Check each medicine against the prescription", ur: "ہر دوا کو نسخے سے ملا لیں" },
@@ -272,10 +310,40 @@ export const messages = {
     en: "The plan lives in this page's link. Copy it and keep it somewhere safe, like a message to yourself or to a brother or sister.",
     ur: "پلان اسی صفحے کے لنک میں ہے۔ اسے کاپی کر کے کسی محفوظ جگہ رکھیں، جیسے خود کو یا بہن بھائی کو بھیجا گیا پیغام۔",
   },
-  saveFileLater: {
-    en: "Saving a copy with photos comes in a later build.",
-    ur: "تصویروں سمیت کاپی محفوظ کرنا بعد کے ورژن میں آئے گا۔",
+  fileHeading: { en: "Save a copy with photos", ur: "تصویروں سمیت کاپی محفوظ کریں" },
+  fileBody: {
+    en: "The link can't hold photos. This file holds everything. Keep it as a backup, or send it to family so they can open it on their phone.",
+    ur: "لنک میں تصویریں نہیں آ سکتیں۔ اس فائل میں سب کچھ ہے۔ اسے بیک اپ کے طور پر رکھیں، یا گھر والوں کو بھیجیں تاکہ وہ اپنے فون پر کھول سکیں۔",
   },
+  downloadFile: { en: "Download saved file", ur: "محفوظ فائل ڈاؤن لوڈ کریں" },
+  fileDownloaded: { en: "Saved file downloaded. Photos included: {n}.", ur: "محفوظ فائل ڈاؤن لوڈ ہو گئی۔ شامل تصویریں: {n}۔" },
+  fileFailed: {
+    en: "Couldn't make the file. Try again, and if it keeps failing, copy the link instead.",
+    ur: "فائل نہیں بن سکی۔ دوبارہ کوشش کریں، اور اگر پھر بھی نہ بنے تو لنک کاپی کر لیں۔",
+  },
+  importHeading: { en: "Open a saved file", ur: "محفوظ فائل کھولیں" },
+  importBody: {
+    en: "Choose a .waqtpe file saved from Waqt Pe, on this device or another.",
+    ur: "وقت پہ سے محفوظ کی گئی .waqtpe فائل چنیں، اس ڈیوائس کی یا کسی اور کی۔",
+  },
+  importChoose: { en: "Choose a saved file", ur: "محفوظ فائل چنیں" },
+  importNotFile: {
+    en: "This isn't a Waqt Pe saved file. Choose the file whose name ends in .waqtpe.",
+    ur: "یہ وقت پہ کی محفوظ فائل نہیں ہے۔ وہ فائل چنیں جس کا نام .waqtpe پر ختم ہوتا ہے۔",
+  },
+  importTooBig: {
+    en: "This file is too big to be a Waqt Pe saved file. Choose the file whose name ends in .waqtpe.",
+    ur: "یہ فائل وقت پہ کی محفوظ فائل ہونے کے لیے بہت بڑی ہے۔ وہ فائل چنیں جس کا نام .waqtpe پر ختم ہوتا ہے۔",
+  },
+  importConfirmNamed: { en: "Open the saved plan for {name}?", ur: "{name} کا محفوظ پلان کھولیں؟" },
+  importConfirm: { en: "Open this saved plan?", ur: "یہ محفوظ پلان کھولیں؟" },
+  importConfirmBody: {
+    en: "Medicines: {medicines}. Photos: {photos}. It replaces the plan on this page; copy this page's link first if you want to keep it.",
+    ur: "دوائیں: {medicines}۔ تصویریں: {photos}۔ یہ اس صفحے کے پلان کی جگہ لے لے گا؛ اگر وہ رکھنا ہے تو پہلے اس صفحے کا لنک کاپی کر لیں۔",
+  },
+  importYes: { en: "Yes, open it", ur: "ہاں، کھولیں" },
+  importCancel: { en: "Cancel", ur: "رہنے دیں" },
+  imported: { en: "Opened the saved plan. Photos included: {n}.", ur: "محفوظ پلان کھل گیا۔ شامل تصویریں: {n}۔" },
   summaryHeading: { en: "What's in the plan", ur: "پلان میں کیا ہے" },
   summaryName: { en: "Name", ur: "نام" },
   summaryHealth: { en: "Health", ur: "صحت" },

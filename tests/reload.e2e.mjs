@@ -39,7 +39,8 @@ const newPage = async () => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]).catch(() => {});
   const page = await context.newPage();
   page.on("request", (r) => {
-    if (!r.url().startsWith(origin) && !r.url().startsWith("data:")) offOrigin.push(r.url());
+    // data: and blob: URLs are in-memory (photos shown from this device), not network.
+    if (!r.url().startsWith(origin) && !/^(data|blob):/.test(r.url())) offOrigin.push(r.url());
   });
   page.on("pageerror", (e) => {
     throw e;
@@ -55,6 +56,28 @@ const next = async (page, expected) => {
   await question(page).filter({ hasText: expected }).waitFor();
 };
 const settle = (page) => page.waitForTimeout(400); // debounced save
+
+/** A large test photo (like a phone camera's), drawn in the browser. */
+const makePhoto = async (page, colour) => {
+  const b64 = await page.evaluate((c) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 3000;
+    canvas.height = 2000;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = c;
+    ctx.fillRect(0, 0, 3000, 2000);
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(600, 600, 1800, 800);
+    return canvas.toDataURL("image/png").split(",")[1];
+  }, colour);
+  return { name: "photo.png", mimeType: "image/png", buffer: Buffer.from(b64, "base64") };
+};
+/** The gallery input (the one without capture) in a photo picker. */
+const galleryInput = (scope) => scope.locator('input[type="file"]:not([capture])').first();
+/** Width of every loaded photo on the page; 0 means not loaded. */
+const loadedPhotos = (page) => page.locator("img").evaluateAll((imgs) => imgs.map((i) => (i.complete ? i.naturalWidth : 0)));
+const waitForPhotos = (page, n) =>
+  page.waitForFunction((n) => [...document.images].filter((i) => i.complete && i.naturalWidth > 0).length >= n, n);
 
 try {
   const page = await newPage();
@@ -118,6 +141,12 @@ try {
   await page.getByText("After food", { exact: true }).tap();
   await page.getByText("Give at Maghrib").tap();
   await page.getByText("This box gets the blue star.").waitFor();
+  // Milestone 4: box photo, shrunk and stored on the device.
+  await page.getByText("The helper finds the right box by this photo").waitFor(); // helper who doesn't read
+  await galleryInput(page).setInputFiles(await makePhoto(page, "#0072B2"));
+  await waitForPhotos(page, 1);
+  const [boxWidth] = await loadedPhotos(page);
+  assert.ok(boxWidth > 0 && boxWidth <= 1000, `photo shrunk to ${boxWidth}px`);
   await shot(page, "05a-medicine-editor");
   await page.getByRole("button", { name: "Save medicine" }).tap();
   await question(page).filter({ hasText: "What medicines does Ammi take?" }).waitFor();
@@ -134,6 +163,8 @@ try {
   await page.getByLabel("Phone number").blur();
   await page.getByText("This number looks short.").waitFor();
   await page.getByLabel("Phone number").fill("+92 300 1234567");
+  await galleryInput(page).setInputFiles(await makePhoto(page, "#CC79A7"));
+  await waitForPhotos(page, 1);
   await page.getByRole("button", { name: "Add a person to call" }).tap(); // left blank on purpose
   await shot(page, "05-contacts");
   await next(page, "Check each medicine against the prescription");
@@ -148,6 +179,26 @@ try {
   await settle(page);
   await shot(page, "06-save");
   const link = page.url();
+  assert.ok(!decodeURIComponent(link).includes("data:image"), "no photo in the link");
+
+  // Photos survive a reload on this device.
+  await page.goto(link.replace("/setup/save/", "/setup/medicines/"));
+  await page.reload();
+  await question(page).filter({ hasText: "What medicines does Ammi take?" }).waitFor();
+  await waitForPhotos(page, 1);
+  assert.equal(await page.getByText("Photos are on the original device").count(), 0);
+  await shot(page, "06b-medicines-with-photo");
+
+  // Download the saved file.
+  await page.goto(link);
+  await question(page).filter({ hasText: "Keep Ammi's plan safe" }).waitFor();
+  const [download] = await Promise.all([
+    page.waitForEvent("download"),
+    page.getByRole("button", { name: "Download saved file" }).tap(),
+  ]);
+  assert.match(download.suggestedFilename(), /^waqt-pe-ammi-\d{4}-\d{2}-\d{2}\.waqtpe$/);
+  const savedFile = await download.path();
+  await page.getByText("Saved file downloaded. Photos included: 2.").waitFor();
   assert.match(link, /\/setup\/save\/#p=/);
 
   // Milestone 1: the link alone restores the plan in a fresh browser.
@@ -167,6 +218,42 @@ try {
   await fresh.reload();
   await question(fresh).filter({ hasText: "Keep Ammi's plan safe" }).waitFor();
   assert.ok((await fresh.locator("dl").textContent()).includes("eldest daughter"), "edit survives back + reload");
+
+  // Another device, with the link only: words come back, photos are flagged.
+  await fresh.goto(fresh.url().replace("/setup/save/", "/setup/medicines/"));
+  await fresh.getByText("Photos are on the original device").waitFor();
+  assert.equal(await fresh.getByRole("img", { name: "Photo is on another device" }).count(), 1);
+  await shot(fresh, "06c-photos-missing");
+  // Importing the saved file brings them.
+  await fresh.getByRole("button", { name: "Import a saved file" }).tap();
+  await question(fresh).filter({ hasText: "Keep Ammi's plan safe" }).waitFor();
+  await galleryInput(fresh).setInputFiles({ name: "notes.txt", mimeType: "text/plain", buffer: Buffer.from("hello") });
+  await fresh.getByText("This isn't a Waqt Pe saved file.").waitFor();
+  await galleryInput(fresh).setInputFiles(savedFile);
+  await fresh.getByText("Open the saved plan for Ammi?").waitFor();
+  await fresh.getByText("Medicines: 1. Photos: 2.").waitFor();
+  await fresh.getByRole("button", { name: "Yes, open it" }).tap();
+  await fresh.getByText("Opened the saved plan. Photos included: 2.").waitFor();
+  await fresh.goto(fresh.url().replace("/setup/save/", "/setup/medicines/"));
+  await waitForPhotos(fresh, 1);
+  assert.equal(await fresh.getByText("Photos are on the original device").count(), 0);
+  await fresh.goto(fresh.url().replace("/setup/medicines/", "/setup/save/"));
+  await question(fresh).filter({ hasText: "Keep Ammi's plan safe" }).waitFor();
+
+  // A brand-new device with only the file: open it from the landing page.
+  const other = await newPage();
+  await other.goto(origin + "/");
+  await other.getByRole("button", { name: "Choose a saved file" }).waitFor();
+  await galleryInput(other).setInputFiles(savedFile);
+  await other.getByRole("button", { name: "Yes, open it" }).tap();
+  await question(other).filter({ hasText: "Keep Ammi's plan safe" }).waitFor();
+  const otherSummary = await other.locator("dl").textContent();
+  for (const text of ["Ammi", "Shabnam", "Prayers", "Maira"]) assert.ok(otherSummary.includes(text), `import restores ${text}`);
+  await other.goto(other.url().replace("/setup/save/", "/setup/contacts/"));
+  await waitForPhotos(other, 1);
+  await other.goto(other.url().replace("/setup/contacts/", "/setup/medicines/"));
+  await waitForPhotos(other, 1);
+  assert.ok((await other.locator("[data-symbol]").textContent()).includes("Metformin 500 mg"));
 
   // Every step restores from the link too.
   const restored = await newPage();
@@ -276,7 +363,7 @@ try {
   }
 
   assert.deepEqual(offOrigin, [], "no request leaves the origin");
-  console.log("ok: setup flow works on a phone; 8 medicines get 8 unique symbols; plan survives reload from the link alone; no off-origin requests");
+  console.log("ok: setup flow works on a phone; 8 medicines get 8 unique symbols; photos survive reload; saved file imports fully elsewhere; plan survives reload from the link alone; no off-origin requests");
 } finally {
   await browser.close();
   server.close();
