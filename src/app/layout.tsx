@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { LangProvider, langBootScript } from "@/lib/i18n";
+import { PlanProvider } from "@/lib/plan-store";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -23,7 +24,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: langBootScript }} />
       </head>
       <body className="min-h-dvh bg-paper text-ink type-body antialiased">
-        <LangProvider>{children}</LangProvider>
+        <LangProvider>
+          <PlanProvider>{children}</PlanProvider>
+        </LangProvider>
       </body>
     </html>
   );

@@ -1,26 +1,27 @@
 "use client";
 
-import { useId, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from "react";
+import { useId, type ComponentProps, type ReactNode } from "react";
 
 const inputLook =
   "block w-full min-h-12 rounded-input border-2 border-line bg-surface px-4 py-2 type-body text-ink focus-visible:border-primary aria-[invalid=true]:border-error";
 
-type Common = { label: string; help?: string; error?: string };
+/** `warning` is advice that never blocks saving; `error` must be fixed. */
+type Common = { label: string; help?: string; error?: string; warning?: string };
 
 /**
  * Label above, never placeholder-only. dir="auto" so a name typed in Urdu
  * sits right-to-left even in the English layout.
  */
-export function TextField({ label, help, error, className = "", ...props }: Common & InputHTMLAttributes<HTMLInputElement>) {
+export function TextField({ label, help, error, warning, className = "", ...props }: Common & ComponentProps<"input">) {
   const id = useId();
   return (
-    <Field id={id} label={label} help={help} error={error} className={className}>
-      <input id={id} dir="auto" aria-describedby={describedBy(id, help, error)} aria-invalid={error ? true : undefined} className={inputLook} {...props} />
+    <Field id={id} label={label} help={help} error={error} warning={warning} className={className}>
+      <input id={id} dir="auto" aria-describedby={describedBy(id, help, error ?? warning)} aria-invalid={error ? true : undefined} className={inputLook} {...props} />
     </Field>
   );
 }
 
-export function TextArea({ label, help, error, className = "", ...props }: Common & TextareaHTMLAttributes<HTMLTextAreaElement>) {
+export function TextArea({ label, help, error, className = "", ...props }: Common & ComponentProps<"textarea">) {
   const id = useId();
   return (
     <Field id={id} label={label} help={help} error={error} className={className}>
@@ -35,7 +36,7 @@ export function SelectField({
   className = "",
   children,
   ...props
-}: Omit<Common, "error"> & SelectHTMLAttributes<HTMLSelectElement>) {
+}: Omit<Common, "error"> & ComponentProps<"select">) {
   const id = useId();
   return (
     <Field id={id} label={label} help={help} className={className}>
@@ -55,6 +56,7 @@ function Field({
   label,
   help,
   error,
+  warning,
   className,
   children,
 }: Common & { id: string; className?: string; children: ReactNode }) {
@@ -69,10 +71,16 @@ function Field({
         </p>
       )}
       {children}
-      {error && (
+      {error ? (
         <p id={`${id}-error`} className="type-helper font-bold text-error">
           {error}
         </p>
+      ) : (
+        warning && (
+          <p id={`${id}-error`} className="type-helper font-bold text-warning">
+            {warning}
+          </p>
+        )
       )}
     </div>
   );
