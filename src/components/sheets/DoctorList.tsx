@@ -6,14 +6,14 @@
 // SPEC.md → Doctor's list.
 
 import type { CSSProperties } from "react";
-import { En, INK, PrintPage } from "./print";
+import { En, PERFORATION, PrintPage, SOFT } from "./print";
 import { fill, messages } from "@/lib/i18n";
 import type { Plan } from "@/lib/plan";
 import { doctorRows, mm, printDate } from "@/lib/sheet";
 import { SymbolShape } from "@/pictograms";
 
-const cell: CSSProperties = { border: "0.3mm solid #8A8FA8", padding: "1.2mm 2mm", verticalAlign: "top", fontSize: "11pt", lineHeight: 1.3 };
-const head: CSSProperties = { ...cell, background: "#ECEDF3", fontWeight: 700, textAlign: "start" };
+const cell: CSSProperties = { border: `0.3mm solid ${PERFORATION}`, padding: "1.2mm 2mm", verticalAlign: "top", fontSize: "11pt", lineHeight: 1.3 };
+const head: CSSProperties = { ...cell, background: "var(--color-ground)", fontWeight: 700, textAlign: "start" };
 
 export function DoctorList({ plan, date }: { plan: Plan; date: Date }) {
   const rows = doctorRows(plan);
@@ -28,7 +28,7 @@ export function DoctorList({ plan, date }: { plan: Plan; date: Date }) {
 
   return (
     <PrintPage plan={plan} label={messages.outputDoctor.en} fill={false}>
-      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "4mm", flexWrap: "wrap", borderBottom: `0.5mm solid ${INK}`, paddingBottom: "2mm" }}>
+      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "4mm", flexWrap: "wrap", paddingBottom: "2mm" }} className="perforation-bottom">
         <div>
           <En size={18} bold>
             {messages.docTitle.en}: {person.name}
@@ -103,8 +103,8 @@ export function DoctorList({ plan, date }: { plan: Plan; date: Date }) {
         </dd>
       </dl>
 
-      <footer style={{ borderTop: "0.3mm solid #8A8FA8", paddingTop: "2mm", breakInside: "avoid" }}>
-        <En size={9} style={{ color: "#4A5070" }}>
+      <footer className="perforation-top" style={{ paddingTop: "2mm", breakInside: "avoid" }}>
+        <En size={9} style={{ color: SOFT }}>
           {messages.docFooter.en}
         </En>
       </footer>

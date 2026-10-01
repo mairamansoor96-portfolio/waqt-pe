@@ -6,10 +6,12 @@
 @import "@fontsource/atkinson-hyperlegible/700.css";
 @import "@fontsource/noto-nastaliq-urdu/400.css";
 @import "@fontsource/noto-nastaliq-urdu/700.css";
+/* Lalezar, for the logo only (Arabic and Latin subsets load on demand). */
+@import "@fontsource/lalezar/400.css";
 
 @layer base {
   html {
-    background: var(--color-paper);
+    background: var(--color-ground);
     color: var(--color-ink);
     font-family: var(--font-sans);
     font-size: 100%; /* respect the reader's text-size setting */
@@ -19,7 +21,7 @@
   body {
     font-size: var(--type-body-size);
     line-height: var(--type-body-lh);
-    background: var(--color-paper);
+    background: var(--color-ground);
   }
 
   /* Every Urdu container: Nastaliq, generous line height, no letter-spacing. */

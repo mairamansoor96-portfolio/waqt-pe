@@ -1,6 +1,6 @@
 "use client";
 
-// Component and type gallery for checking the App theme in both directions.
+// Component and type gallery for checking the theme (THEME.md) in both directions.
 // Switch language to see the right-to-left layout. Not linked from the app.
 
 import { useState } from "react";
@@ -8,11 +8,15 @@ import { Button } from "@/components/Button";
 import { ChoiceCard } from "@/components/ChoiceCard";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { Notice } from "@/components/Notice";
+import { Logo } from "@/components/Logo";
+import { DoseChip } from "@/components/MedicineCard";
 import { ProgressHeader } from "@/components/ProgressHeader";
+import { Perforation, RalliTrim } from "@/components/Trim";
+import { PrintLogo } from "@/components/sheets/print";
 import { TextField } from "@/components/TextField";
 import { Ur } from "@/components/Ur";
 import { BackArrow, Chevron } from "@/components/icons";
-import { SYMBOLS, VERSION_BORDER_COLOURS } from "@/lib/plan";
+import { SLOTS, SYMBOLS, VERSION_BORDER_COLOURS } from "@/lib/plan";
 
 const TOTAL = 8;
 
@@ -29,10 +33,23 @@ export default function Kit() {
 
       <section className="flex flex-col gap-4">
         <h2 className="type-heading">Progress header</h2>
-        <ProgressHeader step={step} total={TOTAL} onBack={() => setStep((s) => Math.max(1, s - 1))} />
+        <div className="px-4">
+          <ProgressHeader step={step} total={TOTAL} onBack={() => setStep((s) => Math.max(1, s - 1))} />
+        </div>
         <Button variant="secondary" onClick={() => setStep((s) => (s % TOTAL) + 1)}>
           Next step
         </Button>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="type-heading">Logo</h2>
+        <Logo variant="header" />
+        <Logo variant="primary" />
+        <Logo variant="stacked" className="self-center" />
+        <PrintLogo />
+        <h2 className="type-heading">Ralli trim and perforation</h2>
+        <RalliTrim />
+        <Perforation />
       </section>
 
       <section className="flex flex-col gap-4">
@@ -79,10 +96,8 @@ export default function Kit() {
       <section className="flex flex-col gap-4">
         <h2 className="type-heading">Time of day and dose chips</h2>
         <div className="flex flex-wrap gap-2">
-          {(["bg-dawn", "bg-noon", "bg-dusk", "bg-night"] as const).map((c, i) => (
-            <span key={c} className={`inline-flex min-h-12 items-center rounded-chip px-4 ${c}`}>
-              {["Morning", "Midday", "Evening", "Night"][i]} · {i + 1}
-            </span>
+          {SLOTS.map((slot, i) => (
+            <DoseChip key={slot} dose={{ slot, quantity: i + 1, food: (["after", "with", "before", "any"] as const)[i] }} form="tablet" />
           ))}
         </div>
       </section>
@@ -102,7 +117,7 @@ export default function Kit() {
         <h2 className="type-heading">Sheet version borders</h2>
         <ul className="flex gap-3">
           {VERSION_BORDER_COLOURS.map((c, i) => (
-            <li key={c} className="flex size-14 items-center justify-center rounded-card border-4 bg-surface font-bold" style={{ borderColor: c }}>
+            <li key={c} className="flex size-14 items-center justify-center rounded-input border-4 bg-surface font-bold" style={{ borderColor: c }}>
               v{i + 1}
             </li>
           ))}

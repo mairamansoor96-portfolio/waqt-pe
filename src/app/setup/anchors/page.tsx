@@ -42,7 +42,7 @@ export default function AnchorsStep() {
             onChange={() =>
               setPlan((p) => ({ ...p, anchors: { mode: m, labels: structuredClone(DEFAULT_ANCHOR_LABELS[m]) } }))
             }
-            icon={<AnchorModeIcon mode={m} size={40} />}
+            icon={<AnchorModeIcon mode={m} size={32} />}
             label={t(modeText[m][0])}
             help={t(modeText[m][1])}
           />

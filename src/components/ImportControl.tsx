@@ -46,7 +46,7 @@ export function ImportControl({ onImported }: { onImported?: () => void }) {
       {/* No accept filter: iOS greys out unknown extensions like .waqtpe. The file is checked after choosing. */}
       <input ref={input} type="file" className="sr-only" tabIndex={-1} aria-hidden="true" onChange={(e) => choose(e.target.files?.[0])} />
       {pending ? (
-        <div role="group" className="frame flex flex-col gap-3 rounded-card border-s-4 border-s-warning bg-surface p-4">
+        <div role="group" className="flex flex-col gap-3 rounded-card border-2 border-warning bg-surface p-4">
           <p className="type-body font-bold">{name ? fillNodes(t("importConfirmNamed"), { name }) : t("importConfirm")}</p>
           <p className="text-ink-soft">
             {fill(t("importConfirmBody"), { medicines: pending.plan.medicines.length, photos: pending.photos.size })}

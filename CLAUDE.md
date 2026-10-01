@@ -2,16 +2,18 @@
 
 **Before doing anything else in a session, read `SPEC.md` in full.** It is the source of truth: Part 1 is the design spec (the why), Part 2 is the build spec (what to build, milestone by milestone). Where they disagree, Part 1 wins on intent and Part 2 wins on implementation. When a decision changes, update `SPEC.md` in the same change.
 
+**`THEME.md` is the source of truth for all visual decisions** (colours, type, shapes, logo, ralli trim). It replaces the App theme section of SPEC.md; where they differ, follow THEME.md.
+
 ## What this is
 
 Waqt Pe ("on time") is a privacy-first family medicine and emergency kit. A family describes one person's medicines and health details once, and the app produces a fridge medicine schedule, sticker sheet, voice-note script, emergency lock-screen card, and doctor's list. It is designed for the hardest reader first: a helper who may not read, so pictures, colour-and-shape symbols, box photos, numerals and voice carry the meaning, and text is a supporting layer.
 
 Everything runs in the browser. No backend, no accounts, no database, no running costs.
 
-## Non-negotiables (see SPEC.md → "Privacy rules" and "App theme")
+## Non-negotiables (see SPEC.md → "Privacy rules" and THEME.md)
 
 - **Privacy rules**: no user data ever goes over the network; no analytics or third-party scripts; the URL hash holds text only, photos never go into the link (they live in IndexedDB on the device); a visible "Clear everything on this device" control; the landing page says "Nothing you enter leaves this device." Fonts are self-hosted via `@fontsource`, never loaded from a CDN at runtime.
-- **App theme**: use only the tokens in `src/styles/tokens.css` (colours, type roles, radii, spacing scale 4/8/12/16/24/32/48). No clinical blue, no drop shadows (structure comes from 1.5 px borders and spacing), Atkinson Hyperlegible for English and Noto Nastaliq Urdu for Urdu only, 18 px body text minimum, sentence case, touch targets ≥ 48 px, visible focus, reduced motion respected. The only decorative animation is the sun on the progress arc.
+- **Theme (THEME.md)**: use only the tokens in `src/styles/tokens.css`, the one file for design tokens (ground, surface, ink, ink-soft, line, perforation, primary, primary-tint, sun, ralli-1 to 4, time-of-day tints; type roles, radii, spacing scale 4/8/12/16/24/32/48). Blister-pack structure: pockets (28 px radius, 2 px `line`, selected 3 px `primary` on `primary-tint`), capsule buttons and chips, 2 px dashed `perforation` dividers (`<Perforation>` or `perforation-top`). Never one-side border accents, drop shadows, gradients or emoji; the only shadow is the logo's sun offset (`logo-offset`). Sun yellow is never readable text. The ralli trim (`<RalliTrim>`) goes directly under the header and above the bottom bar (`AppHeader`, `BottomBar`), never behind text. Atkinson Hyperlegible for English UI, Noto Nastaliq Urdu for Urdu UI, Lalezar for the logo only (`<Logo>`, `PrintLogo`); all self-hosted. 18 px body text minimum, sentence case, touch targets ≥ 48 px, visible focus in primary, reduced motion respected. The only decorative animation is the sun on the progress arc.
 - **Right-to-left from day one**: logical CSS only (`ms-/me-/ps-/pe-/start-/end-`, `text-start`), never left/right. Every Urdu text container gets `lang="ur" dir="rtl"` (use the `<Ur>` component). Wrap names and phone numbers in `<bdi>`. Directional icons flip (`rtl:-scale-x-100`); pictograms and medicine symbols never flip. Never tighten Nastaliq line height or letter-space Urdu. Text the family typed gets `dir="auto"` plus `text-page-start` (aligns with the page's start edge); phone numbers get `whitespace-nowrap`. Layouts that must change with text size use container queries in `rem` (see `ChoiceCard`).
 - **Safety boundary**: Waqt Pe only arranges what a doctor prescribed. No dose advice, no interaction checks, no drug information, ever. Editing a medicine resets `reviewed`; printing stays blocked until every medicine is reviewed.
 - **Pictograms** are placeholders until final art exists; each is a swappable SVG React component with a `size` prop.
@@ -36,9 +38,9 @@ Next.js (App Router) as a static export (`output: "export"`, builds to `out/`), 
 - `src/lib/voice.ts` — the voice-note script: fixed templates (in `messages.ts`) plus Urdu agreement tables (colour × shape gender, meal words in the oblique case, spoken fractions ڈیڑھ/ڈھائی/ساڑھے). Same order as the fridge sheet (`dosesBySlot`). Every Urdu word here needs native review.
 - `src/lib/lockscreen.ts` — the lock-screen card drawn on a canvas: presets, safe area (top 32% and bottom 12% kept clear), shrink-to-fit, text and faces layouts. Returns every drawn box so tests can check the safe area.
 - `src/lib/device.ts` — "Clear everything on this device".
-- `src/components/` — core components from the App theme (Button, TextField, ChoiceCard, ChoiceChip, ListEditor, ConfirmInline, Notice, ProgressHeader, SetupScreen, Ur, icons). Use `ConfirmInline`, never `window.confirm`.
+- `src/components/` — core components from THEME.md (Button, TextField, ChoiceCard (pocket), ChoiceChip, ListEditor, ConfirmInline, Notice, AppHeader/BottomBar/BackButton, ProgressHeader (sun arc), Logo, Trim (RalliTrim, Perforation), SetupScreen, Ur, icons). Use `ConfirmInline`, never `window.confirm`.
 - `src/pictograms/` — placeholder pictograms and medicine symbols, each a swappable SVG component with a `size` prop.
-- `src/app/setup/<step>/` — one route per setup screen. `src/app/outputs/` — the outputs hub (screen 9); medicine outputs stay locked until `canPrint(plan)`. `reviewed` is set true only in the review step, via `markReviewed()`. `src/app/kit/` — component and type gallery for checking the theme in both directions.
+- `src/app/setup/<step>/` — one route per setup screen. `src/app/outputs/` — the outputs hub (screen 9); medicine outputs stay locked until `canPrint(plan)`. `reviewed` is set true only in the review step, via `markReviewed()`. `src/app/kit/` — component and type gallery for checking the theme in both directions. `src/app/icon.svg` and `apple-icon.png` are the favicon and app icon (Urdu baked into paths).
 
 ## Commands
 

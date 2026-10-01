@@ -33,7 +33,7 @@ export function ConfirmInline({
     );
   }
   return (
-    <div role="group" aria-label={typeof title === "string" ? title : undefined} className="frame flex flex-col gap-3 rounded-card border-s-4 border-s-warning bg-surface p-4">
+    <div role="group" aria-label={typeof title === "string" ? title : undefined} className="flex flex-col gap-3 rounded-card border-2 border-warning bg-surface p-4">
       <p className="type-body font-bold">{title}</p>
       {body && <p className="text-ink-soft">{body}</p>}
       <Button

@@ -4,6 +4,7 @@ import { SLOTS } from "@/lib/plan";
 import { samplePlan } from "@/lib/sample";
 import { slotTint } from "@/lib/slots";
 import { useT } from "@/lib/i18n";
+import { Perforation } from "./Trim";
 import { Quantity, SymbolShape, TimeOfDay } from "@/pictograms";
 
 const sample = samplePlan();
@@ -18,7 +19,7 @@ export function SampleSheet() {
     <figure className="flex flex-col gap-3">
       <div
         aria-hidden="true"
-        className="mx-auto flex aspect-[210/297] w-full max-w-[360px] flex-col gap-2 rounded-card border-4 bg-white p-3"
+        className="mx-auto flex aspect-[210/297] w-full max-w-[360px] flex-col gap-2 rounded-input border-4 bg-white p-3"
         style={{ borderColor: sample.sheetVersion.borderColour }}
         dir="ltr"
       >
@@ -45,7 +46,8 @@ export function SampleSheet() {
             </div>
           );
         })}
-        <div className="mt-auto flex justify-around border-t-[1.5px] border-line pt-2">
+        <Perforation className="mt-auto" />
+        <div className="flex justify-around">
           {sample.contacts.map((c) => (
             <div key={c.id} className="flex flex-col items-center">
               <span className="type-helper">{c.name}</span>

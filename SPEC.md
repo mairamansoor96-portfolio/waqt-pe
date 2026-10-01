@@ -2,7 +2,7 @@
 
 *Medicine care anyone can follow.*
 
-This file is the source of truth for the project. Part 1 is the design spec (the why). Part 2 is the build spec (what to build, milestone by milestone). Read both before making changes, and keep this file updated when decisions change.
+This file is the source of truth for the project. Part 1 is the design spec (the why). Part 2 is the build spec (what to build, milestone by milestone). Read both before making changes, and keep this file updated when decisions change. THEME.md holds the visual design and wins on looks.
 
 # Part 1: Design spec
 
@@ -244,7 +244,7 @@ Pictograms and final visuals don't exist yet. Build with clearly marked placehol
 | Backup | Downloadable `.waqtpe` file: JSON with photos as base64 |
 | Printing | CSS `@media print`, A4 and US Letter |
 | Lock screen | HTML canvas rendered to a downloadable PNG |
-| Fonts | Noto Nastaliq Urdu for Urdu; Atkinson Hyperlegible for English (see App theme) |
+| Fonts | Noto Nastaliq Urdu for Urdu; Atkinson Hyperlegible for English; Lalezar for the logo only (see THEME.md) |
 | Target devices | Low-end Android Chrome and iPhone Safari; desktop for printing |
 
 ## Privacy rules (non-negotiable)
@@ -257,89 +257,22 @@ Pictograms and final visuals don't exist yet. Build with clearly marked placehol
 
 ## App theme
 
-This is the design foundation for the app itself, not the printed outputs. Set it up in milestone 1 as tokens, so every screen inherits it. Visual polish, illustrations, and the landing page come after testing.
+**THEME.md is the source of truth for every visual decision** (theme v2: foil, sun and ralli trim). It replaced the earlier indigo theme that was described here; where anything in this spec disagrees with THEME.md on looks, follow THEME.md. Tokens live in one file, `src/styles/tokens.css`.
 
-### Direction
+What stays from the earlier theme: the sun moving along its arc is the progress header and the only decorative animation; mobile first, one column, max width 560 px, content aligned to the start edge; one question per setup screen with the primary action in a sticky bottom bar; spacing scale 4, 8, 12, 16, 24, 32, 48 px; type roles 28 / 22 / 18 / 15 px in English (30 / 24 / 20 / 17 px in Urdu, with Nastaliq line heights never tightened). Time-of-day tints are pale backgrounds only, never text. Sheet version border colours cycle through indigo #2B2D6E, teal #1F7A7A, maroon #7A1F3D and olive #6B6B1F (they're data on the printed sheet, not app chrome) and always appear with the version number.
 
-The product is about *time*: the name means "on time," and the whole schedule runs from dawn to night. That is where the app's personality lives. Everything else stays calm, quiet, and trustworthy, so families feel safe entering health details and the medicine symbols stand out.
+**Build decisions (theme v2):**
 
-**The one memorable element:** the progress header is a small sun moving along an arc from dawn to night as the family moves through setup. Nothing else on screen animates for decoration.
-
-**Deliberately avoided:** clinical blue, the cream-and-terracotta look common in generated design, and the generic kit of identical shadowed cards. Structure comes from borders and spacing, not shadows.
-
-### Colour tokens
-
-The app palette is anchored in a deep night indigo, which is distinct from all eight medicine symbol colours, so buttons never compete with symbols.
-
-| Token | Hex | Use |
-| --- | --- | --- |
-| `paper` | #FAFAF7 | Page background |
-| `surface` | #FFFFFF | Inputs, cards, sheet previews |
-| `ink` | #1E2340 | Body text, icons |
-| `ink-soft` | #4A5070 | Secondary text (passes AA on paper) |
-| `line` | #D9DBE5 | Borders, dividers |
-| `primary` | #2B2D6E | Primary buttons, selected states, focus ring |
-| `dawn` | #FCE9D8 | Morning slot band |
-| `noon` | #FFF6CC | Midday slot band |
-| `dusk` | #F6DCE4 | Evening slot band |
-| `night` | #DDE0F2 | Night slot band |
-| `success` | #2E7D5B | Confirmations |
-| `warning` | #9A5B00 | Review reminders |
-| `error` | #B3261E | Errors |
-
-Time-of-day tints are pale backgrounds only, never text. Sheet version border colours cycle through indigo #2B2D6E, teal #1F7A7A, maroon #7A1F3D, and olive #6B6B1F, and always appear with the version number.
-
-### Type
-
-**English: Atkinson Hyperlegible**, designed by the Braille Institute for readers with low vision. It fits the product's purpose and gives the case study a clear reason behind the choice. **Urdu: Noto Nastaliq Urdu.** No other typefaces.
-
-| Role | English | Urdu | Weight |
-| --- | --- | --- | --- |
-| Screen question | 28 px / 1.3 | 30 px / 2.0 | Bold |
-| Section heading | 22 px / 1.35 | 24 px / 2.0 | Bold |
-| Body and inputs | 18 px / 1.5 | 20 px / 2.1 | Regular |
-| Helper text | 15 px / 1.5 | 17 px / 2.1 | Regular |
-
-Body text starts at 18 px, larger than typical apps, because many users are older or tired. Nastaliq needs much more line height than English; never tighten it. Sentence case everywhere, no all-caps labels, no letter-spacing on Urdu.
-
-### Layout
-
-Mobile first, one column, max width 560 px, content aligned to the start edge (left in English, right in Urdu). One question per setup screen. The primary action sits in a sticky bottom bar, full width, within thumb reach.
-
-```text
-+--------------------------------+
-|  ( sun on arc: dawn ---> night )|  progress header
-|  Step 3 of 8          Back     |
-|                                |
-|  Who usually gives Ammi her    |  screen question, 28 px
-|  medicines?                    |
-|                                |
-|  +--------------------------+  |
-|  | [icon] She takes them    |  |  choice cards
-|  |        herself           |  |
-|  +--------------------------+  |
-|  | [icon] A helper who      |  |
-|  |        doesn't read      |  |
-|  +--------------------------+  |
-|                                |
-|  [        Continue         ]   |  sticky bottom bar
-+--------------------------------+
-```
-
-**Spacing scale:** 4, 8, 12, 16, 24, 32, 48 px. **Radius varies by hierarchy:** 10 px inputs, 14 px buttons, 16 px cards, full round for dose chips. **Borders:** 1.5 px `line`; no drop shadows.
-
-### Core components
-
-| Component | Spec |
-| --- | --- |
-| Button | Min height 56 px. Primary: `primary` fill, white text. Secondary: 2 px `primary` outline. Label says exactly what happens: "Add medicine," "Print fridge sheet." |
-| Text input | Label above, never placeholder-only. 18 px text, 2 px border, 3 px `primary` focus ring with offset. |
-| Choice card | Full width, icon, label, one-line explanation. Selected: 3 px `primary` border and a check mark. |
-| Medicine card | Box photo thumbnail, symbol, name, purpose in the family's words, dose chips tinted by time of day. |
-| Dose chip | Time-of-day tint, slot pictogram, quantity. |
-| Progress header | Sun on a dawn-to-night arc, step count, back button. Respects reduced motion: the sun jumps instead of gliding. |
-| Notice | For privacy and safety messages. `surface` with a 4 px start-edge bar in `primary` or `warning`. |
-| Sheet preview | Paper-proportioned frame showing the output exactly as it will print. |
+- Lalezar is self-hosted with `@fontsource/lalezar` like the other fonts, never loaded from Google at runtime, and used only in the logo.
+- The success, warning and error colours aren't in THEME.md; they stay as status colours, darkened to pass AA on the new ground and tints (success #1F6B4A, warning #8A5000, error #B3261E).
+- Notices and confirmations lost their start-edge bar: a 2 px border all round plus a tone mark at the start carry the tone.
+- On setup screens the header row is back, logo (it goes home), step count; the language switch sits at the top of the content, end-aligned.
+- The back button looks 44 px round but its touch target is 48 px.
+- Dividers that can't be an extra element (rows in a list, the printed sheets) are drawn as a dashed background image, so no one-side borders remain anywhere.
+- The app logo is a logotype at fixed pixel sizes (read out as "Waqt Pe"); it doesn't grow with the text-size setting, so the header holds at 200%.
+- Printed sheets take their colours from the same tokens through CSS variables. The fridge sheet carries the one-colour logo beside the version mark.
+- The favicon (`src/app/icon.svg`) has the Urdu shaped with HarfBuzz and baked into paths, because favicons can't load fonts; `apple-icon.png` is rendered from it.
+- Not changed: the lock-screen card keeps its dark background and red band (milestone 9). Whether it should move to the new palette is an open question.
 
 ### Right-to-left rules (from day one)
 

@@ -6,12 +6,24 @@
 // except where a spec asks for "small text" (sticker names).
 
 import type { CSSProperties, ReactNode } from "react";
+import { messages } from "@/lib/messages";
 import { PAGE_MARGIN_MM, PAPER } from "@/lib/sheet";
 import type { Plan, Slot } from "@/lib/plan";
 
-export const TINT: Record<Slot, string> = { morning: "#FCE9D8", midday: "#FFF6CC", evening: "#F6DCE4", night: "#DDE0F2" };
-export const INK = "#15182B";
-export const SOFT = "#4A5070";
+// Colours come from the app's tokens (src/styles/tokens.css), so the sheets
+// follow THEME.md from the one file. The sheets render in the page, so
+// CSS variables work in their inline styles.
+export const TINT: Record<Slot, string> = {
+  morning: "var(--color-dawn)",
+  midday: "var(--color-noon)",
+  evening: "var(--color-dusk)",
+  night: "var(--color-night)",
+};
+export const INK = "var(--color-ink)";
+export const SOFT = "var(--color-ink-soft)";
+export const LINE = "var(--color-line)";
+export const PERFORATION = "var(--color-perforation)";
+export const PRIMARY = "var(--color-primary)";
 
 /** Size of one printed page's content box, in mm. */
 export function pageBox(plan: Plan) {
@@ -74,6 +86,23 @@ export function En({ children, size = 12, bold, style }: { children: ReactNode; 
   return (
     <span lang="en" dir="auto" style={{ fontSize: `${size}pt`, lineHeight: 1.3, fontWeight: bold ? 700 : 400, display: "block", ...style }}>
       {children}
+    </span>
+  );
+}
+
+/**
+ * The one-colour logo for printed sheets (THEME.md → Logo): Urdu in primary,
+ * English in ink, no sun offset.
+ */
+export function PrintLogo({ size = 24 }: { size?: number }) {
+  return (
+    <span role="img" aria-label={messages.appName.en} dir="ltr" style={{ display: "inline-flex", alignItems: "center", gap: "2mm", flexShrink: 0 }}>
+      <span lang="ur" dir="rtl" style={{ fontFamily: "var(--font-logo)", fontSize: `${size}pt`, lineHeight: 1.2, color: PRIMARY }}>
+        {messages.appName.ur}
+      </span>
+      <span lang="en" style={{ fontFamily: "var(--font-logo)", fontSize: `${Math.round(size / 2)}pt`, lineHeight: 1.1, color: INK }}>
+        {messages.appName.en}
+      </span>
     </span>
   );
 }
