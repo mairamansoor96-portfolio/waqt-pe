@@ -512,6 +512,90 @@ export const messages = {
   voiceDose: { en: "{when}. The {symbol} box. {quantity}.", ur: "{when}۔ {symbol} والا ڈبہ۔ {quantity}۔" },
   voiceClosing: { en: "If anything is unclear, call me.", ur: "کچھ سمجھ نہ آئے تو مجھے فون کریں۔" },
 
+  // 9g. Lock-screen card (screen) --------------------------------------------------
+  lockPrivacyTitle: { en: "Anyone holding the phone can see this", ur: "فون پکڑنے والا ہر شخص یہ دیکھ سکتا ہے" },
+  lockPrivacyBodyNamed: {
+    en: "Show only what a stranger needs to help {name}. Never put a home address on a lock screen.",
+    ur: "صرف وہ دکھائیں جو کسی اجنبی کو {name} کی مدد کے لیے چاہیے۔ لاک اسکرین پر کبھی گھر کا پتا نہ لکھیں۔",
+  },
+  lockPrivacyBody: {
+    en: "Show only what a stranger needs to help. Never put a home address on a lock screen.",
+    ur: "صرف وہ دکھائیں جو کسی اجنبی کو مدد کے لیے چاہیے۔ لاک اسکرین پر کبھی گھر کا پتا نہ لکھیں۔",
+  },
+  lockPhoneLabel: { en: "Phone shape", ur: "فون کی شکل" },
+  lockIphone: { en: "iPhone, 1170 × 2532", ur: "آئی فون، 1170 × 2532" },
+  lockAndroid: { en: "Android, 1080 × 2400", ur: "اینڈرائیڈ، 1080 × 2400" },
+  lockPhoneHelp: {
+    en: "Most recent phones are close to one of these. If the picture doesn't fill the screen, try the other.",
+    ur: "زیادہ تر نئے فون ان میں سے کسی ایک کے قریب ہیں۔ اگر تصویر پوری اسکرین پر نہ آئے تو دوسرا آزمائیں۔",
+  },
+  lockLayoutLabel: { en: "Who is it for?", ur: "یہ کس کے لیے ہے؟" },
+  lockLayoutText: { en: "Anyone who finds the phone", ur: "جسے بھی فون ملے" },
+  lockLayoutTextHelp: {
+    en: "Name, health details and who to call, in English and Urdu.",
+    ur: "نام، صحت کی معلومات اور کسے فون کرنا ہے، انگریزی اور اردو میں۔",
+  },
+  lockLayoutFacesNamed: { en: "{name}, if they don't read", ur: "{name} کے لیے، اگر وہ پڑھ نہیں سکتے" },
+  lockLayoutFaces: { en: "The owner, if they don't read", ur: "فون والے کے لیے، اگر وہ پڑھ نہیں سکتے" },
+  lockLayoutFacesHelp: {
+    en: "Large faces of family members with their numbers, to call in an emergency.",
+    ur: "گھر والوں کے بڑے چہرے ان کے نمبروں کے ساتھ، ایمرجنسی میں فون کرنے کے لیے۔",
+  },
+  lockFieldsLabel: { en: "What to show", ur: "کیا دکھانا ہے" },
+  lockFieldName: { en: "Name", ur: "نام" },
+  lockFieldBlood: { en: "Blood group", ur: "بلڈ گروپ" },
+  lockFieldConditions: { en: "Conditions", ur: "بیماریاں" },
+  lockFieldAllergies: { en: "Allergies", ur: "الرجی" },
+  lockFieldContacts: { en: "People to call", ur: "فون کے لیے لوگ" },
+  lockFieldsHelp: {
+    en: "Only things you've entered can be shown. There's deliberately no address.",
+    ur: "صرف وہی دکھایا جا سکتا ہے جو آپ نے لکھا ہے۔ پتا جان بوجھ کر شامل نہیں۔",
+  },
+  lockNoFaces: {
+    en: "Add people to call first. Their faces and numbers make this card.",
+    ur: "پہلے فون کے لیے لوگ شامل کریں۔ ان کے چہرے اور نمبر ہی یہ کارڈ بناتے ہیں۔",
+  },
+  lockAddPeople: { en: "Add people to call", ur: "فون کے لیے لوگ شامل کریں" },
+  lockClockToggle: { en: "Show the clock and buttons on the preview", ur: "پیش منظر پر گھڑی اور بٹن دکھائیں" },
+  lockPreviewHelp: {
+    en: "Clocks, notifications and buttons sit in different places on different phones, so the card keeps to the middle.",
+    ur: "مختلف فونز پر گھڑی، اطلاعات اور بٹن مختلف جگہ ہوتے ہیں، اس لیے کارڈ درمیان میں رہتا ہے۔",
+  },
+  lockPreviewLabel: { en: "Preview with a pretend clock", ur: "فرضی گھڑی کے ساتھ پیش منظر" },
+  lockDownload: { en: "Download lock-screen picture", ur: "لاک اسکرین تصویر ڈاؤن لوڈ کریں" },
+  lockDownloaded: { en: "Picture saved. Now set it as the lock screen:", ur: "تصویر محفوظ ہو گئی۔ اب اسے لاک اسکرین بنائیں:" },
+  lockHowIphone: {
+    en: "iPhone: open Photos, choose the picture, tap Share, then Use as Wallpaper.",
+    ur: "آئی فون: فوٹوز کھولیں، تصویر چنیں، شیئر پر ٹیپ کریں، پھر Use as Wallpaper۔",
+  },
+  lockHowAndroid: {
+    en: "Android: open Gallery or Photos, choose the picture, open the menu, then Set as wallpaper and Lock screen.",
+    ur: "اینڈرائیڈ: گیلری یا فوٹوز کھولیں، تصویر چنیں، مینو کھولیں، پھر Set as wallpaper اور Lock screen۔",
+  },
+  lockCheck: {
+    en: "Then lock the phone and check that nothing is hidden under the clock or the buttons.",
+    ur: "پھر فون لاک کریں اور دیکھیں کہ گھڑی یا بٹنوں کے نیچے کچھ چھپا تو نہیں۔",
+  },
+  lockMedicalId: {
+    en: "If you can, also fill in Medical ID on iPhone or Emergency information on Android. Not every responder checks it, so this card helps as well.",
+    ur: "اگر ہو سکے تو آئی فون پر Medical ID یا اینڈرائیڈ پر Emergency information بھی بھر دیں۔ ہر مددگار اسے نہیں دیکھتا، اس لیے یہ کارڈ بھی کام آتا ہے۔",
+  },
+  lockCrowded: {
+    en: "There's a lot on this card, so the words are small. Switching off a few things makes them bigger.",
+    ur: "اس کارڈ پر بہت کچھ ہے، اس لیے الفاظ چھوٹے ہیں۔ کچھ چیزیں بند کرنے سے وہ بڑے ہو جائیں گے۔",
+  },
+  lockFailed: {
+    en: "Couldn't make the picture. Try again, or try a different browser.",
+    ur: "تصویر نہیں بن سکی۔ دوبارہ کوشش کریں، یا کوئی اور براؤزر آزمائیں۔",
+  },
+
+  // 9h. Drawn on the lock-screen card (always both languages) ----------------------
+  lockEmergency: { en: "In an emergency", ur: "ایمرجنسی میں" },
+  lockBlood: { en: "Blood group", ur: "بلڈ گروپ" },
+  lockConditions: { en: "Conditions", ur: "بیماریاں" },
+  lockAllergies: { en: "Allergic to", ur: "الرجی" },
+  lockCall: { en: "Please call", ur: "براہ کرم فون کریں" },
+
   // 9b. Printed on the sheet (always both languages) ---------------------------
   sheetFor: { en: "For {helper}", ur: "{helper} کے لیے" },
   sheetCall: { en: "If anything is unclear, call", ur: "کچھ سمجھ نہ آئے تو فون کریں" },

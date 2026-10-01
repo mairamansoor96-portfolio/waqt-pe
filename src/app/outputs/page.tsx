@@ -45,7 +45,7 @@ export default function Outputs() {
     },
     { id: "doctor", title: "outputDoctor", help: t("outputDoctorHelp"), needsReview: true, path: "/outputs/doctor/" },
     // No medicines on it, so it doesn't wait for the medicine check.
-    { id: "lockscreen", title: "outputLockScreen", help: t("outputLockScreenHelp"), needsReview: false },
+    { id: "lockscreen", title: "outputLockScreen", help: t("outputLockScreenHelp"), needsReview: false, path: "/outputs/lockscreen/" },
   ];
 
   return (

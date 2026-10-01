@@ -492,6 +492,17 @@ Setup is a linear, one-question-per-screen flow on mobile, with a progress indic
 - The script says "call me"; it doesn't name the family member reading it, since the voice itself tells the helper who it is.
 - Native review is still needed for every Urdu template and word table before launch, as the spec says.
 
+**Build decisions (milestone 9):**
+
+- The card is drawn on a canvas at the preset's exact pixel size (iPhone 1170 × 2532, Android 1080 × 2400) and downloaded as a PNG, with the bundled fonts so Urdu is shaped in Nastaliq. Dark night-indigo background, white text, and a red "In an emergency" band in English and Urdu.
+- Content stays out of the top 32% and bottom 12% (a little more than the spec's ~30% and ~10%, for margin) and is centred in the band between. If there's a lot to show, everything shrinks a step at a time until it fits; nothing is ever cut off. Below 75% the screen suggests switching a few things off. Phone numbers never wrap; they shrink to fit one line.
+- Each section has its English label at the start and its Urdu label at the end of the same line. Values are drawn in their own direction; contact names stay at the start, beside their number or face, whatever their script.
+- Two layouts: "Anyone who finds the phone" (text, in the spec's order) and "{name}, if they don't read" (large faces with numbers). The faces layout uses contact photos from this device, or a large initial.
+- The family chooses which fields show. Only fields with something entered are offered, and there is no address option at all. The phone shape, layout and field choices are for this picture and aren't saved in the plan.
+- The preview overlays a pretend clock, notification, camera notch and buttons, which can be switched off. After downloading, the screen explains how to set the picture as the lock screen on iPhone and Android, and suggests Medical ID or Emergency information too.
+- The lock-screen card doesn't wait for the medicine check (decided in milestone 5).
+- Still to do before this milestone is done: set the PNG as the wallpaper on two real phones and confirm nothing is hidden.
+
 **Global behaviour:**
 
 - Progress autosaves to the URL hash and IndexedDB on every change.

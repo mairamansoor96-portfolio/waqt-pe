@@ -6,6 +6,9 @@
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { messages, type MessageKey } from "./messages";
+import { textDir } from "./text-direction";
+
+export { textDir };
 
 export { messages, type MessageKey };
 
@@ -60,18 +63,6 @@ export function useT() {
 /** Fill {placeholders}. Values are inserted as plain text. */
 export function fill(template: string, values: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (_, k: string) => String(values[k] ?? ""));
-}
-
-const RTL_CHAR = /[֐-ࣿיִ-﷿ﹰ-﻿]/;
-const LTR_CHAR = /[A-Za-zÀ-ɏ]/;
-
-/** The direction of the first strongly-directional character, if any. */
-export function textDir(text: string): "ltr" | "rtl" | undefined {
-  for (const ch of text) {
-    if (RTL_CHAR.test(ch)) return "rtl";
-    if (LTR_CHAR.test(ch)) return "ltr";
-  }
-  return undefined;
 }
 
 /**
