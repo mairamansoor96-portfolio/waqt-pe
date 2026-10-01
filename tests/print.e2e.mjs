@@ -199,7 +199,7 @@ try {
   assert.equal(sheetBorder, "rgb(31, 122, 122)", "teal border on version 2");
 
   // Milestone 7: stickers measure within 1 mm of spec, on both papers, at every size.
-  for (const out of ["stickers", "doctor"]) {
+  for (const out of ["stickers", "doctor", "voice"]) {
     const l = await newPage();
     await l.goto(link(unchecked, false, out));
     await l.getByText("Check the medicines first").waitFor();
@@ -272,8 +272,90 @@ try {
     }
   }
 
+  // Milestone 8: the voice-note script matches the sheet's order, and Urdu
+  // renders right to left.
+  {
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    const v = await context.newPage();
+    v.on("request", (r) => {
+      if (!r.url().startsWith(origin) && !/^(data|blob):/.test(r.url())) offOrigin.push(r.url());
+    });
+    await v.goto(link(typical, false, "voice"));
+    await v.locator('[data-script="ur"]').waitFor();
+    await v.evaluate(() => document.fonts.ready);
+    const plain = (s) => s.replace(/[\u2066-\u2069]/g, "");
+    const lines = (lang) => v.locator(`[data-script="${lang}"] [data-script-line]`).allTextContents();
+    assert.deepEqual((await lines("en")).map(plain), [
+      "Shabnam, here's how Ammi's medicines go.",
+      "Morning, at Fajr, after food. The blue star box. One and a half tablets.",
+      "Morning, at Fajr. The orange circle box. Half a tablet.",
+      "Evening, at Maghrib, after food. The blue star box. One tablet.",
+      "Night, at Isha, before food. The green leaf box. Two spoons.",
+      "If anything is unclear, call me.",
+    ]);
+    assert.deepEqual((await lines("ur")).map(plain), [
+      "Shabnam، یہ Ammi کی دوائیوں کا طریقہ ہے۔",
+      "صبح، فجر، کھانے کے بعد۔ نیلے ستارے والا ڈبہ۔ ڈیڑھ گولی۔",
+      "صبح، فجر۔ نارنجی دائرے والا ڈبہ۔ آدھی گولی۔",
+      "شام، مغرب، کھانے کے بعد۔ نیلے ستارے والا ڈبہ۔ ایک گولی۔",
+      "رات، عشاء، کھانے سے پہلے۔ سبز پتے والا ڈبہ۔ دو چمچ۔",
+      "کچھ سمجھ نہ آئے تو مجھے فون کریں۔",
+    ]);
+
+    // Same order as the fridge sheet's dose cards.
+    const scriptOrder = await v.locator('[data-script="en"] [data-script-line]').evaluateAll((els) =>
+      els.map((e) => e.dataset.scriptLine).filter((k) => k !== "opening" && k !== "closing"),
+    );
+    const sheet = await newPage();
+    await sheet.goto(link(typical));
+    await sheet.locator("[data-dose-card]").first().waitFor();
+    const sheetOrder = await sheet.locator("[data-dose-card]").evaluateAll((els) => els.map((e) => e.dataset.dose));
+    assert.deepEqual(scriptOrder, sheetOrder, "script follows the fridge sheet's order");
+
+    // Urdu renders right to left, in Nastaliq, whatever the interface language.
+    /** Where each line's first visible letter lands: in the right or left half of its line. */
+    const firstLetterSide = (lang) =>
+      v.locator(`[data-script="${lang}"]`).evaluate((box) => {
+        const style = getComputedStyle(box);
+        const lines = [...box.querySelectorAll("[data-script-line] > span:last-child")].map((span) => {
+          const text = span.firstChild;
+          let i = 0;
+          while (/[\u2066-\u2069\s]/.test(text.data[i])) i++; // skip the invisible direction marks
+          const r = document.createRange();
+          r.setStart(text, i);
+          r.setEnd(text, i + 1);
+          const letter = r.getClientRects()[0];
+          const lineBox = span.getBoundingClientRect();
+          const mid = lineBox.left + lineBox.width / 2;
+          return { direction: getComputedStyle(span).direction, side: letter.left + letter.width / 2 > mid ? "right" : "left" };
+        });
+        return { lang: box.lang, dir: box.dir, direction: style.direction, font: style.fontFamily, lines };
+      });
+    const rtl = await firstLetterSide("ur");
+    assert.equal(rtl.lang, "ur");
+    assert.equal(rtl.dir, "rtl");
+    assert.equal(rtl.direction, "rtl");
+    assert.match(rtl.font, /Noto Nastaliq Urdu/);
+    for (const [i, line] of rtl.lines.entries()) {
+      assert.equal(line.direction, "rtl", `Urdu line ${i} is right to left`);
+      assert.equal(line.side, "right", `Urdu line ${i} starts on the right`);
+    }
+    // Control: the same check on the English script finds every line starting on the left.
+    const ltrLines = await firstLetterSide("en");
+    assert.ok(ltrLines.lines.every((l) => l.side === "left" && l.direction === "ltr"), "English lines start on the left");
+    if (shots) await v.screenshot({ path: `${shots}/voice-script.png`, fullPage: true });
+
+    // The copy button copies exactly the script, one sentence group per line.
+    await v.getByRole("button", { name: "Copy Urdu script" }).click();
+    await v.getByText("Copied. Paste it into WhatsApp").first().waitFor();
+    const copied = await v.evaluate(() => navigator.clipboard.readText());
+    assert.deepEqual(copied.split("\n").map(plain), (await lines("ur")).map(plain));
+    console.log("voice    script matches sheet order; Urdu right to left in Nastaliq; copy works");
+  }
+
   assert.deepEqual(offOrigin, [], "no request leaves the origin");
-  console.log("ok: fridge sheet, stickers and doctor's list print cleanly on A4 and Letter; stickers within 1 mm; research toggles stay local; versions advance on changed prints");
+  console.log("ok: fridge sheet, stickers and doctor's list print cleanly on A4 and Letter; stickers within 1 mm; voice script in sheet order with Urdu right to left; research toggles stay local; versions advance on changed prints");
 } finally {
   await browser.close();
   server.close();

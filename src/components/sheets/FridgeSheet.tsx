@@ -56,6 +56,7 @@ function DoseCard({ dose, plan, foodVariant }: { dose: SheetDose; plan: Plan; fo
   return (
     <div
       data-dose-card
+      data-dose={`${dose.dose.slot}-${medicine.id}`}
       style={{
         width: "68mm",
         padding: "2.5mm",
