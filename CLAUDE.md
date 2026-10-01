@@ -27,7 +27,8 @@ Next.js (App Router) as a static export (`output: "export"`, builds to `out/`), 
 - `src/lib/plan.ts` — the `Plan` data model from SPEC.md, defaults, symbol table, and rules (review reset, print lock, sheet versions, units).
 - `src/lib/sanitise.ts` — turns untrusted JSON (from a link or file) into a valid `Plan`.
 - `src/lib/hash.ts` — `Plan` ⇄ compressed URL hash (`#p=…`).
-- `src/lib/plan-store.tsx` — `PlanProvider` and `usePlan()`: loads the plan from the hash once, autosaves every change back to it, and `go(path)` moves between screens carrying the plan in the link. Mounted in the root layout so every screen shares one plan.
+- `src/lib/plan-store.tsx` — `PlanProvider` and `usePlan()`: loads the plan from the hash once, autosaves every change back to it, and `go(path)` moves between screens carrying the plan in the link. Mounted in the root layout so every screen shares one plan. Sample mode (`enterSample`/`exitSample`, a `#sample` link) shows the demo plan from memory and never writes the link or IndexedDB; the family's own plan rides along as `#sample&p=…`.
+- `src/lib/sample.ts` — `samplePlan()` for tests, and `demoPlan()` for "See a sample for Ammi" with box photos bundled in `public/sample/` (`SAMPLE_PHOTOS`; `photos.ts` serves them and never stores or deletes them).
 - `src/lib/steps.ts` — the setup flow order (8 steps, one question per screen).
 - `src/lib/messages.ts` — all interface copy in English and Urdu (Urdu needs native review). `src/lib/i18n.tsx` — UI language, document direction, `useT()`, and `useFillNodes()` for names inside sentences (isolates a name only when its direction differs from the sentence's).
 - `src/lib/medicine.ts` — medicine helpers: symbol names for the voice note, drawn/written quantities, `withDose`/`withForm` (edits go through `editMedicine`, so `reviewed` resets).
@@ -51,6 +52,7 @@ Next.js (App Router) as a static export (`output: "export"`, builds to `out/`), 
 - `node tests/print.e2e.mjs [screenshotDir]` — after a build: prints the fridge sheet, stickers and doctor's list on A4 and Letter, checks the voice script's order and right-to-left Urdu, (typical and worst-case plans), checks nothing sticks out of a page, measures stickers against spec (within 1 mm), and makes real PDFs to check page size and count
 - `node tests/lockscreen.e2e.mjs [screenshotDir]` — after a build: lock-screen PNGs for both presets and layouts; exact PNG size, every drawn piece in the safe area, no drawn pixels in the clock or button zones, fields and order
 - `node tests/a11y.e2e.mjs [screenshotDir]` — after a build: every screen in English and Urdu at 100% and 200% text on a 390 px phone; axe-core (WCAG 2.1 AA + best practice), no sideways scroll, one h1 and main, Urdu right to left, 48 px touch targets, and a keyboard-only walk
+- `node tests/sample.e2e.mjs [screenshotDir]` — after a build: every output reached from the landing page in two taps through the sample, the sample notice on each, the family's own link and IndexedDB left untouched (including the back button), and the landing bottom bar sticking only after the hero button scrolls away
 - `node tests/reload.e2e.mjs [screenshotDir]` — after a build: serves `out/` and walks the setup flow on a phone-sized touch screen, checking the plan survives a reload from the link alone (uses the preinstalled Chromium)
 
 ## Milestones

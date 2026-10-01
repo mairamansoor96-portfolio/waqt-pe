@@ -10,6 +10,7 @@ import { Button } from "@/components/Button";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { MissingPhotosNotice } from "@/components/MissingPhotosNotice";
 import { Notice } from "@/components/Notice";
+import { SampleNotice } from "@/components/SampleNotice";
 import { fill, useFillNodes, useT, type MessageKey } from "@/lib/i18n";
 import { usePlan } from "@/lib/plan-store";
 import { canPrint, isHelper } from "@/lib/plan";
@@ -27,7 +28,7 @@ function LockIcon() {
 export default function Outputs() {
   const t = useT();
   const fillNodes = useFillNodes();
-  const { plan, status, go } = usePlan();
+  const { plan, status, go, sample, exitSample } = usePlan();
   const name = plan.person.name.trim();
   const helper = isHelper(plan.giver.type) ? plan.giver.helperName?.trim() : undefined;
   const unlocked = canPrint(plan);
@@ -50,7 +51,11 @@ export default function Outputs() {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-app flex-col px-4">
-      <AppHeader onBack={() => go(stepPath("review"))} onHome={() => go("/")} end={<LanguageToggle />} />
+      <AppHeader
+        onBack={() => (sample ? exitSample("/") : go(stepPath("review")))}
+        onHome={() => (sample ? exitSample("/") : go("/"))}
+        end={<LanguageToggle />}
+      />
 
       {status === "loading" ? (
         <p role="status" className="grow py-8 text-ink-soft">
@@ -63,6 +68,7 @@ export default function Outputs() {
               <h1 className="type-question text-balance">{name ? fillNodes(t("outputsTitleNamed"), { name }) : t("outputsTitle")}</h1>
               <p className="text-ink-soft">{t("outputsHelp")}</p>
             </div>
+            <SampleNotice />
             <MissingPhotosNotice />
 
             {!unlocked && (
@@ -115,9 +121,15 @@ export default function Outputs() {
             </ul>
           </main>
           <BottomBar>
-            <Button full onClick={() => go(stepPath("save"))}>
-              {t("saveAndShare")}
-            </Button>
+            {sample ? (
+              <Button full onClick={() => exitSample(stepPath("name"))}>
+                {t("startPlan")}
+              </Button>
+            ) : (
+              <Button full onClick={() => go(stepPath("save"))}>
+                {t("saveAndShare")}
+              </Button>
+            )}
           </BottomBar>
         </>
       )}

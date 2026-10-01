@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes } from "react";
+import type { ComponentProps } from "react";
 
 type Variant = "primary" | "secondary" | "danger";
 
@@ -13,7 +13,7 @@ export function Button({
   className = "",
   type = "button",
   ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; full?: boolean }) {
+}: ComponentProps<"button"> & { variant?: Variant; full?: boolean }) {
   const look = {
     primary: "bg-primary text-white border-2 border-primary",
     secondary: "bg-surface text-primary border-2 border-primary",

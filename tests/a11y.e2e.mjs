@@ -21,7 +21,7 @@ const require = createRequire(import.meta.url);
 const AXE = await readFile(require.resolve("axe-core/axe.min.js"), "utf8");
 const ROOT = new URL("../out/", import.meta.url).pathname;
 const shots = process.argv[2];
-const types = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".woff2": "font/woff2", ".woff": "font/woff", ".txt": "text/plain" };
+const types = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".woff2": "font/woff2", ".woff": "font/woff", ".txt": "text/plain", ".png": "image/png", ".svg": "image/svg+xml" };
 const server = createServer(async (req, res) => {
   let path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname));
   if (path.endsWith("/")) path += "index.html";
@@ -70,6 +70,7 @@ const hash = (p) => `#p=${LZString.compressToEncodedURIComponent(JSON.stringify(
 // [path, plan]: outputs need every medicine checked; the review step and hub are also seen locked.
 const screens = [
   ["/", plan],
+  ["/", null],
   ["/setup/name/", plan],
   ["/setup/health/", plan],
   ["/setup/giver/", plan],
@@ -86,6 +87,10 @@ const screens = [
   ["/outputs/doctor/", checked],
   ["/outputs/voice/", checked],
   ["/outputs/lockscreen/", checked],
+  // The demo plan behind "See a sample for Ammi", with its notice.
+  ["/outputs/", "sample"],
+  ["/outputs/fridge/", "sample"],
+  ["/outputs/lockscreen/", "sample"],
   ["/kit/", plan],
 ];
 
@@ -102,7 +107,7 @@ async function open(path, p, lang, textSize) {
   page.on("pageerror", (e) => {
     throw e;
   });
-  await page.goto(`${origin}${path}${p ? hash(p) : ""}`);
+  await page.goto(`${origin}${path}${p === "sample" ? "#sample" : p ? hash(p) : ""}`);
   await page.locator("h1").first().waitFor();
   if (textSize !== 100) await page.addStyleTag({ content: `html { font-size: ${textSize}% !important; }` });
   await page.evaluate(() => document.fonts.ready);
@@ -160,13 +165,13 @@ try {
       for (const [path, p] of screens) {
         const page = await open(path, p, lang, textSize);
         const problems = await audit(page, textSize);
-        const label = `${lang} ${String(textSize).padStart(3)}% ${path}${p === checked ? " (checked)" : ""}`;
+        const label = `${lang} ${String(textSize).padStart(3)}% ${path}${p === checked ? " (checked)" : p === "sample" ? " (sample)" : p ? "" : " (new)"}`;
         if (problems.length) {
           failures += problems.length;
           console.log(`✗ ${label}\n    ${[...new Set(problems)].join("\n    ")}`);
         } else console.log(`✓ ${label}`);
         if (shots && textSize === 200) {
-          const name = `${lang}-200-${path.replace(/[/?=]+/g, "-").replace(/^-|-$/g, "") || "landing"}${p === checked ? "-checked" : ""}`;
+          const name = `${lang}-200-${path.replace(/[/?=]+/g, "-").replace(/^-|-$/g, "") || "landing"}${p === checked ? "-checked" : p === "sample" ? "-sample" : p ? "" : "-new"}`;
           await page.screenshot({ path: `${shots}/${name}.png`, fullPage: true });
         }
         await page.context().close();

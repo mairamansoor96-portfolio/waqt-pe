@@ -355,7 +355,7 @@ Setup is a linear, one-question-per-screen flow on mobile, with a progress indic
 
 | # | Screen | What it does | Done when |
 | --- | --- | --- | --- |
-| 1 | Landing | Explains Waqt Pe in one line, shows a sample fridge sheet, states the privacy promise | A first-time visitor can start setup in one tap |
+| 1 | Landing | Explains Waqt Pe in one line, shows the five outputs and how setup works, states the privacy promise, and opens a sample plan | A first-time visitor can start setup in one tap, and see every output in two taps without entering anything |
 | 2 | Person | Name, blood group, treatment-relevant conditions, allergies | Name is the only required field |
 | 3 | Who gives the medicines | Four choices from the data model; helper name if a helper | Choice changes defaults per the Design spec table |
 | 4 | Daily anchors | Meals, prayers, or clock; editable labels per slot in English and Urdu | Sensible defaults for each mode |
@@ -443,6 +443,16 @@ Setup is a linear, one-question-per-screen flow on mobile, with a progress indic
 - Urdu at 200% text: choice cards stack (icon and check above, words below) when there isn't room, and the medicine form choices drop to fewer columns; both use container queries in `rem`, so they follow the reader's text size. Names and notes the family typed keep their own reading direction but line up with the page's start edge (`text-page-start`), so an English medicine name sits on the right in the Urdu layout. Phone numbers never wrap. Contact lines in the summary read in their own direction.
 - The final pictograms are not swapped in yet: the placeholders stay until the artwork is ready, and each is still one swappable component in `src/pictograms/`.
 - Still to do by hand: a pass with a real screen reader (TalkBack on Android, VoiceOver on iPhone) and on a low-end Android phone, as the quality floor asks.
+
+**Build decisions (landing page and sample plan):**
+
+- The landing page explains what Waqt Pe produces before anyone starts, top to bottom: header (logo at the start, language switch at the end, ralli trim); hero with "Start a plan" and "See a sample for Ammi"; "What you'll get", five cards with a small token-drawn picture of each output and a Print or Phone tag; "How it works" in three steps; the privacy pocket; a text link to open a saved `.waqtpe` file (the existing import); and a bottom bar with "Start a plan" that sticks to the screen only once the hero's button has scrolled away.
+- With a plan already in the link, both Start buttons keep saying "Continue {name}'s plan" and "Start a new plan" stays at the bottom, as before.
+- The privacy heading keeps its full stop ("Nothing you enter leaves this device.") because the privacy rules quote it that way.
+- "See a sample for Ammi" opens the outputs hub with a built-in demo plan (`demoPlan()` in `src/lib/sample.ts`): Metformin for sugar (morning and night, after food), Amlodipine for blood pressure (morning), Atorvastatin for cholesterol (night), a helper who doesn't read named Shazia, and two contacts. It's already checked, so every output opens. Its box photos are placeholder images bundled in `public/sample/`.
+- The sample lives only in memory under a `#sample` link. Nothing is written to the link or to IndexedDB while it's open. The family's own plan rides along untouched (`#sample&p=…`), and the sample's Back, logo, Start buttons and the browser's back button all return to it exactly. Settings changed on a sample output (paper size, printing) stay in memory.
+- The sample is only for looking at outputs: a sample link on a setup screen goes to the sample's outputs hub. Every sample screen shows "This is a sample. Start your own plan to make one for your family." with a "Start a plan" button. The hub's bottom bar says "Start a plan" instead of "Save and share".
+- The old small sample fridge sheet on the landing page is gone; the real sample replaces it.
 
 **Global behaviour:**
 

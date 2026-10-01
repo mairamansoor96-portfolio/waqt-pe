@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react";
 import { del, get, set } from "idb-keyval";
 import { newId } from "./plan";
+import { SAMPLE_PHOTOS, isSamplePhoto } from "./sample";
 
 const KEY = (id: string) => `photo:${id}`;
 const MAX_EDGE = 1000; // px. A 30 mm print at 300 dpi needs about 350 px.
@@ -75,6 +76,7 @@ export async function compressPhoto(file: Blob): Promise<Blob> {
 }
 
 export async function putPhoto(id: string, blob: Blob): Promise<void> {
+  if (isSamplePhoto(id)) return; // bundled with the app; never stored
   try {
     await set(KEY(id), { type: blob.type || "image/jpeg", data: await blob.arrayBuffer() } satisfies StoredPhoto);
   } catch {
@@ -92,6 +94,16 @@ export async function addPhoto(file: Blob): Promise<string> {
 }
 
 export async function getPhoto(id: string): Promise<Blob | undefined> {
+  // The demo plan's box photos ship with the app (same origin, no user data).
+  if (isSamplePhoto(id)) {
+    try {
+      const res = await fetch(SAMPLE_PHOTOS[id]);
+      // Typed explicitly so canvases and <img> decode it whatever the server says.
+      return res.ok ? new Blob([await res.arrayBuffer()], { type: "image/png" }) : undefined;
+    } catch {
+      return undefined;
+    }
+  }
   try {
     const stored = await get<StoredPhoto>(KEY(id));
     return stored ? new Blob([stored.data], { type: stored.type }) : undefined;
@@ -101,7 +113,7 @@ export async function getPhoto(id: string): Promise<Blob | undefined> {
 }
 
 export async function deletePhoto(id: string | undefined): Promise<void> {
-  if (!id) return;
+  if (!id || isSamplePhoto(id)) return;
   try {
     await del(KEY(id));
   } catch {

@@ -11,7 +11,7 @@ import { usePlan } from "@/lib/plan-store";
  * "Choose a saved file": reads a .waqtpe file, shows what's in it, and only
  * replaces the current plan after the family confirms in the page.
  */
-export function ImportControl({ onImported }: { onImported?: () => void }) {
+export function ImportControl({ onImported, trigger = "button" }: { onImported?: () => void; trigger?: "button" | "link" }) {
   const t = useT();
   const fillNodes = useFillNodes();
   const { setPlan } = usePlan();
@@ -58,6 +58,14 @@ export function ImportControl({ onImported }: { onImported?: () => void }) {
             {t("importCancel")}
           </Button>
         </div>
+      ) : trigger === "link" ? (
+        <button
+          type="button"
+          onClick={() => input.current?.click()}
+          className="inline-flex min-h-12 items-center self-start rounded-input type-body font-bold text-primary underline decoration-2 underline-offset-4"
+        >
+          {t("openSavedFile")}
+        </button>
       ) : (
         <Button variant="secondary" full onClick={() => input.current?.click()}>
           {t("importChoose")}

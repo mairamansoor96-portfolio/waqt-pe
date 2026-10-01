@@ -30,3 +30,23 @@ export function decodePlan(hash: string): DecodeResult {
     return { status: "invalid" };
   }
 }
+
+// The demo plan ("See a sample for Ammi") has its own link: `#sample`, plus
+// `&p=…` carrying the family's own plan untouched so leaving the sample
+// returns to it. The sample itself is never encoded into a link.
+const SAMPLE = "sample";
+
+export function sampleHash(back: string): string {
+  return back ? `${SAMPLE}&${back}` : SAMPLE;
+}
+
+/** The family's own plan carried by a sample link, or null if this isn't one. */
+export function parseSampleHash(hash: string): { back: string } | null {
+  const raw = hash.startsWith("#") ? hash.slice(1) : hash;
+  if (raw === SAMPLE) return { back: "" };
+  if (raw.startsWith(`${SAMPLE}&`)) {
+    const back = raw.slice(SAMPLE.length + 1);
+    return { back: back.startsWith(PREFIX) ? back : "" };
+  }
+  return null;
+}
