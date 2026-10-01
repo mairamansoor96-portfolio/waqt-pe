@@ -79,7 +79,8 @@ export default function SaveStep() {
       value: contacts.length ? (
         <ul>
           {contacts.map((c) => (
-            <li key={c.id}>
+            // Each contact reads in its own direction, aligned with the screen's start edge.
+            <li key={c.id} dir="auto" className="text-page-start">
               <bdi>{c.name || "—"}</bdi>
               {c.relation && (
                 <>
@@ -90,7 +91,7 @@ export default function SaveStep() {
               {c.phone && (
                 <>
                   {" · "}
-                  <bdi dir="ltr">{c.phone}</bdi>
+                  <bdi dir="ltr" className="whitespace-nowrap">{c.phone}</bdi>
                 </>
               )}
             </li>
@@ -134,19 +135,20 @@ export default function SaveStep() {
         </h2>
         <dl className="frame flex flex-col rounded-card bg-surface">
           {rows.map((r, i) => (
-            <div key={r.label} className={`flex items-start justify-between gap-4 px-4 py-3 ${i ? "border-t-[1.5px] border-line" : ""}`}>
-              <div className="flex min-w-0 flex-col">
-                <dt className="type-helper text-ink-soft">{t(r.label)}</dt>
-                <dd className="break-words">{r.value}</dd>
-              </div>
-              <button
-                type="button"
-                onClick={() => go(stepPath(r.step))}
-                className="-me-2 min-h-12 shrink-0 rounded-button px-2 font-bold text-primary"
-              >
-                {t("change")}
-                <span className="sr-only">: {t(r.label)}</span>
-              </button>
+            // A dl group may only hold dt and dd, so the Change button sits in its own dd.
+            <div key={r.label} className={`grid grid-cols-[1fr_auto] items-start gap-x-4 px-4 py-3 ${i ? "border-t-[1.5px] border-line" : ""}`}>
+              <dt className="col-start-1 row-start-1 type-helper text-ink-soft">{t(r.label)}</dt>
+              <dd className="col-start-1 row-start-2 min-w-0 break-words">{r.value}</dd>
+              <dd className="col-start-2 row-span-2 row-start-1">
+                <button
+                  type="button"
+                  onClick={() => go(stepPath(r.step))}
+                  className="-me-2 min-h-12 rounded-button px-2 font-bold text-primary"
+                >
+                  {t("change")}
+                  <span className="sr-only">: {t(r.label)}</span>
+                </button>
+              </dd>
             </div>
           ))}
         </dl>

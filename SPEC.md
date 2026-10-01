@@ -503,6 +503,14 @@ Setup is a linear, one-question-per-screen flow on mobile, with a progress indic
 - The lock-screen card doesn't wait for the medicine check (decided in milestone 5).
 - Still to do before this milestone is done: set the PNG as the wallpaper on two real phones and confirm nothing is hidden.
 
+**Build decisions (milestone 10):**
+
+- Accessibility is checked automatically on every screen, in English and Urdu, at 100% and 200% text on a 390 px phone (`tests/a11y.e2e.mjs`): axe-core with WCAG 2.1 A/AA and best-practice rules finds no violations; nothing scrolls sideways; each screen has one `h1` and one `main`; every Urdu container computes right to left; touch targets are at least 48 px; and setup can be started and answered by keyboard alone with visible focus at every stop. axe-core is a test-only dev dependency and never ships to families.
+- Fixed in this pass: the plan summary's list markup (screen readers now pair each label with its value), an unnamed tick-grid column header, and a missing `main` on the kit page.
+- Urdu at 200% text: choice cards stack (icon and check above, words below) when there isn't room, and the medicine form choices drop to fewer columns; both use container queries in `rem`, so they follow the reader's text size. Names and notes the family typed keep their own reading direction but line up with the page's start edge (`text-page-start`), so an English medicine name sits on the right in the Urdu layout. Phone numbers never wrap. Contact lines in the summary read in their own direction.
+- The final pictograms are not swapped in yet: the placeholders stay until the artwork is ready, and each is still one swappable component in `src/pictograms/`.
+- Still to do by hand: a pass with a real screen reader (TalkBack on Android, VoiceOver on iPhone) and on a low-end Android phone, as the quality floor asks.
+
 **Global behaviour:**
 
 - Progress autosaves to the URL hash and IndexedDB on every change.

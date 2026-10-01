@@ -69,3 +69,19 @@
     transform: none !important;
   }
 }
+
+/*
+ * Text the family typed (names, purposes) keeps its own reading direction
+ * (dir="auto") but lines up with the page's start edge, so an English name
+ * in the Urdu layout sits on the right with everything else. Physical
+ * left/right on purpose: `text-align: match-parent` should do this but
+ * Chromium resolves it against the element's own direction.
+ */
+@utility text-page-start {
+  [dir="ltr"] & {
+    text-align: left;
+  }
+  [dir="rtl"] & {
+    text-align: right;
+  }
+}

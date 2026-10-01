@@ -137,7 +137,9 @@ function MedicineEditor() {
 
       <fieldset className="flex flex-col gap-3">
         <legend className="mb-3 type-heading">{t("medFormLabel")}</legend>
-        <div className="grid grid-cols-2 gap-2 min-[420px]:grid-cols-3">
+        {/* Columns follow the text size, so large text gets one wide column. */}
+        <div className="@container">
+        <div className="grid grid-cols-1 gap-2 @[18rem]:grid-cols-2 @[28rem]:grid-cols-3">
           {FORMS.map((f) => {
             const checked = medicine.form === f;
             return (
@@ -154,6 +156,7 @@ function MedicineEditor() {
               </label>
             );
           })}
+        </div>
         </div>
       </fieldset>
 

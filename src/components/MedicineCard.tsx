@@ -40,11 +40,11 @@ export function MedicineCard({ medicine, onOpen }: { medicine: Medicine; onOpen:
       )}
       <SymbolShape shape={medicine.symbol.shape} colour={medicine.symbol.colour} size={48} className="shrink-0" />
       <span className="flex min-w-0 grow flex-col gap-1">
-        <span dir="auto" className="type-body break-words font-bold">
+        <span dir="auto" className="text-page-start type-body break-words font-bold">
           {name || t("unnamedMedicine")}
         </span>
         {medicine.purpose.trim() && (
-          <span dir="auto" className="type-helper break-words text-ink-soft">
+          <span dir="auto" className="text-page-start type-helper break-words text-ink-soft">
             {medicine.purpose.trim()}
           </span>
         )}
