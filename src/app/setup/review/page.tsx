@@ -5,6 +5,7 @@ import { DoseLines } from "@/components/MedicineCard";
 import { Notice } from "@/components/Notice";
 import { PhotoThumb } from "@/components/Photo";
 import { SetupScreen } from "@/components/SetupScreen";
+import { Perforation } from "@/components/Trim";
 import { Check } from "@/components/icons";
 import { fill, useFillNodes, useT } from "@/lib/i18n";
 import { markReviewed } from "@/lib/medicine";
@@ -90,13 +91,13 @@ function ReviewItem({
   return (
     <article
       data-review={medicine.id}
-      className={`flex flex-col gap-3 rounded-card bg-surface p-4 ${ok ? "border-3 border-success" : "frame"}`}
+      className={`flex flex-col gap-3 rounded-card bg-surface ${ok ? "border-3 border-success p-4" : "frame p-[17px]"}`}
     >
       <div className="flex items-start gap-3">
         {medicine.photoId ? (
           <PhotoThumb id={medicine.photoId} alt={name ? fill(t("boxPhotoAltNamed"), { name }) : t("boxPhotoAlt")} size={112} />
         ) : (
-          <span className="flex size-28 shrink-0 items-center justify-center rounded-input border-2 border-dashed border-line p-2 text-center type-helper text-ink-soft">
+          <span className="flex size-28 shrink-0 items-center justify-center rounded-thumb border-2 border-dashed border-perforation p-2 text-center type-helper text-ink-soft">
             {t("reviewNoPhoto")}
           </span>
         )}
@@ -114,17 +115,18 @@ function ReviewItem({
       </div>
       {!medicine.photoId && photoNeeded && <p className="type-helper font-bold text-warning">{t("reviewPhotoNeeded")}</p>}
 
+      <Perforation />
       <DoseLines medicine={medicine} anchors={anchors} />
 
       <label
-        className={`flex min-h-14 cursor-pointer items-center gap-3 rounded-input px-3 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-3 has-[:focus-visible]:outline-primary ${
+        className={`flex min-h-14 cursor-pointer items-center gap-3 rounded-chip px-4 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-3 has-[:focus-visible]:outline-primary ${
           ok ? "bg-success text-white" : "border-2 border-primary text-primary"
         }`}
       >
         <input type="checkbox" checked={ok} onChange={(e) => onReviewed(e.target.checked)} className="sr-only" />
         <span
           aria-hidden="true"
-          className={`flex size-8 shrink-0 items-center justify-center rounded-input ${ok ? "bg-white text-success" : "border-2 border-primary bg-surface"}`}
+          className={`flex size-8 shrink-0 items-center justify-center rounded-chip ${ok ? "bg-white text-success" : "border-2 border-primary bg-surface"}`}
         >
           {ok && <Check size={22} />}
         </span>

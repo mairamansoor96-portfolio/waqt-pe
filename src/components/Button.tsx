@@ -3,7 +3,8 @@ import type { ButtonHTMLAttributes } from "react";
 type Variant = "primary" | "secondary" | "danger";
 
 /**
- * Min height 56 px. The label says exactly what happens: "Add medicine",
+ * A capsule, 56 px tall. Primary is filled primary; secondary is a 2 px
+ * primary outline on surface. The label says exactly what happens: "Add medicine",
  * "Print fridge sheet".
  */
 export function Button({
@@ -21,7 +22,7 @@ export function Button({
   return (
     <button
       type={type}
-      className={`inline-flex min-h-14 items-center justify-center gap-2 rounded-button px-6 py-2 type-body font-bold ${look} disabled:opacity-50 ${full ? "w-full" : ""} ${className}`}
+      className={`inline-flex min-h-14 items-center justify-center gap-2 rounded-button px-6 py-2 text-center type-body font-bold ${look} disabled:opacity-50 ${full ? "w-full" : ""} ${className}`}
       {...props}
     />
   );

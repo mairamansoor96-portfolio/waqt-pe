@@ -12,11 +12,11 @@ type Shape = "box" | "face";
 export function PhotoThumb({ id, alt, size, shape = "box" }: { id?: string; alt: string; size: number; shape?: Shape }) {
   const photo = usePhoto(id);
   const t = useT();
-  const round = shape === "face" ? "rounded-chip" : "rounded-input";
+  const round = shape === "face" ? "rounded-chip" : "rounded-thumb";
   if (photo.status === "ready") {
     return (
       // eslint-disable-next-line @next/next/no-img-element -- object URLs from IndexedDB, not optimisable
-      <img src={photo.url} alt={alt} width={size} height={size} className={`${round} shrink-0 border-[1.5px] border-line bg-white object-cover`} style={{ width: size, height: size }} />
+      <img src={photo.url} alt={alt} width={size} height={size} className={`${round} shrink-0 border-2 border-line bg-white object-cover`} style={{ width: size, height: size }} />
     );
   }
   if (photo.status === "missing") {

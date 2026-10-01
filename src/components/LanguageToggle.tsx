@@ -11,7 +11,7 @@ export function LanguageToggle() {
       type="button"
       onClick={() => setLang(other)}
       aria-label={t("switchLangLabel")}
-      className="frame inline-flex min-h-12 items-center rounded-button bg-surface px-4 text-primary"
+      className="inline-flex min-h-12 items-center rounded-button border-2 border-primary bg-surface px-4 text-primary"
     >
       {/* The label is in the other language, so mark it as such. */}
       <span lang={other} dir={other === "ur" ? "rtl" : "ltr"} className="type-helper font-bold">

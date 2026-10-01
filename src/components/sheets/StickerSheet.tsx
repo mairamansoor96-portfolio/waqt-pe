@@ -5,7 +5,7 @@
 // small text beneath, and a dashed cut guide around each. SPEC.md → Sticker
 // sheet. A 50 mm line lets the family check the printer didn't shrink it.
 
-import { En, INK, PrintPage, Ur } from "./print";
+import { En, INK, PrintPage, SOFT, Ur } from "./print";
 import { messages } from "@/lib/i18n";
 import type { Plan } from "@/lib/plan";
 import { mm, type StickerSize } from "@/lib/sheet";
@@ -30,7 +30,7 @@ export function StickerSheet({ plan, size }: { plan: Plan; size: StickerSize }) 
             style={{
               width: `${size + 12}mm`,
               padding: "3mm",
-              border: "0.3mm dashed #6B7085",
+              border: `0.3mm dashed ${SOFT}`,
               borderRadius: "3mm",
               display: "flex",
               flexDirection: "column",
@@ -68,12 +68,10 @@ export function StickerSheet({ plan, size }: { plan: Plan; size: StickerSize }) 
       </div>
 
       <div data-calibration style={{ display: "flex", flexDirection: "column", gap: "1mm", breakInside: "avoid", marginTop: "2mm" }}>
-        <div
-          data-calibration-line
-          style={{ width: "50mm", height: "3mm", borderLeft: `0.4mm solid ${INK}`, borderRight: `0.4mm solid ${INK}`, boxSizing: "border-box", position: "relative" }}
-        >
-          <div style={{ position: "absolute", left: 0, right: 0, top: "1.3mm", height: "0.4mm", background: INK }} />
-        </div>
+        {/* 50 mm from the outer edge of one end mark to the other. */}
+        <svg data-calibration-line width="50mm" height="3mm" viewBox="0 0 50 3" aria-hidden="true" style={{ display: "block" }}>
+          <path d="M0 0h0.4v3H0zM49.6 0h0.4v3h-0.4zM0 1.3h50v0.4H0z" fill={INK} />
+        </svg>
         <En size={10}>{messages.stickerCalibration.en}</En>
         <Ur size={12}>{messages.stickerCalibration.ur}</Ur>
       </div>

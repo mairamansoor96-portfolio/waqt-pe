@@ -1,12 +1,12 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { AppHeader, BottomBar } from "../AppHeader";
 import { Button } from "../Button";
 import { ChoiceChip } from "../ChoiceChip";
 import { LanguageToggle } from "../LanguageToggle";
 import { MissingPhotosNotice } from "../MissingPhotosNotice";
 import { Notice } from "../Notice";
-import { BackArrow } from "../icons";
 import { useT } from "@/lib/i18n";
 import { usePlan } from "@/lib/plan-store";
 import { canPrint, type Paper } from "@/lib/plan";
@@ -51,29 +51,14 @@ export function OutputShell({
   return (
     <div className="mx-auto flex min-h-dvh max-w-app flex-col px-4 print:block print:max-w-none print:p-0">
       <style>{`@page { size: ${PAPER[plan.settings.paper].css} portrait; margin: ${PAGE_MARGIN_MM}mm; }`}</style>
-      <div className="flex items-center justify-between gap-4 pt-3 print:hidden">
-        <button type="button" onClick={() => go("/")} className="min-h-12 rounded-button type-helper font-bold text-ink">
-          {t("appName")}
-        </button>
-        <LanguageToggle />
-      </div>
-      <div className="pt-2 print:hidden">
-        <button
-          type="button"
-          onClick={() => go(OUTPUTS_PATH)}
-          className="-ms-3 inline-flex min-h-12 items-center gap-1 rounded-button px-3 type-body font-bold text-primary"
-        >
-          <BackArrow size={20} />
-          {t("back")}
-        </button>
-      </div>
+      <AppHeader className="print:hidden" onBack={() => go(OUTPUTS_PATH)} onHome={() => go("/")} end={<LanguageToggle />} />
 
       {status === "loading" ? (
         <p role="status" className="grow py-8 text-ink-soft">
           {t("loading")}
         </p>
       ) : locked ? (
-        <main className="flex grow flex-col gap-6 pb-12 pt-2 print:hidden">
+        <main className="flex grow flex-col gap-6 pb-12 pt-4 print:hidden">
           <h1 className="type-question">{title}</h1>
           <Notice tone="warning" title={t("outputsLockedTitle")}>
             <div className="flex flex-col gap-3">
@@ -86,7 +71,7 @@ export function OutputShell({
         </main>
       ) : (
         <>
-          <main className="flex grow flex-col gap-6 pb-12 pt-2 print:block print:p-0">
+          <main className="flex grow flex-col gap-6 pb-12 pt-4 print:block print:p-0">
             <div className="flex flex-col gap-4 print:hidden">
               <h1 className="type-question">{title}</h1>
               <MissingPhotosNotice />
@@ -114,11 +99,11 @@ export function OutputShell({
             {after && <div className="flex flex-col gap-3 print:hidden">{after}</div>}
           </main>
           {onPrint && (
-            <div className="sticky bottom-0 -mx-4 border-t-[1.5px] border-line bg-paper px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 print:hidden">
+            <BottomBar className="print:hidden">
               <Button full onClick={onPrint}>
                 {printLabel}
               </Button>
-            </div>
+            </BottomBar>
           )}
         </>
       )}

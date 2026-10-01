@@ -46,7 +46,7 @@ export default function GiverStep() {
             value={g}
             checked={giver === g}
             onChange={() => setPlan((p) => ({ ...p, giver: { ...p.giver, type: g } }))}
-            icon={<GiverIcon giver={g} size={40} />}
+            icon={<GiverIcon giver={g} size={32} />}
             label={t(text[g][0])}
             help={t(text[g][1])}
           />

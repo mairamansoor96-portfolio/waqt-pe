@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
+import { BottomBar } from "./AppHeader";
 import { Button } from "./Button";
 import { LanguageToggle } from "./LanguageToggle";
 import { MissingPhotosNotice } from "./MissingPhotosNotice";
@@ -10,8 +11,9 @@ import { usePlan } from "@/lib/plan-store";
 import { STEPS, nextStep, prevStep, stepNumber, stepPath, type StepId } from "@/lib/steps";
 
 /**
- * One setup screen: progress header, one question, the answer controls, and
- * the primary action in a sticky bottom bar within thumb reach.
+ * One setup screen: progress header (logo, step count, sun arc, ralli trim),
+ * one question, the answer controls, and the primary action in a sticky
+ * bottom bar within thumb reach.
  */
 export function SetupScreen({
   step,
@@ -56,13 +58,11 @@ export function SetupScreen({
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-app flex-col px-4">
-      <div className="flex items-center justify-between gap-4 pt-3">
-        <button type="button" onClick={() => go("/")} className="min-h-12 rounded-button type-helper font-bold text-ink">
-          {t("appName")}
-        </button>
-        <LanguageToggle />
-      </div>
-      <ProgressHeader step={stepNumber(step)} total={STEPS.length} onBack={() => {
+      <ProgressHeader
+        step={stepNumber(step)}
+        total={STEPS.length}
+        onHome={() => go("/")}
+        onBack={() => {
           onBack?.();
           go(backPath ?? (prev ? stepPath(prev) : "/"));
         }}
@@ -76,6 +76,9 @@ export function SetupScreen({
         <>
           <main className="flex grow flex-col gap-6 pb-12 pt-4">
             <div className="flex flex-col gap-2">
+              <div className="flex justify-end">
+                <LanguageToggle />
+              </div>
               <h1 ref={heading} tabIndex={-1} className="type-question text-balance outline-none">
                 {question}
               </h1>
@@ -84,7 +87,7 @@ export function SetupScreen({
             <MissingPhotosNotice showAction={step !== "save"} />
             {children}
           </main>
-          <div className="sticky bottom-0 -mx-4 border-t-[1.5px] border-line bg-paper px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3">
+          <BottomBar>
             {bottomBar ?? (
               <Button
                 full
@@ -97,7 +100,7 @@ export function SetupScreen({
                 {continueLabel ?? t("continue")}
               </Button>
             )}
-          </div>
+          </BottomBar>
         </>
       )}
     </div>

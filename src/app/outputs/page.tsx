@@ -5,11 +5,11 @@
 // themselves arrive in milestones 6 to 9.
 
 import type { ReactNode } from "react";
+import { AppHeader, BottomBar } from "@/components/AppHeader";
 import { Button } from "@/components/Button";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { MissingPhotosNotice } from "@/components/MissingPhotosNotice";
 import { Notice } from "@/components/Notice";
-import { BackArrow } from "@/components/icons";
 import { fill, useFillNodes, useT, type MessageKey } from "@/lib/i18n";
 import { usePlan } from "@/lib/plan-store";
 import { canPrint, isHelper } from "@/lib/plan";
@@ -50,22 +50,7 @@ export default function Outputs() {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-app flex-col px-4">
-      <div className="flex items-center justify-between gap-4 pt-3">
-        <button type="button" onClick={() => go("/")} className="min-h-12 rounded-button type-helper font-bold text-ink">
-          {t("appName")}
-        </button>
-        <LanguageToggle />
-      </div>
-      <div className="pt-2">
-        <button
-          type="button"
-          onClick={() => go(stepPath("review"))}
-          className="-ms-3 inline-flex min-h-12 items-center gap-1 rounded-button px-3 type-body font-bold text-primary"
-        >
-          <BackArrow size={20} />
-          {t("back")}
-        </button>
-      </div>
+      <AppHeader onBack={() => go(stepPath("review"))} onHome={() => go("/")} end={<LanguageToggle />} />
 
       {status === "loading" ? (
         <p role="status" className="grow py-8 text-ink-soft">
@@ -73,7 +58,7 @@ export default function Outputs() {
         </p>
       ) : (
         <>
-          <main className="flex grow flex-col gap-6 pb-12 pt-2">
+          <main className="flex grow flex-col gap-6 pb-12 pt-4">
             <div className="flex flex-col gap-2">
               <h1 className="type-question text-balance">{name ? fillNodes(t("outputsTitleNamed"), { name }) : t("outputsTitle")}</h1>
               <p className="text-ink-soft">{t("outputsHelp")}</p>
@@ -109,7 +94,7 @@ export default function Outputs() {
                     key={o.id}
                     data-output={o.id}
                     data-locked={locked}
-                    className={`frame flex flex-col gap-1 rounded-card p-4 ${locked ? "bg-paper" : "bg-surface"}`}
+                    className={`frame flex flex-col gap-1 rounded-card p-4 ${locked ? "bg-ground" : "bg-surface"}`}
                   >
                     <h2 className="type-heading">{t(o.title)}</h2>
                     <p className="type-helper text-ink-soft">{o.help}</p>
@@ -129,11 +114,11 @@ export default function Outputs() {
               })}
             </ul>
           </main>
-          <div className="sticky bottom-0 -mx-4 border-t-[1.5px] border-line bg-paper px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3">
+          <BottomBar>
             <Button full onClick={() => go(stepPath("save"))}>
               {t("saveAndShare")}
             </Button>
-          </div>
+          </BottomBar>
         </>
       )}
     </div>

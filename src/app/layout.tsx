@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#FAFAF7",
+  themeColor: "#E9EDEC",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -23,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: langBootScript }} />
       </head>
-      <body className="min-h-dvh bg-paper text-ink type-body antialiased">
+      <body className="min-h-dvh bg-ground text-ink type-body antialiased">
         <LangProvider>
           <PlanProvider>{children}</PlanProvider>
         </LangProvider>

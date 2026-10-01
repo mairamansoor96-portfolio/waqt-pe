@@ -145,8 +145,8 @@ function MedicineEditor() {
             return (
               <label
                 key={f}
-                className={`flex min-h-14 cursor-pointer items-center gap-2 rounded-card bg-surface px-3 py-2 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-3 has-[:focus-visible]:outline-primary ${
-                  checked ? "border-3 border-primary" : "frame"
+                className={`flex min-h-14 cursor-pointer items-center gap-2 rounded-pocket has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-3 has-[:focus-visible]:outline-primary ${
+                  checked ? "border-3 border-primary bg-primary-tint px-3 py-2" : "frame bg-surface px-[13px] py-[9px]"
                 }`}
               >
                 <input type="radio" name="form" checked={checked} onChange={() => update((m) => withForm(m, f))} className="sr-only" />
@@ -239,7 +239,7 @@ function SlotDose({
   const on = !!dose;
 
   return (
-    <div className={`flex flex-col gap-3 rounded-card p-3 ${slotTint[slot]} ${on ? "border-3 border-primary" : "frame"}`}>
+    <div className={`flex flex-col gap-3 rounded-card ${slotTint[slot]} ${on ? "border-3 border-primary p-3" : "frame p-[13px]"}`}>
       <label className="flex min-h-12 cursor-pointer items-center gap-3 rounded-input has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-3 has-[:focus-visible]:outline-primary">
         <input
           type="checkbox"

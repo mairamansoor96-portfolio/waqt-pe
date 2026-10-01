@@ -5,7 +5,7 @@
 // size; the screen preview scales it down (SheetFrame).
 
 import type { CSSProperties } from "react";
-import { En, INK, PrintPage, SOFT, TINT, Ur } from "./print";
+import { En, INK, LINE, PERFORATION, PrintLogo, PrintPage, SOFT, TINT, Ur } from "./print";
 import { fill, messages } from "@/lib/i18n";
 import { quantityText } from "@/lib/medicine";
 import { giverDefaults, isHelper, type FoodVariant, type Plan, type TickVariant } from "@/lib/plan";
@@ -37,10 +37,10 @@ function BoxPhoto({ dose }: { dose: SheetDose }) {
   const frame: CSSProperties = { width: "30mm", height: "22.5mm", borderRadius: "2mm", flexShrink: 0 };
   if (photo.status === "ready") {
     // eslint-disable-next-line @next/next/no-img-element -- object URL from IndexedDB
-    return <img src={photo.url} alt="" style={{ ...frame, objectFit: "cover", border: "0.4mm solid #999" }} />;
+    return <img src={photo.url} alt="" style={{ ...frame, objectFit: "cover", border: `0.4mm solid ${LINE}` }} />;
   }
   return (
-    <span style={{ ...frame, display: "flex", alignItems: "center", justifyContent: "center", border: "0.4mm dashed #999" }}>
+    <span style={{ ...frame, display: "flex", alignItems: "center", justifyContent: "center", border: `0.4mm dashed ${PERFORATION}` }}>
       <SymbolShape shape={dose.medicine.symbol.shape} colour={dose.medicine.symbol.colour} size={mm(18)} />
     </span>
   );
@@ -60,7 +60,7 @@ function DoseCard({ dose, plan, foodVariant }: { dose: SheetDose; plan: Plan; fo
       style={{
         width: "68mm",
         padding: "2.5mm",
-        border: "0.5mm solid #8A8FA8",
+        border: `0.5mm solid ${PERFORATION}`,
         borderRadius: "2.5mm",
         background: "#fff",
         breakInside: "avoid",
@@ -100,11 +100,11 @@ function ContactFace({ id, name }: { id?: string; name: string }) {
   const frame: CSSProperties = { width: "18mm", height: "18mm", borderRadius: "50%", flexShrink: 0 };
   if (photo.status === "ready") {
     // eslint-disable-next-line @next/next/no-img-element -- object URL from IndexedDB
-    return <img src={photo.url} alt="" style={{ ...frame, objectFit: "cover", border: "0.4mm solid #999" }} />;
+    return <img src={photo.url} alt="" style={{ ...frame, objectFit: "cover", border: `0.4mm solid ${LINE}` }} />;
   }
   return (
     <span
-      style={{ ...frame, display: "flex", alignItems: "center", justifyContent: "center", border: "0.5mm solid #8A8FA8", fontSize: "16pt", fontWeight: 700 }}
+      style={{ ...frame, display: "flex", alignItems: "center", justifyContent: "center", border: `0.5mm solid ${PERFORATION}`, fontSize: "16pt", fontWeight: 700 }}
     >
       {name.trim().charAt(0).toUpperCase()}
     </span>
@@ -141,7 +141,10 @@ export function SchedulePage({ plan, version, date, foodVariant, className }: Sh
             </>
           )}
         </div>
-        <VersionMark version={version} date={date} />
+        <div style={{ display: "flex", alignItems: "center", gap: "4mm", flexWrap: "wrap" }}>
+          <VersionMark version={version} date={date} />
+          <PrintLogo />
+        </div>
       </header>
 
       {rows.map(({ slot, doses }) => (
@@ -171,7 +174,8 @@ export function SchedulePage({ plan, version, date, foodVariant, className }: Sh
 
       {plan.contacts.length > 0 && (
         <footer
-          style={{ marginTop: "auto", borderTop: "0.5mm solid #8A8FA8", paddingTop: "3mm", breakInside: "avoid", display: "flex", gap: "4mm", alignItems: "center" }}
+          className="perforation-top"
+          style={{ marginTop: "auto", paddingTop: "3mm", breakInside: "avoid", display: "flex", gap: "4mm", alignItems: "center" }}
         >
           <div style={{ width: "30mm", flexShrink: 0, display: "flex", flexDirection: "column", gap: "1mm" }}>
             <CallPictogram size={mm(9)} />
@@ -248,7 +252,8 @@ export function TickGridPage({
             {messages.weekStarting.en}
           </En>
           <Ur size={14}>{messages.weekStarting.ur}</Ur>
-          <span style={{ borderBottom: "0.5mm solid #000", width: "50mm", display: "inline-block" }} />
+          {/* A line to write the date on. */}
+          <span style={{ background: INK, height: "0.5mm", width: "50mm", display: "inline-block" }} />
         </div>
       )}
       <table style={{ borderCollapse: "collapse", width: "100%" }}>
@@ -288,7 +293,7 @@ export function TickGridPage({
         <tbody>
           {rows.map(({ medicine, dose, slot }) => (
             <tr key={`${slot}-${medicine.id}`} data-tick-row style={{ breakInside: "avoid" }}>
-              <td style={{ padding: "1mm 2mm 1mm 0", borderBottom: "0.3mm solid #ccc" }}>
+              <td className="perforation-bottom" style={{ padding: "1mm 2mm 1mm 0" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "1.5mm" }}>
                   <span style={{ background: TINT[slot], borderRadius: "1.5mm", display: "flex", padding: "0.5mm" }}>
                     <TimeOfDay slot={slot} size={mm(9)} />

@@ -1,10 +1,12 @@
 /*
- * Waqt Pe app theme — the one file for design tokens (SPEC.md → App theme).
- * This styles the app itself, not the printed outputs.
+ * Waqt Pe app theme — the one file for design tokens.
+ * THEME.md is the source of truth for every visual decision (theme v2: foil,
+ * sun and ralli trim). This styles the app itself; printed sheets read the
+ * same values through src/components/sheets/print.tsx.
  *
- * Tailwind v4 turns these into utilities: bg-paper, text-ink, border-line,
- * rounded-card, max-w-app, font-urdu, and so on. The default Tailwind palette,
- * shadows and radii are switched off so nothing off-theme can slip in.
+ * Tailwind v4 turns these into utilities: bg-ground, text-ink, border-line,
+ * rounded-pocket, max-w-app, font-urdu, and so on. The default Tailwind
+ * palette, shadows and radii are switched off so nothing off-theme can slip in.
  *
  * Medicine symbol colours and sheet-version border colours are data, not app
  * chrome; they live in src/lib/plan.ts.
@@ -17,12 +19,21 @@
   --color-current: currentColor;
   --color-white: #ffffff;
 
-  --color-paper: #fafaf7;   /* page background */
-  --color-surface: #ffffff; /* inputs, cards, sheet previews */
-  --color-ink: #1e2340;     /* body text, icons */
-  --color-ink-soft: #4a5070;/* secondary text, AA on paper */
-  --color-line: #d9dbe5;    /* borders, dividers */
-  --color-primary: #2b2d6e; /* primary buttons, selected states, focus ring */
+  --color-ground: #e9edec;       /* page background (foil grey) */
+  --color-surface: #ffffff;      /* pockets, cards, inputs */
+  --color-ink: #102421;          /* text and icons */
+  --color-ink-soft: #445a56;     /* secondary text, AA on ground */
+  --color-line: #b4c3bf;         /* borders at rest */
+  --color-perforation: #93a7a2;  /* dashed dividers, sun arc path */
+  --color-primary: #0b5d57;      /* actions, selection, focus ring */
+  --color-primary-tint: #d9ece8; /* selected pocket fill */
+  --color-sun: #f2a23a;          /* current step on the arc; logo offset. Never text. */
+
+  /* Ralli trim patches: decoration only, never behind text. */
+  --color-ralli-1: #c9deda; /* teal */
+  --color-ralli-2: #e6dcc6; /* sand */
+  --color-ralli-3: #e2c6c2; /* madder */
+  --color-ralli-4: #b9c8c5; /* foil */
 
   /* Time-of-day tints: pale backgrounds only, never text. */
   --color-dawn: #fce9d8;
@@ -30,26 +41,33 @@
   --color-dusk: #f6dce4;
   --color-night: #dde0f2;
 
-  --color-success: #2e7d5b;
-  --color-warning: #9a5b00;
+  /* Status text and borders, tuned to pass AA on ground, surface and the tints. */
+  --color-success: #1f6b4a;
+  --color-warning: #8a5000;
   --color-error: #b3261e;
 
   /* Type ---------------------------------------------------------------- */
   --font-*: initial;
   --font-sans: "Atkinson Hyperlegible", system-ui, sans-serif;
   --font-urdu: "Noto Nastaliq Urdu", "Atkinson Hyperlegible", serif;
+  /* The logo only, never interface text. */
+  --font-logo: "Lalezar", "Noto Nastaliq Urdu", "Atkinson Hyperlegible", sans-serif;
 
-  /* Radius varies by hierarchy ----------------------------------------- */
+  /* Radius: blister-pack pockets and capsules ---------------------------- */
   --radius-*: initial;
-  --radius-input: 10px;
-  --radius-button: 14px;
-  --radius-card: 16px;
-  --radius-chip: 9999px;
+  --radius-input: 16px;
+  --radius-thumb: 16px;  /* photo thumbnails */
+  --radius-card: 26px;   /* medicine cards, panels, notices */
+  --radius-pocket: 28px; /* choice pockets */
+  --radius-chip: 9999px; /* buttons, chips, step badges: capsules */
+  --radius-button: 9999px;
 
-  /* No drop shadows. Structure comes from borders and spacing. */
+  /* No drop shadows. Structure comes from borders and spacing. The only
+     shadow in the app is the logo's sun offset (logo-offset below). */
   --shadow-*: initial;
   --inset-shadow-*: initial;
   --drop-shadow-*: initial;
+  --text-shadow-*: initial;
 
   /* Layout: one column, max 560 px. */
   --container-app: 560px;
@@ -74,6 +92,8 @@
   --type-question-lh: 1.3;
   --type-heading-size: 1.375rem; /* 22px */
   --type-heading-lh: 1.35;
+  --type-title-size: 1.1875rem; /* 19px: medicine card name */
+  --type-title-lh: 1.35;
   --type-body-size: 1.125rem; /* 18px */
   --type-body-lh: 1.5;
   --type-helper-size: 0.9375rem; /* 15px */
@@ -85,6 +105,8 @@
   --type-question-lh: 2;
   --type-heading-size: 1.5rem; /* 24px */
   --type-heading-lh: 2;
+  --type-title-size: 1.3125rem; /* 21px */
+  --type-title-lh: 2;
   --type-body-size: 1.25rem; /* 20px */
   --type-body-lh: 2.1;
   --type-helper-size: 1.0625rem; /* 17px */
@@ -101,6 +123,11 @@
   line-height: var(--type-heading-lh);
   font-weight: 700;
 }
+@utility type-title {
+  font-size: var(--type-title-size);
+  line-height: var(--type-title-lh);
+  font-weight: 700;
+}
 @utility type-body {
   font-size: var(--type-body-size);
   line-height: var(--type-body-lh);
@@ -112,9 +139,37 @@
   font-weight: 400;
 }
 
-/* Borders: 1.5 px `line`. */
+/* Borders at rest: 2 px `line`, all four sides. No one-side accents. */
 @utility frame {
-  border-width: 1.5px;
+  border-width: 2px;
   border-style: solid;
   border-color: var(--color-line);
+}
+
+/*
+ * The logo's sun offset: a hard copy of the Urdu in `sun`, shifted down and
+ * to the right by 5% of its font size, no blur. The only shadow in the app.
+ */
+@utility logo-offset {
+  text-shadow: 0.05em 0.05em 0 var(--color-sun);
+  /* Snapped to half pixels where supported: 28 px → 1.5 px, 64 px → 3 px. */
+  text-shadow: round(nearest, 0.05em, 0.5px) round(nearest, 0.05em, 0.5px) 0 var(--color-sun);
+}
+
+/*
+ * A perforation along the top edge, for places where an extra element can't
+ * go (rows inside a <dl>). Same 2 px dashes as <Perforation>; the colour is
+ * --color-perforation, written out because a data URI can't read variables.
+ */
+@utility perforation-top {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='2'%3E%3Crect width='6' height='2' fill='%2393a7a2'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: top left;
+  background-size: 11px 2px;
+}
+@utility perforation-bottom {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='2'%3E%3Crect width='6' height='2' fill='%2393a7a2'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: bottom left;
+  background-size: 11px 2px;
 }
