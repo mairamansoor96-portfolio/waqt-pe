@@ -254,7 +254,10 @@ export function TickGridPage({
       <table style={{ borderCollapse: "collapse", width: "100%" }}>
         <thead style={{ display: "table-header-group" }}>
           <tr>
-            <th style={{ textAlign: "start" }} />
+            <th style={{ textAlign: "start" }}>
+              {/* Named for screen readers; the printed column needs no heading. */}
+              <span className="sr-only">{messages.docColMedicine.en}</span>
+            </th>
             {DAYS.map((day, i) => (
               <th
                 key={day.en}

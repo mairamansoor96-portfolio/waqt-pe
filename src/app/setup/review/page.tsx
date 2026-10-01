@@ -102,11 +102,11 @@ function ReviewItem({
         )}
         <div className="flex min-w-0 flex-col gap-1">
           <SymbolShape shape={medicine.symbol.shape} colour={medicine.symbol.colour} size={40} />
-          <h2 dir="auto" className="type-heading break-words">
+          <h2 dir="auto" className="text-page-start type-heading break-words">
             {name}
           </h2>
           {medicine.purpose.trim() && (
-            <p dir="auto" className="type-helper break-words text-ink-soft">
+            <p dir="auto" className="text-page-start type-helper break-words text-ink-soft">
               {medicine.purpose.trim()}
             </p>
           )}

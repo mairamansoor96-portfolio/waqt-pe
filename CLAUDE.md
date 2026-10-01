@@ -12,7 +12,7 @@ Everything runs in the browser. No backend, no accounts, no database, no running
 
 - **Privacy rules**: no user data ever goes over the network; no analytics or third-party scripts; the URL hash holds text only, photos never go into the link (they live in IndexedDB on the device); a visible "Clear everything on this device" control; the landing page says "Nothing you enter leaves this device." Fonts are self-hosted via `@fontsource`, never loaded from a CDN at runtime.
 - **App theme**: use only the tokens in `src/styles/tokens.css` (colours, type roles, radii, spacing scale 4/8/12/16/24/32/48). No clinical blue, no drop shadows (structure comes from 1.5 px borders and spacing), Atkinson Hyperlegible for English and Noto Nastaliq Urdu for Urdu only, 18 px body text minimum, sentence case, touch targets ≥ 48 px, visible focus, reduced motion respected. The only decorative animation is the sun on the progress arc.
-- **Right-to-left from day one**: logical CSS only (`ms-/me-/ps-/pe-/start-/end-`, `text-start`), never left/right. Every Urdu text container gets `lang="ur" dir="rtl"` (use the `<Ur>` component). Wrap names and phone numbers in `<bdi>`. Directional icons flip (`rtl:-scale-x-100`); pictograms and medicine symbols never flip. Never tighten Nastaliq line height or letter-space Urdu.
+- **Right-to-left from day one**: logical CSS only (`ms-/me-/ps-/pe-/start-/end-`, `text-start`), never left/right. Every Urdu text container gets `lang="ur" dir="rtl"` (use the `<Ur>` component). Wrap names and phone numbers in `<bdi>`. Directional icons flip (`rtl:-scale-x-100`); pictograms and medicine symbols never flip. Never tighten Nastaliq line height or letter-space Urdu. Text the family typed gets `dir="auto"` plus `text-page-start` (aligns with the page's start edge); phone numbers get `whitespace-nowrap`. Layouts that must change with text size use container queries in `rem` (see `ChoiceCard`).
 - **Safety boundary**: Waqt Pe only arranges what a doctor prescribed. No dose advice, no interaction checks, no drug information, ever. Editing a medicine resets `reviewed`; printing stays blocked until every medicine is reviewed.
 - **Pictograms** are placeholders until final art exists; each is a swappable SVG React component with a `size` prop.
 
@@ -48,6 +48,7 @@ Next.js (App Router) as a static export (`output: "export"`, builds to `out/`), 
 - `npm test` — unit tests (Vitest)
 - `node tests/print.e2e.mjs [screenshotDir]` — after a build: prints the fridge sheet, stickers and doctor's list on A4 and Letter, checks the voice script's order and right-to-left Urdu, (typical and worst-case plans), checks nothing sticks out of a page, measures stickers against spec (within 1 mm), and makes real PDFs to check page size and count
 - `node tests/lockscreen.e2e.mjs [screenshotDir]` — after a build: lock-screen PNGs for both presets and layouts; exact PNG size, every drawn piece in the safe area, no drawn pixels in the clock or button zones, fields and order
+- `node tests/a11y.e2e.mjs [screenshotDir]` — after a build: every screen in English and Urdu at 100% and 200% text on a 390 px phone; axe-core (WCAG 2.1 AA + best practice), no sideways scroll, one h1 and main, Urdu right to left, 48 px touch targets, and a keyboard-only walk
 - `node tests/reload.e2e.mjs [screenshotDir]` — after a build: serves `out/` and walks the setup flow on a phone-sized touch screen, checking the plan survives a reload from the link alone (uses the preinstalled Chromium)
 
 ## Milestones
@@ -63,4 +64,4 @@ Tracked in SPEC.md → "Build milestones". Status:
 - [x] 7. Sticker sheet and doctor's list
 - [x] 8. Voice-note script, English and Urdu
 - [x] 9. Lock-screen card with presets and clock preview (still to verify on two real phones)
-- [ ] 10. Urdu layout polish, accessibility pass, final pictograms swapped in
+- [x] 10. Urdu layout polish and accessibility pass (final pictograms still to come: the placeholders stay until the artwork is ready)

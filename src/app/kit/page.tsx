@@ -21,7 +21,7 @@ export default function Kit() {
   const [choice, setChoice] = useState("helperNoRead");
 
   return (
-    <div className="mx-auto flex max-w-app flex-col gap-8 px-4 py-6">
+    <main className="mx-auto flex max-w-app flex-col gap-8 px-4 py-6">
       <div className="flex items-center justify-between gap-4">
         <h1 className="type-question">Kit</h1>
         <LanguageToggle />
@@ -46,7 +46,7 @@ export default function Kit() {
         <Ur as="p" role="body">صبح، ناشتے کے بعد۔ نیلے ستارے والا ڈبہ۔ ایک گولی۔</Ur>
         <Ur as="p" role="helper" className="text-ink-soft">مددگار متن</Ur>
         <p>
-          Mixed direction: call <bdi>ماریہ</bdi> on <bdi dir="ltr">+92 300 1234567</bdi>.
+          Mixed direction: call <bdi>ماریہ</bdi> on <bdi dir="ltr" className="whitespace-nowrap">+92 300 1234567</bdi>.
         </p>
       </section>
 
@@ -108,6 +108,6 @@ export default function Kit() {
           ))}
         </ul>
       </section>
-    </div>
+    </main>
   );
 }
