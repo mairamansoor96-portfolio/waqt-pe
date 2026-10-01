@@ -7,6 +7,7 @@ import { ChoiceChip } from "../ChoiceChip";
 import { LanguageToggle } from "../LanguageToggle";
 import { MissingPhotosNotice } from "../MissingPhotosNotice";
 import { Notice } from "../Notice";
+import { SampleNotice } from "../SampleNotice";
 import { useT } from "@/lib/i18n";
 import { usePlan } from "@/lib/plan-store";
 import { canPrint, type Paper } from "@/lib/plan";
@@ -45,13 +46,13 @@ export function OutputShell({
   paperChoice?: boolean;
 }) {
   const t = useT();
-  const { plan, setPlan, status, go } = usePlan();
+  const { plan, setPlan, status, go, sample, exitSample } = usePlan();
   const locked = needsReview && !canPrint(plan);
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-app flex-col px-4 print:block print:max-w-none print:p-0">
       <style>{`@page { size: ${PAPER[plan.settings.paper].css} portrait; margin: ${PAGE_MARGIN_MM}mm; }`}</style>
-      <AppHeader className="print:hidden" onBack={() => go(OUTPUTS_PATH)} onHome={() => go("/")} end={<LanguageToggle />} />
+      <AppHeader className="print:hidden" onBack={() => go(OUTPUTS_PATH)} onHome={() => (sample ? exitSample("/") : go("/"))} end={<LanguageToggle />} />
 
       {status === "loading" ? (
         <p role="status" className="grow py-8 text-ink-soft">
@@ -74,6 +75,7 @@ export function OutputShell({
           <main className="flex grow flex-col gap-6 pb-12 pt-4 print:block print:p-0">
             <div className="flex flex-col gap-4 print:hidden">
               <h1 className="type-question">{title}</h1>
+              <SampleNotice />
               <MissingPhotosNotice />
               {controls}
               {paperChoice && (

@@ -14,7 +14,7 @@ import { chromium } from "playwright-core";
 
 const ROOT = new URL("../out/", import.meta.url).pathname;
 const shots = process.argv[2];
-const types = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".woff2": "font/woff2", ".woff": "font/woff", ".txt": "text/plain" };
+const types = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".woff2": "font/woff2", ".woff": "font/woff", ".txt": "text/plain", ".png": "image/png", ".svg": "image/svg+xml" };
 
 const server = createServer(async (req, res) => {
   let path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname));
@@ -86,7 +86,7 @@ try {
   await page.goto(origin + "/");
   await page.getByText("Nothing you enter leaves this device.").waitFor();
   await shot(page, "01-landing");
-  await page.getByRole("button", { name: "Start a plan" }).tap();
+  await page.getByRole("button", { name: "Start a plan" }).first().tap();
 
   // 1. Name is the only required field.
   await question(page).filter({ hasText: "Who is this plan for?" }).waitFor();
@@ -291,7 +291,7 @@ try {
   // A brand-new device with only the file: open it from the landing page.
   const other = await newPage();
   await other.goto(origin + "/");
-  await other.getByRole("button", { name: "Choose a saved file" }).waitFor();
+  await other.getByRole("button", { name: "Open a saved .waqtpe file" }).waitFor();
   await galleryInput(other).setInputFiles(savedFile);
   await other.getByRole("button", { name: "Yes, open it" }).tap();
   await question(other).filter({ hasText: "Keep Ammi's plan safe" }).waitFor();
@@ -316,7 +316,7 @@ try {
 
   // Landing with a plan offers to continue it.
   await restored.goto(fresh.url().replace("/setup/save/", "/"));
-  await restored.getByRole("button", { name: "Continue Ammi's plan" }).waitFor();
+  await restored.getByRole("button", { name: "Continue Ammi's plan" }).first().waitFor();
 
   // A cut-short link says so instead of silently starting over.
   const broken = await newPage();
@@ -405,7 +405,7 @@ try {
   if (shots) {
     const landing = await newPage();
     await landing.goto(origin + "/");
-    await landing.getByText("What the fridge sheet looks like").waitFor();
+    await landing.getByText("What you'll get").waitFor();
     await landing.waitForTimeout(300);
     await shot(landing, "00-landing-full");
   }

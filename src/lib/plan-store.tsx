@@ -4,11 +4,16 @@
 // on first open, and written back on every change. replaceState keeps typing
 // out of the back button's history; the write is debounced because Safari
 // throws if replaceState runs too often.
+//
+// Sample mode: a `#sample` link shows the demo plan from memory. Nothing is
+// written to the link or to IndexedDB while it's open, and the family's own
+// plan rides along untouched in the link (`#sample&p=…`) until they leave.
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { createEmptyPlan, type Plan } from "./plan";
-import { decodePlan, encodePlan } from "./hash";
+import { decodePlan, encodePlan, parseSampleHash, sampleHash } from "./hash";
+import { demoPlan } from "./sample";
 
 const SAVE_DELAY_MS = 250;
 
@@ -24,7 +29,16 @@ interface PlanStore {
   status: LoadStatus;
   /** Write any pending change to the link now. */
   flush: () => void;
+  /** True while the demo plan is showing (a `#sample` link). */
+  sample: boolean;
+  /** Open the demo plan at this path, keeping the family's own plan aside. */
+  enterSample: (path: string) => void;
+  /** Leave the demo plan for this path, back to the family's own plan. */
+  exitSample: (path: string) => void;
 }
+
+/** Sample mode is only for looking at the outputs. */
+const SAMPLE_ROOT = "/outputs/";
 
 const PlanContext = createContext<PlanStore | null>(null);
 
@@ -49,10 +63,33 @@ export function PlanProvider({ children }: { children: ReactNode }) {
   const lastWritten = useRef("");
   const timer = useRef<number | undefined>(undefined);
   const dirty = useRef(false);
+  const sampleRef = useRef<{ back: string } | null>(null);
+  const [sample, setSample] = useState(false);
+
+  const showSample = useCallback((back: string) => {
+    window.clearTimeout(timer.current);
+    const demo = demoPlan();
+    sampleRef.current = { back };
+    planRef.current = demo;
+    touched.current = false;
+    dirty.current = false;
+    lastWritten.current = sampleHash(back);
+    setPlanState(demo);
+    setSample(true);
+    setStatus("restored");
+  }, []);
 
   const load = useCallback(() => {
     const hash = window.location.hash;
-    if (hash && hash.slice(1) === lastWritten.current) return; // our own write
+    const s = parseSampleHash(hash);
+    if (s) {
+      if (!(sampleRef.current && hash.slice(1) === lastWritten.current)) showSample(s.back);
+      return;
+    }
+    const wasSample = !!sampleRef.current;
+    sampleRef.current = null;
+    setSample(false);
+    if (!wasSample && hash && hash.slice(1) === lastWritten.current) return; // our own write
     const result = decodePlan(hash);
     const next = result.status === "ok" ? result.plan : createEmptyPlan();
     planRef.current = next;
@@ -60,7 +97,7 @@ export function PlanProvider({ children }: { children: ReactNode }) {
     lastWritten.current = hash.slice(1);
     setPlanState(next);
     setStatus(result.status === "ok" ? "restored" : result.status === "invalid" ? "invalid" : "new");
-  }, []);
+  }, [showSample]);
 
   useEffect(() => {
     load();
@@ -70,7 +107,7 @@ export function PlanProvider({ children }: { children: ReactNode }) {
 
   const flush = useCallback(() => {
     window.clearTimeout(timer.current);
-    if (!dirty.current || !touched.current) return;
+    if (sampleRef.current || !dirty.current || !touched.current) return;
     const encoded = encodePlan(planRef.current);
     try {
       writeHash(encoded);
@@ -90,15 +127,23 @@ export function PlanProvider({ children }: { children: ReactNode }) {
   // After moving between screens (including the browser's back button, which
   // restores an older link), make the link match the plan again.
   useEffect(() => {
-    if (status === "loading" || !touched.current) return;
+    if (status === "loading") return;
+    // The back button can cross between the sample and the family's own plan.
+    if (!!parseSampleHash(window.location.hash) !== !!sampleRef.current) return load();
+    if (sampleRef.current) {
+      if (!pathname.startsWith(SAMPLE_ROOT)) router.replace(`${SAMPLE_ROOT}#${sampleHash(sampleRef.current.back)}`);
+      return;
+    }
+    if (!touched.current) return;
     dirty.current = true;
     flush();
-  }, [pathname, status, flush]);
+  }, [pathname, status, flush, load, router]);
 
   const setPlan = useCallback<PlanStore["setPlan"]>(
     (update) => {
       const next = typeof update === "function" ? update(planRef.current) : update;
       planRef.current = next;
+      if (sampleRef.current) return setPlanState(next); // memory only
       touched.current = true;
       dirty.current = true;
       setPlanState(next);
@@ -123,6 +168,12 @@ export function PlanProvider({ children }: { children: ReactNode }) {
   const go = useCallback(
     (path: string, options?: { replace?: boolean }) => {
       window.clearTimeout(timer.current);
+      if (sampleRef.current) {
+        const url = `${path}#${sampleHash(sampleRef.current.back)}`;
+        if (options?.replace) router.replace(url);
+        else router.push(url);
+        return;
+      }
       const encoded = touched.current ? encodePlan(planRef.current) : "";
       lastWritten.current = encoded;
       dirty.current = false;
@@ -133,7 +184,36 @@ export function PlanProvider({ children }: { children: ReactNode }) {
     [router],
   );
 
+  const enterSample = useCallback(
+    (path: string) => {
+      const back = sampleRef.current ? sampleRef.current.back : touched.current ? encodePlan(planRef.current) : "";
+      showSample(back);
+      router.push(`${path}#${sampleHash(back)}`);
+    },
+    [router, showSample],
+  );
+
+  const exitSample = useCallback(
+    (path: string) => {
+      const back = sampleRef.current?.back ?? "";
+      sampleRef.current = null;
+      setSample(false);
+      const result = decodePlan(back);
+      const next = result.status === "ok" ? result.plan : createEmptyPlan();
+      planRef.current = next;
+      touched.current = result.status === "ok";
+      dirty.current = false;
+      lastWritten.current = back;
+      setPlanState(next);
+      setStatus(result.status === "ok" ? "restored" : "new");
+      router.push(back ? `${path}#${back}` : path);
+    },
+    [router],
+  );
+
   return (
-    <PlanContext.Provider value={{ plan, setPlan, resetPlan, go, status, flush }}>{children}</PlanContext.Provider>
+    <PlanContext.Provider value={{ plan, setPlan, resetPlan, go, status, flush, sample, enterSample, exitSample }}>
+      {children}
+    </PlanContext.Provider>
   );
 }

@@ -33,6 +33,7 @@ export function AppHeader({
   onHome,
   end,
   logo = <Logo variant="header" />,
+  logoAtStart = false,
   children,
   className = "",
 }: {
@@ -40,11 +41,19 @@ export function AppHeader({
   onHome?: () => void;
   end?: ReactNode;
   logo?: ReactNode;
+  /** Logo at the start and nothing to go back to (the landing page). */
+  logoAtStart?: boolean;
   children?: ReactNode;
   className?: string;
 }) {
   return (
     <header className={`-mx-4 flex flex-col ${className}`}>
+      {logoAtStart ? (
+        <div className="flex flex-wrap items-center justify-between gap-2 px-4 pt-3 pb-2">
+          {logo}
+          <div className="flex flex-wrap items-center justify-end gap-2">{end}</div>
+        </div>
+      ) : (
       <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 px-4 pt-3 pb-2">
         <div className="flex justify-start">{onBack && <BackButton onClick={onBack} />}</div>
         {onHome ? (
@@ -56,16 +65,17 @@ export function AppHeader({
         )}
         <div className="flex flex-wrap items-center justify-end gap-2 text-end">{end}</div>
       </div>
+      )}
       {children && <div className="px-4">{children}</div>}
       <RalliTrim />
     </header>
   );
 }
 
-/** The sticky bottom action bar: ralli trim on top, then the actions. */
-export function BottomBar({ children, className = "" }: { children: ReactNode; className?: string }) {
+/** The bottom action bar: ralli trim on top, then the actions. Sticky unless told otherwise. */
+export function BottomBar({ children, className = "", sticky = true }: { children: ReactNode; className?: string; sticky?: boolean }) {
   return (
-    <div className={`sticky bottom-0 -mx-4 bg-ground ${className}`}>
+    <div data-sticky={sticky} className={`${sticky ? "sticky bottom-0" : ""} -mx-4 bg-ground ${className}`}>
       <RalliTrim />
       <div className="px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3">{children}</div>
     </div>
