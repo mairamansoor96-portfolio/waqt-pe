@@ -82,11 +82,11 @@ const storedKeys = (page) =>
   });
 
 const OUTPUTS = [
-  { card: "fridge", title: "Fridge sheet", check: async (p) => waitForPhotos(p, 3) },
-  { card: "stickers", title: "Sticker sheet", check: async (p) => p.getByText("Atorvastatin 10 mg").first().waitFor() },
-  { card: "voice", title: "Voice-note script", check: async (p) => p.getByText(/Shazia/).first().waitFor() },
-  { card: "doctor", title: "Doctor's list", check: async (p) => p.getByText("for cholesterol").first().waitFor() },
-  { card: "lockscreen", title: "Emergency lock-screen card", check: async (p) => p.locator("canvas").first().waitFor() },
+  { card: "fridge", title: "Fridge sheet", button: /^Preview\s*:\s*Fridge sheet$/, check: async (p) => waitForPhotos(p, 3) },
+  { card: "stickers", title: "Sticker sheet", button: /^Print stickers$/, check: async (p) => p.getByText("Atorvastatin 10 mg").first().waitFor() },
+  { card: "voice", title: "Voice-note script", button: /^Read it here\s*:\s*Voice-note script$/, check: async (p) => p.getByText(/Shazia/).first().waitFor() },
+  { card: "doctor", title: "Doctor's list", button: /^Print or save\s*:\s*Doctor's list$/, check: async (p) => p.getByText("for cholesterol").first().waitFor() },
+  { card: "lockscreen", title: "Emergency lock-screen card", button: /^Save wallpaper$/, check: async (p) => p.locator("canvas").first().waitFor() },
 ];
 
 try {
@@ -103,12 +103,12 @@ try {
       await shot(page, "01-landing");
     }
     await page.getByRole("button", { name: "See a sample for Ammi" }).tap(); // tap 1
-    await h1(page).filter({ hasText: "Ammi's sheets" }).waitFor();
+    await h1(page).filter({ hasText: "Ammi's kit is ready" }).waitFor();
     assert.equal(await hashOf(page), "#sample");
     assert.equal(await page.locator('[data-locked="true"]').count(), 0, "every sample output is open");
     await page.getByText("This is a sample. Start your own plan to make one for your family.").waitFor();
     if (i === 0) await shot(page, "02-sample-hub");
-    await page.getByRole("button", { name: new RegExp(`Open.*${o.title}`) }).tap(); // tap 2
+    await page.getByRole("button", { name: o.button }).tap(); // tap 2
     await h1(page).filter({ hasText: o.title.split(" ")[0] }).first().waitFor();
     await page.getByText("This is a sample.").first().waitFor();
     await o.check(page);
@@ -130,11 +130,11 @@ try {
   await page.goto(origin + "/" + own);
   await page.getByRole("button", { name: "Continue Nani's plan" }).first().waitFor();
   await page.getByRole("button", { name: "See a sample for Ammi" }).tap();
-  await h1(page).filter({ hasText: "Ammi's sheets" }).waitFor();
+  await h1(page).filter({ hasText: "Ammi's kit is ready" }).waitFor();
   assert.equal(await hashOf(page), `#sample&${own.slice(1)}`, "the family's plan rides along untouched");
 
   // Changing a setting on a sample output stays in memory.
-  await page.getByRole("button", { name: /Open.*Fridge sheet/ }).tap();
+  await page.getByRole("button", { name: /^Preview\s*:\s*Fridge sheet$/ }).tap();
   await h1(page).filter({ hasText: "Fridge sheet" }).waitFor();
   await page.getByText("US Letter").tap();
   await settle(page);
@@ -147,7 +147,7 @@ try {
   // The browser's back button returns to the family's own plan, unchanged.
   await page.goto(origin + "/" + own);
   await page.getByRole("button", { name: "See a sample for Ammi" }).tap();
-  await h1(page).filter({ hasText: "Ammi's sheets" }).waitFor();
+  await h1(page).filter({ hasText: "Ammi's kit is ready" }).waitFor();
   await page.goBack();
   await page.getByRole("button", { name: "Continue Nani's plan" }).first().waitFor();
   await settle(page);
@@ -155,7 +155,7 @@ try {
 
   // The sample's own Back and Start lead back to the family's plan.
   await page.getByRole("button", { name: "See a sample for Ammi" }).tap();
-  await h1(page).filter({ hasText: "Ammi's sheets" }).waitFor();
+  await h1(page).filter({ hasText: "Ammi's kit is ready" }).waitFor();
   await page.getByRole("button", { name: "Back", exact: true }).tap();
   await page.getByRole("button", { name: "Continue Nani's plan" }).first().waitFor();
   assert.equal(await hashOf(page), own);
@@ -171,7 +171,7 @@ try {
   // 3. A sample link can't reach the setup screens (nothing there to edit).
   const stray = await newPage();
   await stray.goto(origin + "/setup/medicines/#sample");
-  await h1(stray).filter({ hasText: "Ammi's sheets" }).waitFor();
+  await h1(stray).filter({ hasText: "Ammi's kit is ready" }).waitFor();
   assert.equal(new URL(stray.url()).pathname, "/outputs/");
   console.log("✓ a sample link on a setup screen goes to the sample's outputs");
 

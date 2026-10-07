@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { AppHeader, BottomBar } from "../AppHeader";
 import { Button } from "../Button";
 import { ChoiceChip } from "../ChoiceChip";
@@ -13,6 +13,21 @@ import { usePlan } from "@/lib/plan-store";
 import { canPrint, type Paper } from "@/lib/plan";
 import { PAGE_MARGIN_MM, PAPER } from "@/lib/sheet";
 import { OUTPUTS_PATH, stepPath } from "@/lib/steps";
+
+/** Asks an output screen to run its main action (print, save) as soon as it's ready. */
+const NOW_PARAM = "now";
+
+/** The path that opens an output and runs its main action straight away. */
+export const actionPath = (path: string) => `${path}?${NOW_PARAM}=1`;
+
+/** Wait for fonts, then for the photos in the preview to finish loading. */
+async function settled() {
+  await document.fonts.ready;
+  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+  // Photos come from IndexedDB a moment after the sheet renders.
+  await new Promise((r) => setTimeout(r, 500));
+  await Promise.all([...document.querySelectorAll("img")].map((img) => img.decode().catch(() => undefined)));
+}
 
 /**
  * The screen around a printed output: back to the sheets, the lock until every
@@ -29,6 +44,7 @@ export function OutputShell({
   printLabel,
   onPrint,
   paperChoice = true,
+  ready = true,
 }: {
   title: ReactNode;
   needsReview?: boolean;
@@ -44,10 +60,28 @@ export function OutputShell({
   onPrint?: () => void;
   /** False for outputs that aren't printed, like the voice-note script. */
   paperChoice?: boolean;
+  /** False while the output is still being drawn, so `?now=1` waits for it. */
+  ready?: boolean;
 }) {
   const t = useT();
   const { plan, setPlan, status, go, sample, exitSample } = usePlan();
   const locked = needsReview && !canPrint(plan);
+
+  // Opened from the hub's "Print …" or "Save …" button: do it once it's ready.
+  const action = useRef(onPrint);
+  action.current = onPrint;
+  const ran = useRef(false);
+  const canAct = status !== "loading" && !locked && !!onPrint && ready;
+  useEffect(() => {
+    if (ran.current || !canAct) return;
+    const url = new URL(window.location.href);
+    if (url.searchParams.get(NOW_PARAM) !== "1") return;
+    ran.current = true;
+    // Drop the request from the address, so reloading doesn't print again.
+    url.searchParams.delete(NOW_PARAM);
+    window.history.replaceState(window.history.state, "", url);
+    settled().then(() => action.current?.());
+  }, [canAct]);
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-app flex-col px-4 print:block print:max-w-none print:p-0">

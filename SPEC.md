@@ -364,7 +364,7 @@ Setup is a linear, one-question-per-screen flow on mobile, with a progress indic
 | 6 | Add or edit medicine | Name, purpose, form, box photo, doses per slot with quantity and food | Photo capture works from the phone camera; symbol assigned automatically |
 | 7 | Contacts | Up to 3 contacts with name, relation, phone, optional photo | Numbers validated loosely; never blocks saving |
 | 8 | Review | Each medicine beside its box photo; family ticks "matches the prescription" for each | Outputs stay locked until every medicine is ticked |
-| 9 | Outputs hub | Links to fridge sheet, stickers, voice script, doctor's list, lock screen | Each output opens as a print or download preview |
+| 9 | Outputs hub | A checklist of the five outputs in numbered steps, each saying what it is, who it's for and what to do, with a status | Someone who has never seen the app can tell, without opening anything, what each output is, who it's for, what to do with it, and what's left to do |
 | 10 | Save | Copy private link, download `.waqtpe` file, import a file, clear device data | Import restores text and photos exactly |
 
 **Build decisions (milestone 2):**
@@ -454,6 +454,15 @@ Setup is a linear, one-question-per-screen flow on mobile, with a progress indic
 - The sample lives only in memory under a `#sample` link. Nothing is written to the link or to IndexedDB while it's open. The family's own plan rides along untouched (`#sample&p=…`), and the sample's Back, logo, Start buttons and the browser's back button all return to it exactly. Settings changed on a sample output (paper size, printing) stay in memory.
 - The sample is only for looking at outputs: a sample link on a setup screen goes to the sample's outputs hub. Every sample screen shows "This is a sample. Start your own plan to make one for your family." with a "Start a plan" button. The hub's bottom bar says "Start a plan" instead of "Save and share".
 - The old small sample fridge sheet on the landing page is gone; the real sample replaces it.
+
+**Build decisions (outputs hub redesign):**
+
+- The hub reads as a checklist: "{Name}'s kit is ready" (first letter capitalised for display only; the plan keeps what was typed), an intro naming how many medicines it was made from, and a progress bar ("{done} of {total} done", `role="progressbar"`). The plan has no pronoun field, so the intro uses the name.
+- Outputs are grouped into numbered steps, in this order: for the fridge (fridge sheet and box stickers), for the helper's phone (voice note), for {name}'s phone (lock screen), for appointments (doctor's list). The voice-note step leads only when the giver is a helper who doesn't read; otherwise it moves to the end as "Optional: a voice note." and isn't counted in the progress total.
+- Each card has a preview drawn from the plan (times of day with the real symbols and contact faces, the real stickers, a voice-note bubble, a phone, a page with a row per medicine; all `aria-hidden`), a tag, one line on who it's for, specific action buttons, and a status row. The fridge sheet card leads with a 3 px primary border and a large preview. The stickers card lists which symbol goes on which medicine; the voice card shows the script's first line in the interface language.
+- "Print fridge sheet", "Print stickers", "Print or save" and "Save wallpaper" open the output with `?now=1`, which runs its main action once fonts and photos are ready, then drops the request from the address so a reload doesn't repeat it. "Copy script" copies the script in the interface language from the hub itself. Choices made on an output screen (sticker size, lock-screen fields) still work as before from that screen.
+- An output is marked done when its main action is used, on the hub or on its own screen (fridge sheet: the whole sheet, not the tick grid alone). Done states live in IndexedDB (`waqtpe.done`, `src/lib/done.ts`) with a fingerprint of everything any output shows, taken after sanitising so a reload gives the same fingerprint. When the plan's content changes, every done state is void. Re-ticking a medicine whose content didn't change keeps them, since the printed sheets still match. Tapping a done status undoes it. "Clear everything on this device" clears them; the sample keeps them in memory only.
+- The bottom of the hub is a "Keep this plan" pocket with "Copy link" and "Save file", and a link to the Save screen for importing and clearing the device. The sticky "Save and share" bar is gone; the sample keeps its "Start a plan" bar.
 
 **Global behaviour:**
 

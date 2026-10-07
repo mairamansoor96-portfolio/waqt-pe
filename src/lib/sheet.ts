@@ -3,6 +3,7 @@
 
 import { messages, type MessageKey } from "./messages";
 import { quantityText } from "./medicine";
+import { sanitisePlan } from "./sanitise";
 import { SLOTS, nextSheetVersion, type Dose, type Form, type Medicine, type Paper, type Plan, type Slot } from "./plan";
 
 /** Paper sizes in mm. Printed with an 8 mm margin all round. */
@@ -39,6 +40,20 @@ export function sheetFingerprint(plan: Plan): string {
     contacts: plan.contacts,
   };
   return hash(JSON.stringify(shown));
+}
+
+/**
+ * A fingerprint of everything any output shows (the sheet, plus the health
+ * details on the lock screen and doctor's list). Done states on the outputs
+ * hub belong to one fingerprint, so any change to the plan clears them.
+ * The plan goes through the sanitiser first, as it does when a link is
+ * opened, so the same plan gives the same fingerprint before and after a
+ * reload (same key order, same trimming).
+ */
+export function planFingerprint(plan: Plan): string {
+  const clean = sanitisePlan(plan);
+  const { name: _name, ...health } = clean.person;
+  return hash(JSON.stringify({ sheet: sheetFingerprint(clean), health }));
 }
 
 /** Has the sheet changed since it was last printed? */

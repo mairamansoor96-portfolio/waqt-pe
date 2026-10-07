@@ -170,7 +170,7 @@ try {
   await next(page, "Check each medicine against the prescription");
 
   // Milestone 5: outputs stay locked until every medicine is checked.
-  const sheets = page.locator("h1", { hasText: "Ammi's sheets" });
+  const sheets = page.locator("h1", { hasText: "Ammi's kit is ready" });
   const lockedOutputs = () => page.locator('[data-locked="true"]').count();
   await page.getByText("Checked: 0 of 1").waitFor();
   await page.getByRole("button", { name: "See the sheets" }).tap();
@@ -190,6 +190,31 @@ try {
   await page.getByRole("button", { name: "See the sheets" }).tap();
   await sheets.waitFor();
   assert.equal(await lockedOutputs(), 0, "all outputs unlocked");
+
+  // The hub is a checklist: steps in order (the voice note leads, because
+  // Shabnam doesn't read), and done states that survive a reload.
+  const steps = await page.locator("main section[data-step] h2").allTextContents();
+  assert.deepEqual(steps, ["For the fridge", "For Shabnam's phone", "For Ammi's phone", "For appointments"]);
+  const progress = page.getByRole("progressbar");
+  assert.equal(await progress.getAttribute("aria-valuetext"), "0 of 5 done");
+  await page.locator("[data-script-start]").getByText(/here's how/).waitFor();
+  await page.getByRole("button", { name: "Copy script" }).tap();
+  await page.locator('[data-output="voice"]').getByText("Copied today").waitFor();
+  assert.equal(await progress.getAttribute("aria-valuetext"), "1 of 5 done");
+  await page.getByRole("button", { name: /^Print or save\s*:\s*Doctor's list$/ }).tap();
+  await page.locator("h1", { hasText: "Doctor's list" }).waitFor();
+  await page.getByText("Doctor's list ready", { exact: false }).first().waitFor(); // printed on arrival
+  assert.ok(!page.url().includes("now=1"), "the print request leaves the address");
+  await page.getByRole("button", { name: "Back", exact: true }).tap();
+  await sheets.waitFor();
+  await page.reload();
+  await sheets.waitFor();
+  await page.locator('[data-output="doctor"]').getByText("Printed or saved today").waitFor();
+  assert.equal(await progress.getAttribute("aria-valuetext"), "2 of 5 done");
+  await shot(page, "06c-outputs-done");
+  await page.getByRole("button", { name: /Undo\s*:\s*mark Doctor's list as not done/ }).tap();
+  await page.locator('[data-output="doctor"]').getByText("Not done yet").waitFor();
+  assert.equal(await progress.getAttribute("aria-valuetext"), "1 of 5 done");
 
   // Editing any medicine re-locks them.
   await page.getByRole("button", { name: "Back" }).tap();
@@ -215,7 +240,10 @@ try {
   await page.getByRole("button", { name: "See the sheets" }).tap();
   await sheets.waitFor();
   assert.equal(await lockedOutputs(), 0);
-  await page.getByRole("button", { name: "Save and share the plan" }).tap();
+  // That edit put the dose back as it was, so the sheets still match the plan
+  // and what was done stays done (a real change clears it: tests/done.test.ts).
+  assert.equal(await page.getByRole("progressbar").getAttribute("aria-valuetext"), "1 of 5 done");
+  await page.getByRole("button", { name: "More ways to save, or clear this device" }).tap();
   await question(page).filter({ hasText: "Keep Ammi's plan safe" }).waitFor();
 
   // 8. Save: the summary shows everything; blank contact was dropped.
