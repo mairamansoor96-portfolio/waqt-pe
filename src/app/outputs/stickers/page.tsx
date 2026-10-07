@@ -7,6 +7,7 @@ import { OutputShell } from "@/components/sheets/OutputShell";
 import { SheetFrame } from "@/components/sheets/SheetFrame";
 import { StickerSheet } from "@/components/sheets/StickerSheet";
 import { useT, type MessageKey } from "@/lib/i18n";
+import { useDone } from "@/lib/done";
 import { usePlan } from "@/lib/plan-store";
 import { DEFAULT_STICKER_SIZE, STICKER_SIZES, type StickerSize } from "@/lib/sheet";
 
@@ -17,6 +18,7 @@ const sizeText: Record<StickerSize, MessageKey> = { 20: "stickerSmall", 30: "sti
 export default function StickersScreen() {
   const t = useT();
   const { plan } = usePlan();
+  const { markDone } = useDone();
   const [size, setSize] = useState<StickerSize>(DEFAULT_STICKER_SIZE);
   const [printed, setPrinted] = useState(false);
 
@@ -27,6 +29,7 @@ export default function StickersScreen() {
       printLabel={t("printStickers")}
       onPrint={() => {
         window.print();
+        markDone("stickers");
         setPrinted(true);
       }}
       controls={

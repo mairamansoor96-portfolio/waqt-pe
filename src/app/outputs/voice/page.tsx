@@ -9,6 +9,7 @@ import { Button } from "@/components/Button";
 import { Notice } from "@/components/Notice";
 import { OutputShell } from "@/components/sheets/OutputShell";
 import { useFillNodes, useT, type MessageKey } from "@/lib/i18n";
+import { useDone } from "@/lib/done";
 import { usePlan } from "@/lib/plan-store";
 import { isHelper, type Plan } from "@/lib/plan";
 import { scriptText, voiceScript, type ScriptLang } from "@/lib/voice";
@@ -40,6 +41,7 @@ export default function VoiceScriptScreen() {
 function Script({ plan, lang, heading, copyLabel }: { plan: Plan; lang: ScriptLang; heading: MessageKey; copyLabel: MessageKey }) {
   const t = useT();
   const [copy, setCopy] = useState<"idle" | "copied" | "failed">("idle");
+  const { markDone } = useDone();
   const lines = voiceScript(plan, lang);
   const medicines = new Map(plan.medicines.map((m) => [m.id, m]));
 
@@ -47,6 +49,7 @@ function Script({ plan, lang, heading, copyLabel }: { plan: Plan; lang: ScriptLa
     try {
       await navigator.clipboard.writeText(scriptText(lines));
       setCopy("copied");
+      markDone("voice");
     } catch {
       setCopy("failed");
     }

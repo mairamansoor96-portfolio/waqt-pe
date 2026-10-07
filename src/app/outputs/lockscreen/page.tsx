@@ -25,6 +25,7 @@ import {
   type Preset,
 } from "@/lib/lockscreen";
 import { getPhoto } from "@/lib/photos";
+import { useDone } from "@/lib/done";
 import { usePlan } from "@/lib/plan-store";
 import type { Plan } from "@/lib/plan";
 import { stepPath } from "@/lib/steps";
@@ -64,6 +65,7 @@ async function loadFaces(plan: Plan): Promise<Face[]> {
 export default function LockScreenScreen() {
   const t = useT();
   const { plan, go } = usePlan();
+  const { markDone } = useDone();
   const canvas = useRef<HTMLCanvasElement>(null);
   const [preset, setPreset] = useState<Preset>("iphone");
   const [layout, setLayout] = useState<Layout>("text");
@@ -110,6 +112,7 @@ export default function LockScreenScreen() {
       if (!blob) return setSaved("failed");
       downloadBlob(blob, lockScreenFileName(plan, preset));
       setSaved("saved");
+      markDone("lockscreen");
     }, "image/png");
   };
 
@@ -131,6 +134,7 @@ export default function LockScreenScreen() {
       paperChoice={false}
       printLabel={t("lockDownload")}
       onPrint={noFaces ? undefined : download}
+      ready={!!result}
       controls={
         <>
           <Notice tone="warning" title={t("lockPrivacyTitle")}>

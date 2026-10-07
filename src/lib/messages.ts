@@ -372,12 +372,6 @@ export const messages = {
   },
 
   // 9. Outputs hub -----------------------------------------------------------
-  outputsTitleNamed: { en: "{name}'s sheets", ur: "{name} کی شیٹس" },
-  outputsTitle: { en: "The sheets", ur: "شیٹس" },
-  outputsHelp: {
-    en: "Everything here is made on this device from the plan on this page.",
-    ur: "یہاں سب کچھ اسی ڈیوائس پر، اسی صفحے کے پلان سے بنتا ہے۔",
-  },
   outputsLockedTitle: { en: "Check the medicines first", ur: "پہلے دوائیں جانچ لیں" },
   outputsLockedBody: {
     en: "The fridge sheet, stickers, voice note and doctor's list unlock when every medicine is checked against the prescription.",
@@ -391,34 +385,129 @@ export const messages = {
   goReview: { en: "Check the medicines", ur: "دوائیں جانچیں" },
   goMedicines: { en: "Add medicines", ur: "دوائیں شامل کریں" },
   outputFridge: { en: "Fridge sheet", ur: "فریج شیٹ" },
-  outputFridgeHelp: {
-    en: "The daily schedule with box photos and pictures, and a weekly tick grid.",
-    ur: "روزانہ کا شیڈول ڈبوں کی تصویروں اور نشانوں کے ساتھ، اور ہفتہ وار ٹک والا خانہ۔",
-  },
   outputStickers: { en: "Sticker sheet", ur: "اسٹیکر شیٹ" },
-  outputStickersHelp: { en: "One sticker for each box, matching the fridge sheet.", ur: "ہر ڈبے کے لیے ایک اسٹیکر، فریج شیٹ سے ملتا ہوا۔" },
   outputVoice: { en: "Voice-note script", ur: "وائس نوٹ کا متن" },
-  outputVoiceHelpNamed: {
-    en: "Words to read aloud and send to {helper} as a WhatsApp voice note.",
-    ur: "بلند آواز سے پڑھ کر {helper} کو واٹس ایپ وائس نوٹ میں بھیجنے کے الفاظ۔",
-  },
-  outputVoiceHelp: {
-    en: "Words to read aloud and send as a WhatsApp voice note.",
-    ur: "بلند آواز سے پڑھ کر واٹس ایپ وائس نوٹ میں بھیجنے کے الفاظ۔",
-  },
   outputDoctor: { en: "Doctor's list", ur: "ڈاکٹر کی فہرست" },
-  outputDoctorHelp: {
-    en: "One page of medicines, doses, conditions and allergies, for appointments and pharmacies.",
-    ur: "دواؤں، خوراک، بیماریوں اور الرجی کا ایک صفحہ، ڈاکٹر اور فارمیسی کے لیے۔",
-  },
   outputLockScreen: { en: "Emergency lock-screen card", ur: "ایمرجنسی لاک اسکرین کارڈ" },
-  outputLockScreenHelp: {
-    en: "A phone wallpaper a stranger can read in an emergency without unlocking the phone.",
-    ur: "فون کا وال پیپر جو ایمرجنسی میں کوئی اجنبی فون کھولے بغیر پڑھ سکے۔",
-  },
   outputLocked: { en: "Locked until every medicine is checked", ur: "ہر دوا جانچنے تک بند" },
-  outputComing: { en: "Coming in a later build", ur: "بعد کے ورژن میں آ رہا ہے" },
-  openOutput: { en: "Open", ur: "کھولیں" },
+
+  // The hub as a checklist: what each output is, who it's for, what's left.
+  hubTitleNamed: { en: "{name}'s kit is ready", ur: "{name} کی کٹ تیار ہے" },
+  hubTitle: { en: "The kit is ready", ur: "کٹ تیار ہے" },
+  hubIntroNamed: {
+    en: "Made from {name}'s {n} medicines. Do these things, in this order, and everyone in the house will know what to give and when.",
+    ur: "{name} کی {n} دواؤں سے بنی۔ یہ کام اسی ترتیب سے کریں، تو گھر میں ہر ایک کو پتا ہوگا کہ کیا دینا ہے اور کب۔",
+  },
+  hubIntroNamedOne: {
+    en: "Made from {name}'s 1 medicine. Do these things, in this order, and everyone in the house will know what to give and when.",
+    ur: "{name} کی 1 دوا سے بنی۔ یہ کام اسی ترتیب سے کریں، تو گھر میں ہر ایک کو پتا ہوگا کہ کیا دینا ہے اور کب۔",
+  },
+  hubIntro: {
+    en: "Made from {n} medicines. Do these things, in this order, and everyone in the house will know what to give and when.",
+    ur: "{n} دواؤں سے بنی۔ یہ کام اسی ترتیب سے کریں، تو گھر میں ہر ایک کو پتا ہوگا کہ کیا دینا ہے اور کب۔",
+  },
+  hubIntroOne: {
+    en: "Made from 1 medicine. Do these things, in this order, and everyone in the house will know what to give and when.",
+    ur: "1 دوا سے بنی۔ یہ کام اسی ترتیب سے کریں، تو گھر میں ہر ایک کو پتا ہوگا کہ کیا دینا ہے اور کب۔",
+  },
+  hubProgress: { en: "{done} of {total} done", ur: "{total} میں سے {done} مکمل" },
+
+  hubStepFridge: { en: "For the fridge", ur: "فریج کے لیے" },
+  hubStepFridgeHelp: { en: "Print these, then put the sheet on the fridge.", ur: "یہ پرنٹ کریں، پھر شیٹ فریج پر لگا دیں۔" },
+  hubStepHelperNamed: { en: "For {helper}'s phone", ur: "{helper} کے فون کے لیے" },
+  hubStepHelper: { en: "For the helper's phone", ur: "مددگار کے فون کے لیے" },
+  hubStepHelperHelpNamed: {
+    en: "{helper} doesn't read, so send the instructions as a voice note.",
+    ur: "{helper} پڑھ نہیں سکتے، اس لیے ہدایات وائس نوٹ میں بھیجیں۔",
+  },
+  hubStepHelperHelp: {
+    en: "Your helper doesn't read, so send the instructions as a voice note.",
+    ur: "آپ کے مددگار پڑھ نہیں سکتے، اس لیے ہدایات وائس نوٹ میں بھیجیں۔",
+  },
+  hubStepVoiceOptional: { en: "Optional: a voice note.", ur: "اختیاری: ایک وائس نوٹ۔" },
+  hubStepVoiceOptionalHelp: {
+    en: "If it helps, read the medicines aloud and send them as a WhatsApp voice note.",
+    ur: "اگر فائدہ ہو تو دوائیں بول کر پڑھیں اور واٹس ایپ وائس نوٹ میں بھیج دیں۔",
+  },
+  hubStepPersonNamed: { en: "For {name}'s phone", ur: "{name} کے فون کے لیے" },
+  hubStepPerson: { en: "For their phone", ur: "ان کے فون کے لیے" },
+  hubStepPersonHelp: {
+    en: "In an emergency, anyone can read this without unlocking the phone.",
+    ur: "ایمرجنسی میں کوئی بھی فون کھولے بغیر اسے پڑھ سکتا ہے۔",
+  },
+  hubStepDoctor: { en: "For appointments", ur: "ڈاکٹر کے پاس جاتے وقت" },
+  hubStepDoctorHelp: { en: "Take this to the doctor or pharmacy.", ur: "یہ ڈاکٹر یا فارمیسی لے جائیں۔" },
+
+  tagPrint2: { en: "Print, 2 pages", ur: "پرنٹ، 2 صفحے" },
+  tagPrint1: { en: "Print, 1 page", ur: "پرنٹ، 1 صفحہ" },
+  tagPrintPdf: { en: "Print or PDF", ur: "پرنٹ یا PDF" },
+
+  hubFridgeForNamed: {
+    en: "For {helper}: what to give at each time of day, found by box photo and symbol, with a tick grid.",
+    ur: "{helper} کے لیے: دن کے ہر وقت کیا دینا ہے، ڈبے کی تصویر اور نشان سے پہچان کر، ٹک والے خانوں کے ساتھ۔",
+  },
+  hubFridgeFor: {
+    en: "For whoever gives the medicines: what to give at each time of day, found by box photo and symbol, with a tick grid.",
+    ur: "جو بھی دوائیں دیتا ہے اس کے لیے: دن کے ہر وقت کیا دینا ہے، ڈبے کی تصویر اور نشان سے پہچان کر، ٹک والے خانوں کے ساتھ۔",
+  },
+  hubStickersFor: {
+    en: "For the medicine boxes: stick each one on its box, so every box matches the sheet.",
+    ur: "دوا کے ڈبوں کے لیے: ہر اسٹیکر اپنے ڈبے پر لگائیں، تاکہ ہر ڈبہ شیٹ سے مل جائے۔",
+  },
+  hubStickersWhich: { en: "Which sticker goes on which box", ur: "کون سا اسٹیکر کس ڈبے پر" },
+  hubVoiceForNamed: {
+    en: "For {helper}: every dose read aloud in your own voice, in the same order as the sheet.",
+    ur: "{helper} کے لیے: ہر خوراک آپ کی اپنی آواز میں، شیٹ والی ترتیب سے۔",
+  },
+  hubVoiceFor: {
+    en: "For whoever gives the medicines: every dose read aloud in your own voice, in the same order as the sheet.",
+    ur: "جو بھی دوائیں دیتا ہے اس کے لیے: ہر خوراک آپ کی اپنی آواز میں، شیٹ والی ترتیب سے۔",
+  },
+  hubVoiceStarts: { en: "It starts:", ur: "شروع یوں ہوتا ہے:" },
+  hubLockForNamed: {
+    en: "For a stranger or paramedic: who {name} is, what they need to know, and who to call.",
+    ur: "کسی اجنبی یا ایمبولینس والے کے لیے: {name} کون ہیں، کیا جاننا ضروری ہے، اور کسے فون کریں۔",
+  },
+  hubLockFor: {
+    en: "For a stranger or paramedic: who this is, what they need to know, and who to call.",
+    ur: "کسی اجنبی یا ایمبولینس والے کے لیے: یہ کون ہیں، کیا جاننا ضروری ہے، اور کسے فون کریں۔",
+  },
+  hubDoctorFor: {
+    en: "For the doctor or pharmacist: every medicine, dose, condition and allergy on one page.",
+    ur: "ڈاکٹر یا فارماسسٹ کے لیے: ہر دوا، خوراک، بیماری اور الرجی ایک صفحے پر۔",
+  },
+
+  hubPreview: { en: "Preview", ur: "دیکھیں" },
+  hubPrintStickers: { en: "Print stickers", ur: "اسٹیکر پرنٹ کریں" },
+  hubCopyScript: { en: "Copy script", ur: "متن کاپی کریں" },
+  hubReadHere: { en: "Read it here", ur: "یہیں پڑھیں" },
+  hubSaveWallpaper: { en: "Save wallpaper", ur: "وال پیپر محفوظ کریں" },
+  hubPrintOrSave: { en: "Print or save", ur: "پرنٹ یا محفوظ کریں" },
+  hubCopyFailed: {
+    en: "Couldn't copy automatically. Open the script with \"Read it here\" and copy it from there.",
+    ur: "خود بخود کاپی نہیں ہو سکا۔ \"یہیں پڑھیں\" سے متن کھولیں اور وہاں سے کاپی کریں۔",
+  },
+
+  statusNotDone: { en: "Not done yet", ur: "ابھی باقی ہے" },
+  statusPrintedToday: { en: "Printed today", ur: "آج پرنٹ ہوا" },
+  statusPrintedOn: { en: "Printed {date}", ur: "{date} کو پرنٹ ہوا" },
+  statusPrintedSavedToday: { en: "Printed or saved today", ur: "آج پرنٹ یا محفوظ ہوا" },
+  statusPrintedSavedOn: { en: "Printed or saved {date}", ur: "{date} کو پرنٹ یا محفوظ ہوا" },
+  statusCopiedToday: { en: "Copied today", ur: "آج کاپی ہوا" },
+  statusCopiedOn: { en: "Copied {date}", ur: "{date} کو کاپی ہوا" },
+  statusSavedToday: { en: "Saved today", ur: "آج محفوظ ہوا" },
+  statusSavedOn: { en: "Saved {date}", ur: "{date} کو محفوظ ہوا" },
+  statusUndo: { en: "Undo", ur: "واپس لیں" },
+  statusUndoFor: { en: "mark {output} as not done", ur: "{output} کو نامکمل کریں" },
+
+  keepTitle: { en: "Keep this plan", ur: "یہ پلان سنبھال کر رکھیں" },
+  keepBody: {
+    en: "Save the link or a file, so you can update everything when a prescription changes.",
+    ur: "لنک یا فائل محفوظ کر لیں، تاکہ نسخہ بدلنے پر سب کچھ بدل سکیں۔",
+  },
+  keepCopyLink: { en: "Copy link", ur: "لنک کاپی کریں" },
+  keepSaveFile: { en: "Save file", ur: "فائل محفوظ کریں" },
+  keepMore: { en: "More ways to save, or clear this device", ur: "محفوظ کرنے کے مزید طریقے، یا یہ ڈیوائس صاف کریں" },
 
   // 9a. Fridge sheet (screen) --------------------------------------------------
   paperLabel: { en: "Paper size", ur: "کاغذ کا سائز" },
@@ -641,7 +730,6 @@ export const messages = {
   sheetPrinted: { en: "Printed {date}", ur: "پرنٹ {date}" },
   tickTitle: { en: "Tick a box each time you give a medicine", ur: "ہر بار دوا دینے کے بعد خانے میں ٹک لگائیں" },
   weekStarting: { en: "Week starting", ur: "ہفتہ شروع" },
-  saveAndShare: { en: "Save and share the plan", ur: "پلان محفوظ کریں اور بھیجیں" },
 
   // 8. Save ------------------------------------------------------------------
   qSaveNamed: { en: "Keep {name}'s plan safe", ur: "{name} کا پلان محفوظ رکھیں" },

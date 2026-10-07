@@ -6,11 +6,13 @@ import { DoctorList } from "@/components/sheets/DoctorList";
 import { OutputShell } from "@/components/sheets/OutputShell";
 import { SheetFrame } from "@/components/sheets/SheetFrame";
 import { useT } from "@/lib/i18n";
+import { useDone } from "@/lib/done";
 import { usePlan } from "@/lib/plan-store";
 
 export default function DoctorListScreen() {
   const t = useT();
   const { plan } = usePlan();
+  const { markDone } = useDone();
   const [printed, setPrinted] = useState(false);
 
   return (
@@ -20,6 +22,7 @@ export default function DoctorListScreen() {
       printLabel={t("printDoctor")}
       onPrint={() => {
         window.print();
+        markDone("doctor");
         setPrinted(true);
       }}
       controls={

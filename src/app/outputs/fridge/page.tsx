@@ -13,6 +13,7 @@ import { SchedulePage, TickGridPage } from "@/components/sheets/FridgeSheet";
 import { OutputShell } from "@/components/sheets/OutputShell";
 import { SheetFrame } from "@/components/sheets/SheetFrame";
 import { fill, useT, type MessageKey } from "@/lib/i18n";
+import { useDone } from "@/lib/done";
 import { usePlan } from "@/lib/plan-store";
 import { VERSION_BORDER_COLOURS, canPrint, type FoodVariant, type TickVariant } from "@/lib/plan";
 import { changedSinceLastPrint, printDate, recordPrint, upcomingVersion } from "@/lib/sheet";
@@ -29,6 +30,7 @@ type Part = "all" | "grid";
 export default function FridgeSheetScreen() {
   const t = useT();
   const { plan, setPlan } = usePlan();
+  const { markDone } = useDone();
   const [part, setPart] = useState<Part>("all");
   const [printed, setPrinted] = useState<Part | null>(null);
   const [research, setResearch] = useState(false);
@@ -63,6 +65,7 @@ export default function FridgeSheetScreen() {
       setPart(which);
     });
     window.print();
+    if (which === "all") markDone("fridge");
     setPrinted(which);
     setPart("all");
   };
