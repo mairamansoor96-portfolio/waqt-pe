@@ -11,7 +11,7 @@ const sizes: Record<Variant, { ur: number; en: number }> = {
 };
 
 /**
- * وقت پہ in Lalezar, primary teal, with the hard sun-yellow offset behind it;
+ * وقت پہ in Lalezar, logo red, with the hard sun (cinnamon buff) offset behind it;
  * "Waqt Pe" in ink. No background block. Read out as "Waqt Pe".
  * The printed one-colour version lives with the sheets (print.tsx → PrintLogo).
  */
@@ -26,7 +26,7 @@ export function Logo({ variant = "header", className = "" }: { variant?: Variant
       dir="ltr"
       className={`inline-flex font-logo ${stacked ? "flex-col items-center" : "items-baseline gap-2"} ${className}`}
     >
-      <span lang="ur" dir="rtl" className="logo-offset font-logo text-primary" style={{ fontSize: size.ur, lineHeight: 1.4 }}>
+      <span lang="ur" dir="rtl" className="logo-offset font-logo text-logo" style={{ fontSize: size.ur, lineHeight: 1.4 }}>
         {messages.appName.ur}
       </span>
       <span lang="en" className="font-logo text-ink" style={{ fontSize: size.en, lineHeight: 1.1 }}>

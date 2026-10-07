@@ -23,7 +23,7 @@ export const INK = "var(--color-ink)";
 export const SOFT = "var(--color-ink-soft)";
 export const LINE = "var(--color-line)";
 export const PERFORATION = "var(--color-perforation)";
-export const PRIMARY = "var(--color-primary)";
+export const LOGO = "var(--color-logo)";
 
 /** Size of one printed page's content box, in mm. */
 export function pageBox(plan: Plan) {
@@ -91,13 +91,13 @@ export function En({ children, size = 12, bold, style }: { children: ReactNode; 
 }
 
 /**
- * The one-colour logo for printed sheets (THEME.md → Logo): Urdu in primary,
+ * The one-colour logo for printed sheets (THEME.md → Logo): Urdu in logo red,
  * English in ink, no sun offset.
  */
 export function PrintLogo({ size = 24 }: { size?: number }) {
   return (
     <span role="img" aria-label={messages.appName.en} dir="ltr" style={{ display: "inline-flex", alignItems: "center", gap: "2mm", flexShrink: 0 }}>
-      <span lang="ur" dir="rtl" style={{ fontFamily: "var(--font-logo)", fontSize: `${size}pt`, lineHeight: 1.2, color: PRIMARY }}>
+      <span lang="ur" dir="rtl" style={{ fontFamily: "var(--font-logo)", fontSize: `${size}pt`, lineHeight: 1.2, color: LOGO }}>
         {messages.appName.ur}
       </span>
       <span lang="en" style={{ fontFamily: "var(--font-logo)", fontSize: `${Math.round(size / 2)}pt`, lineHeight: 1.1, color: INK }}>
