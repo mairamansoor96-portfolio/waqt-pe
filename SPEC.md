@@ -257,14 +257,15 @@ Pictograms and final visuals don't exist yet. Build with clearly marked placehol
 
 ## App theme
 
-**THEME.md is the source of truth for every visual decision** (theme v2: foil, sun and ralli trim). It replaced the earlier indigo theme that was described here; where anything in this spec disagrees with THEME.md on looks, follow THEME.md. Tokens live in one file, `src/styles/tokens.css`.
+**THEME.md is the source of truth for every visual decision** (theme v3: all six, the v2 foil, sun and ralli trim structure in a new palette). It replaced the earlier indigo theme that was described here; where anything in this spec disagrees with THEME.md on looks, follow THEME.md. Tokens live in one file, `src/styles/tokens.css`.
 
 What stays from the earlier theme: the sun moving along its arc is the progress header and the only decorative animation; mobile first, one column, max width 560 px, content aligned to the start edge; one question per setup screen with the primary action in a sticky bottom bar; spacing scale 4, 8, 12, 16, 24, 32, 48 px; type roles 28 / 22 / 18 / 15 px in English (30 / 24 / 20 / 17 px in Urdu, with Nastaliq line heights never tightened). Time-of-day tints are pale backgrounds only, never text. Sheet version border colours cycle through indigo #2B2D6E, teal #1F7A7A, maroon #7A1F3D and olive #6B6B1F (they're data on the printed sheet, not app chrome) and always appear with the version number.
 
 **Build decisions (theme v2):**
 
 - Lalezar is self-hosted with `@fontsource/lalezar` like the other fonts, never loaded from Google at runtime, and used only in the logo.
-- The success, warning and error colours aren't in THEME.md; they stay as status colours, darkened to pass AA on the new ground and tints (success #1F6B4A, warning #8A5000, error #B3261E).
+- The success, warning and error colours aren't in THEME.md; they stay as status colours, darkened to pass AA on the new ground and tints (success #1F6B4A, warning #8A5000, error #B3261E). Rechecked for theme v3: every text colour passes AA on ground, surface, primary-tint and all four time-of-day tints (lowest: `logo` on night, 4.7:1).
+- Theme v3 adds a `logo` token (#A83E33) used only for the logo's Urdu, on screen, in the favicon and app icon, and in the printed one-colour logo. The ralli trim cycles five full-strength colours, so its pattern repeats every ten squares.
 - Notices and confirmations lost their start-edge bar: a 2 px border all round plus a tone mark at the start carry the tone.
 - On setup screens the header row is back, logo (it goes home), step count; the language switch sits at the top of the content, end-aligned.
 - The back button looks 44 px round but its touch target is 48 px.

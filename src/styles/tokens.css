@@ -1,7 +1,7 @@
 /*
  * Waqt Pe app theme — the one file for design tokens.
- * THEME.md is the source of truth for every visual decision (theme v2: foil,
- * sun and ralli trim). This styles the app itself; printed sheets read the
+ * THEME.md is the source of truth for every visual decision (theme v3: all
+ * six). This styles the app itself; printed sheets read the
  * same values through src/components/sheets/print.tsx.
  *
  * Tailwind v4 turns these into utilities: bg-ground, text-ink, border-line,
@@ -19,21 +19,24 @@
   --color-current: currentColor;
   --color-white: #ffffff;
 
-  --color-ground: #e9edec;       /* page background (foil grey) */
+  --color-ground: #fff4e4;       /* page background (pale cinnamon buff) */
   --color-surface: #ffffff;      /* pockets, cards, inputs */
-  --color-ink: #102421;          /* text and icons */
-  --color-ink-soft: #445a56;     /* secondary text, AA on ground */
-  --color-line: #b4c3bf;         /* borders at rest */
-  --color-perforation: #93a7a2;  /* dashed dividers, sun arc path */
-  --color-primary: #0b5d57;      /* actions, selection, focus ring */
-  --color-primary-tint: #d9ece8; /* selected pocket fill */
-  --color-sun: #f2a23a;          /* current step on the arc; logo offset. Never text. */
+  --color-ink: #2a2140;          /* text and icons */
+  --color-ink-soft: #5e5468;     /* secondary text, AA on ground */
+  --color-line: #e3cdb0;         /* borders at rest */
+  --color-perforation: #bc9c78;  /* dashed dividers, sun arc path */
+  --color-primary: #6450a1;      /* actions, selection, focus ring (blue violet) */
+  --color-primary-tint: #e7e2f5; /* selected pocket fill */
+  --color-sun: #fdc57e;          /* current step on the arc; logo offset. Never text. */
+  --color-logo: #a83e33;         /* logo Urdu only (Etruscan red, deepened) */
 
-  /* Ralli trim patches: decoration only, never behind text. */
-  --color-ralli-1: #c9deda; /* teal */
-  --color-ralli-2: #e6dcc6; /* sand */
-  --color-ralli-3: #e2c6c2; /* madder */
-  --color-ralli-4: #b9c8c5; /* foil */
+  /* Ralli trim patches, full strength: decoration only, never text, never
+     behind text. */
+  --color-ralli-1: #c55347; /* Etruscan red */
+  --color-ralli-2: #648f7b; /* pistachio green */
+  --color-ralli-3: #eeb480; /* pinkish cinnamon */
+  --color-ralli-4: #c1c494; /* olive buff */
+  --color-ralli-5: #6450a1; /* blue violet */
 
   /* Time-of-day tints: pale backgrounds only, never text. */
   --color-dawn: #fce9d8;
@@ -162,13 +165,13 @@
  * --color-perforation, written out because a data URI can't read variables.
  */
 @utility perforation-top {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='2'%3E%3Crect width='6' height='2' fill='%2393a7a2'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='2'%3E%3Crect width='6' height='2' fill='%23bc9c78'/%3E%3C/svg%3E");
   background-repeat: repeat-x;
   background-position: top left;
   background-size: 11px 2px;
 }
 @utility perforation-bottom {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='2'%3E%3Crect width='6' height='2' fill='%2393a7a2'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='2'%3E%3Crect width='6' height='2' fill='%23bc9c78'/%3E%3C/svg%3E");
   background-repeat: repeat-x;
   background-position: bottom left;
   background-size: 11px 2px;
