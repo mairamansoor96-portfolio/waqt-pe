@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { decodePlan, encodePlan } from "@/lib/hash";
 import { markReviewed, withDose } from "@/lib/medicine";
-import { VERSION_BORDER_COLOURS } from "@/lib/plan";
+import { VERSION_BORDER_COLOURS, createEmptyPlan, createMedicine } from "@/lib/plan";
 import { samplePlan } from "@/lib/sample";
 import { changedSinceLastPrint, doctorRows, dosesBySlot, recordPrint, sheetFingerprint, tickRows, upcomingVersion } from "@/lib/sheet";
 
@@ -47,6 +47,20 @@ describe("fridge sheet", () => {
     const back = decodePlan(encodePlan(plan));
     expect(back.status === "ok" && back.plan.sheetVersion.fingerprint).toBe(plan.sheetVersion.fingerprint);
     expect(back.status === "ok" && changedSinceLastPrint(back.plan)).toBe(false);
+  });
+
+  it("keeps the version when an unchanged sheet is printed again after a reload", () => {
+    // Built the way the app builds it, so its keys aren't in the order the
+    // link restores them in (a medicine's doses come before its symbol).
+    let plan = createEmptyPlan();
+    plan.person.name = "Ammi";
+    const medicine = withDose(createMedicine([], { name: "Metformin 500 mg" })!, "morning", { quantity: 1, food: "after" });
+    plan = { ...plan, medicines: [markReviewed(medicine, true)] };
+    plan = recordPrint(plan, new Date("2026-09-30T10:00:00Z"));
+    const back = decodePlan(encodePlan(plan));
+    if (back.status !== "ok") throw new Error("the link should open");
+    expect(changedSinceLastPrint(back.plan)).toBe(false);
+    expect(recordPrint(back.plan).sheetVersion.number).toBe(1);
   });
 
   it("writes the doctor's list in plain clinical English", () => {
