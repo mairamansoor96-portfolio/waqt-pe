@@ -30,14 +30,19 @@ function hash(text: string): string {
 /**
  * A fingerprint of everything the fridge sheet shows. Ticking "reviewed" and
  * changing print settings don't change it; any change to what's printed does.
+ * The plan goes through the sanitiser first, as it does when a link is
+ * opened, so the same plan gives the same fingerprint before and after a
+ * reload (same key order, same trimming). Without this, an unchanged sheet
+ * printed again after a reload became the next version.
  */
 export function sheetFingerprint(plan: Plan): string {
+  const clean = sanitisePlan(plan);
   const shown = {
-    name: plan.person.name.trim(),
-    giver: plan.giver,
-    anchors: plan.anchors,
-    medicines: plan.medicines.map(({ reviewed: _reviewed, ...m }) => m),
-    contacts: plan.contacts,
+    name: clean.person.name.trim(),
+    giver: clean.giver,
+    anchors: clean.anchors,
+    medicines: clean.medicines.map(({ reviewed: _reviewed, ...m }) => m),
+    contacts: clean.contacts,
   };
   return hash(JSON.stringify(shown));
 }
@@ -46,14 +51,11 @@ export function sheetFingerprint(plan: Plan): string {
  * A fingerprint of everything any output shows (the sheet, plus the health
  * details on the lock screen and doctor's list). Done states on the outputs
  * hub belong to one fingerprint, so any change to the plan clears them.
- * The plan goes through the sanitiser first, as it does when a link is
- * opened, so the same plan gives the same fingerprint before and after a
- * reload (same key order, same trimming).
+ * Sanitised first, like sheetFingerprint, so it holds across a reload.
  */
 export function planFingerprint(plan: Plan): string {
-  const clean = sanitisePlan(plan);
-  const { name: _name, ...health } = clean.person;
-  return hash(JSON.stringify({ sheet: sheetFingerprint(clean), health }));
+  const { name: _name, ...health } = sanitisePlan(plan).person;
+  return hash(JSON.stringify({ sheet: sheetFingerprint(plan), health }));
 }
 
 /** Has the sheet changed since it was last printed? */
